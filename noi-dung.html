@@ -244,20 +244,85 @@
                 .replace(/"/g, '&quot;');
         }
 
-        function toExternalUrl(url) {
-            const t = String(url ?? '').trim();
+        function extractUrlFromText(s) {
+            const m = String(s ?? '').match(/https?:\/\/[^\s<>"']+/i);
+            if (!m) return '';
+            return m[0].replace(/[.,;)\]]+$/, '');
+        }
+
+        function extractLinkCellValue(val) {
+            if (val == null || val === '') return '';
+            if (typeof val === 'string') {
+                const t = val.trim();
+                if (!t) return '';
+                if (t.startsWith('{') || t.startsWith('[')) {
+                    try { return extractLinkCellValue(JSON.parse(t)); } catch { /* keep */ }
+                }
+                return extractUrlFromText(t) || t;
+            }
+            if (Array.isArray(val)) {
+                for (const item of val) {
+                    const u = extractLinkCellValue(item);
+                    if (u) return u;
+                }
+                return '';
+            }
+            if (typeof val === 'object') {
+                for (const k of ['url', 'href', 'link', 'Value', 'value', 'Label', 'label']) {
+                    if (val[k] != null && String(val[k]).trim()) {
+                        const u = extractLinkCellValue(val[k]);
+                        if (u) return u;
+                    }
+                }
+            }
+            return '';
+        }
+
+        function isValidExternalUrl(url) {
+            try {
+                const u = new URL(url);
+                if (u.protocol !== 'http:' && u.protocol !== 'https:') return false;
+                const host = u.hostname.replace(/^\[|\]$/g, '');
+                if (!host || host === 'blank' || /^\d+$/.test(host)) return false;
+                return true;
+            } catch { return false; }
+        }
+
+        function normalizeExternalUrl(raw) {
+            let t = extractLinkCellValue(raw);
+            if (!t) t = String(raw ?? '').trim();
             if (!t) return '';
-            return /^https?:\/\//i.test(t) ? t : `https://${t}`;
+            const embedded = extractUrlFromText(t);
+            if (embedded) t = embedded;
+            else if (!/^https?:\/\//i.test(t)) {
+                if (/^(www\.|[\w-]+\.[\w.-]+\.[a-z]{2,})/i.test(t)) t = `https://${t.replace(/^\/+/, '')}`;
+                else return '';
+            }
+            try {
+                const href = new URL(t).href;
+                return isValidExternalUrl(href) ? href : '';
+            } catch { return ''; }
+        }
+
+        function toExternalUrl(url) {
+            return normalizeExternalUrl(url);
+        }
+
+        function openExternalLink(url) {
+            if (!isValidExternalUrl(url)) return;
+            const w = window.top && window.top !== window ? window.top : window;
+            w.open(url, '_blank', 'noopener,noreferrer');
         }
 
         function renderLinkCell(url) {
-            const href = toExternalUrl(url);
+            const href = normalizeExternalUrl(url);
             if (!href) {
                 return '<span class="link-icon-btn is-empty inline-flex items-center justify-center w-9 h-9 rounded-lg" style="background: #f3e5f5; color: #b39ddb;" title="Chưa có link"><i class="fa-solid fa-link"></i></span>';
             }
+            const label = extractLinkCellValue(url) || href;
             const safeHref = escapeHtml(href);
-            const safeTitle = escapeHtml(url);
-            return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer" class="link-icon-btn inline-flex items-center justify-center w-9 h-9 rounded-lg transition-colors" style="background: #e8eaf6; color: #7e57c2;" title="${safeTitle}"><i class="fa-solid fa-link"></i></a>`;
+            const safeTitle = escapeHtml(label);
+            return `<button type="button" class="link-icon-btn inline-flex items-center justify-center w-9 h-9 rounded-lg transition-colors" style="background: #e8eaf6; color: #7e57c2; border:none;cursor:pointer;" data-href="${safeHref}" title="${safeTitle}"><i class="fa-solid fa-link"></i></button>`;
         }
 
         function normalizeColName(col) {
@@ -486,7 +551,7 @@
                     const cellValue = row[col] || '';
                     if (isLinkColumn(col)) {
                         td.className += ' text-center';
-                        td.innerHTML = renderLinkCell(cellValue);
+                        td.innerHTML = renderLinkCell(row[col]);
                     } else if (isContentModalColumn(col)) {
                         td.className += ' text-center';
                         td.dataset.rowId = rowId ?? '';
@@ -570,6 +635,12 @@
         });
 
         document.getElementById('tableBody').addEventListener('click', function(e) {
+            const linkBtn = e.target.closest('.link-icon-btn[data-href]');
+            if (linkBtn) {
+                e.preventDefault();
+                openExternalLink(linkBtn.getAttribute('data-href'));
+                return;
+            }
             const viewBtn = e.target.closest('.view-content-btn');
             if (viewBtn) {
                 const td = viewBtn.closest('td');
