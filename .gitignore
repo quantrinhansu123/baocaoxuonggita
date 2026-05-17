@@ -1,0 +1,5 @@
+*.backup*
+_patch_*.py
+_fix_*.py
+.DS_Store
+Thumbs.db

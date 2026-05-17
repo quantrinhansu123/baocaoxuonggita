@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tổng Hợp Tabs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    html, body { font-family: 'Montserrat', sans-serif; height: 100%; margin: 0; overflow: hidden; }
+    body {
+      position: relative;
+      isolation: isolate;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: url("LOGO.jpg") center center / min(48vmin, 520px) no-repeat;
+      opacity: 0.6;
+    }
+    .app-shell { position: relative; z-index: 1; }
+    #tabFrame { display: block; width: 100%; height: 100%; border: 0; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 h-screen flex flex-col app-shell">
+  <div class="shrink-0 px-4 py-3 border-b border-slate-200 bg-white/90 shadow-sm backdrop-blur-sm">
+    <div id="tabs" class="flex flex-wrap gap-2"></div>
+  </div>
+  <div class="flex-1 min-h-0 bg-white/85 backdrop-blur-[1px]">
+    <iframe id="tabFrame" title="Nội dung tab" src=""></iframe>
+  </div>
+
+  <script>
+    const tabItems = [
+      { id: 'content-plan', label: 'Content Plan', file: 'content-plan.html' },
+      { id: 'dashboard', label: 'Dashboard', file: 'dashboard-complete.html' },
+      { id: 'noi-dung', label: 'Nội dung', file: 'noi-dung.html' }
+    ];
+
+    const tabsContainer = document.getElementById('tabs');
+    const frame = document.getElementById('tabFrame');
+
+    function setActiveTab(tabId) {
+      tabItems.forEach(item => {
+        const btn = document.getElementById(`tab-${item.id}`);
+        const active = item.id === tabId;
+
+        if (btn) {
+          btn.className = active
+            ? 'px-4 py-2 rounded-lg text-sm font-medium bg-emerald-600 text-white shadow-sm'
+            : 'px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors';
+        }
+
+        if (active) {
+          frame.src = item.file;
+          document.title = `Tổng Hợp Tabs - ${item.label}`;
+        }
+      });
+    }
+
+    tabItems.forEach((item, index) => {
+      const btn = document.createElement('button');
+      btn.id = `tab-${item.id}`;
+      btn.type = 'button';
+      btn.textContent = item.label;
+      btn.addEventListener('click', () => setActiveTab(item.id));
+      tabsContainer.appendChild(btn);
+
+      if (index === 0) setActiveTab(item.id);
+    });
+  </script>
+</body>
+</html>

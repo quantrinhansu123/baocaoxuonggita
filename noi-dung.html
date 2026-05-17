@@ -1,0 +1,650 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Content (AppSheet)</title>
+    <!-- Tải Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tải FontAwesome cho Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Montserrat', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#f0fdf4', 100: '#e8f5e9', 200: '#c8e6c9', 500: '#81c784', 600: '#66bb6a', 700: '#4caf50' },
+                        pastel: {
+                            bg: '#faf8fc',
+                            card: '#ffffff',
+                            header: '#e8eaf6',
+                            row: '#f3e5f5',
+                            rowAlt: '#e3f2fd',
+                            border: '#e1bee7',
+                            accent: '#b39ddb',
+                            text: '#5c4d6d'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body { height: 100%; margin: 0; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #faf8fc;
+            min-height: 100%;
+            position: relative;
+            isolation: isolate;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: url("LOGO.jpg") center center / min(48vmin, 520px) no-repeat;
+            opacity: 0.6;
+        }
+        body > .w-full { position: relative; z-index: 1; }
+        
+        /* Hiệu ứng thông báo (Toast) */
+        .toast-enter { transform: translateY(100%); opacity: 0; }
+        .toast-enter-active { transform: translateY(0); opacity: 1; transition: all 300ms ease-in-out; }
+        .toast-leave { transform: translateY(0); opacity: 1; }
+        .toast-leave-active { transform: translateY(100%); opacity: 0; transition: all 300ms ease-in-out; }
+        
+        /* Tùy chỉnh thanh cuộn cho bảng */
+        .table-container::-webkit-scrollbar { width: 6px; height: 8px; }
+        .table-container::-webkit-scrollbar-thumb { background: #d1c4e9; border-radius: 4px; }
+        .table-container::-webkit-scrollbar-track { background: #f3e5f5; }
+        #dataTable { width: 100%; table-layout: fixed; }
+        #dataTable th, #dataTable td { word-wrap: break-word; overflow-wrap: break-word; }
+        .link-icon-btn:hover { background: #d1c4e9 !important; color: #5e35b1 !important; }
+        .link-icon-btn.is-empty { opacity: 0.35; pointer-events: none; cursor: default; }
+        .action-icon-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 2.25rem; height: 2.25rem; border-radius: 0.5rem;
+            border: 1px solid #d1c4e9; transition: background 0.2s, color 0.2s;
+            cursor: pointer;
+        }
+        .action-icon-btn.view-btn { background: #e8eaf6; color: #5e35b1; }
+        .action-icon-btn.view-btn:hover { background: #d1c4e9; }
+        .action-icon-btn.edit-btn { background: #f3e5f5; color: #7e57c2; }
+        .action-icon-btn.edit-btn:hover { background: #e1bee7; }
+        .action-icon-btn.is-empty { opacity: 0.35; pointer-events: none; cursor: default; }
+        #contentModal { display: none; }
+        #contentModal.is-open { display: flex; }
+        #contentModal .modal-backdrop {
+            position: absolute; inset: 0; background: rgba(92, 77, 109, 0.35);
+        }
+        #contentModal .modal-panel {
+            position: relative; z-index: 1; width: min(720px, calc(100vw - 2rem));
+            max-height: calc(100vh - 4rem); margin: auto;
+            background: #fff; border-radius: 1rem; border: 1px solid #e1bee7;
+            box-shadow: 0 20px 50px rgba(106, 76, 122, 0.2);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        #contentModal .modal-header {
+            padding: 1rem 1.25rem; border-bottom: 1px solid #e1bee7;
+            display: flex; align-items: center; justify-content: space-between;
+            background: #f3e5f5;
+        }
+        #contentModal .modal-body {
+            padding: 1.25rem; overflow-y: auto; flex: 1;
+        }
+        #contentModal .modal-view-text {
+            white-space: pre-wrap; word-break: break-word;
+            line-height: 1.6; color: #5c4d6d; font-size: 0.875rem;
+        }
+        #contentModal .modal-textarea {
+            width: 100%; min-height: 280px; padding: 0.75rem;
+            border: 2px solid #b39ddb; border-radius: 0.5rem;
+            font-family: inherit; font-size: 0.875rem; line-height: 1.6;
+            resize: vertical; outline: none; color: #5c4d6d;
+        }
+        #contentModal .modal-footer {
+            padding: 1rem 1.25rem; border-top: 1px solid #e1bee7;
+            display: flex; justify-content: flex-end; gap: 0.5rem;
+            background: #faf8fc;
+        }
+        #statusFilter {
+            min-width: 200px; padding: 0.5rem 2rem 0.5rem 0.75rem;
+            border: 1px solid #d1c4e9; border-radius: 0.5rem;
+            font-family: inherit; font-size: 0.875rem; color: #5c4d6d;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238e7a9b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center;
+            appearance: none; cursor: pointer;
+        }
+        #statusFilter:focus { outline: none; border-color: #b39ddb; box-shadow: 0 0 0 2px rgba(179, 157, 219, 0.35); }
+    </style>
+</head>
+<body class="p-3 md:p-5 min-h-screen text-[#5c4d6d]">
+
+    <div class="w-full">
+        <!-- Khu vực tiêu đề và điều khiển -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4 p-5 rounded-xl border shadow-sm" style="background: #fff5f8; border-color: #f8bbd0;">
+            <div>
+                <h2 class="text-2xl font-bold text-[#6a4c7a]">Quản lý Dữ liệu</h2>
+                <p class="text-sm text-[#8e7a9b] mt-1">Nguồn dữ liệu: Bảng <span class="font-semibold text-[#9575cd]">Input</span> (AppSheet)</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <div id="filterBar" class="hidden flex flex-wrap items-center gap-2 px-3 py-2 rounded-lg border" style="background: #faf8fc; border-color: #e1bee7;">
+                    <i class="fa-solid fa-filter text-sm" style="color: #9575cd;"></i>
+                    <label for="statusFilter" class="text-sm font-medium whitespace-nowrap" style="color: #6a4c7a;">Trạng thái duyệt</label>
+                    <select id="statusFilter" title="Lọc theo trạng thái duyệt">
+                        <option value="">Tất cả</option>
+                    </select>
+                    <span id="filterResultCount" class="text-sm whitespace-nowrap" style="color: #8e7a9b;"></span>
+                </div>
+                <button id="refreshBtn" class="px-5 py-2.5 text-white text-sm font-medium rounded-lg shadow-sm transition-colors flex items-center gap-2 hover:opacity-90" style="background: #b39ddb;">
+                    <i class="fa-solid fa-rotate-right"></i> Tải lại dữ liệu
+                </button>
+            </div>
+        </div>
+
+        <!-- Khung chứa Bảng dữ liệu chính -->
+        <div class="w-full rounded-xl shadow-sm border overflow-hidden" style="background: #ffffff; border-color: #e1bee7;">
+
+            <!-- Trạng thái Đang tải -->
+            <div id="loadingIndicator" class="p-16 text-center" style="color: #8e7a9b;">
+                <svg class="animate-spin h-10 w-10 mx-auto mb-4" style="color: #b39ddb;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="font-medium">Đang kết nối tới AppSheet...</p>
+            </div>
+            
+            <!-- Bảng dữ liệu -->
+            <div class="table-container w-full overflow-x-auto hidden" id="tableContainer">
+                <table id="dataTable" class="w-full text-left border-collapse">
+                    <thead id="tableHead" style="background: #e8eaf6; border-bottom: 2px solid #d1c4e9;">
+                        <!-- Tiêu đề cột sẽ được render động vào đây -->
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Dữ liệu hàng sẽ được render động vào đây -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Trạng thái trống (Không có dữ liệu hoặc Lỗi) -->
+            <div id="emptyState" class="p-16 text-center hidden flex-col items-center" style="color: #8e7a9b;">
+                <i class="fa-regular fa-folder-open text-4xl mb-3" style="color: #d1c4e9;"></i>
+                <p id="emptyStateText">Không tìm thấy dữ liệu nào.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal xem / sua noi dung -->
+    <div id="contentModal" class="fixed inset-0 z-[100] items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="contentModalTitle">
+        <div class="modal-backdrop" id="contentModalBackdrop"></div>
+        <div class="modal-panel">
+            <div class="modal-header">
+                <h3 id="contentModalTitle" class="font-semibold text-[#6a4c7a]">Nội dung</h3>
+                <button type="button" id="contentModalClose" class="action-icon-btn view-btn" style="width:2rem;height:2rem;border:none;" title="Đóng">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="contentModalView" class="modal-view-text"></div>
+                <textarea id="contentModalEdit" class="modal-textarea hidden" hidden></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="contentModalCancel" class="px-4 py-2 text-sm font-medium rounded-lg" style="background:#fce4ec;color:#6a4c7a;">Hủy</button>
+                <button type="button" id="contentModalSave" class="px-4 py-2 text-sm font-medium rounded-lg text-white hidden" style="background:#81c784;">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nơi hiển thị thông báo góc phải màn hình -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+
+    <script>
+        // ==========================================
+        // CẤU HÌNH KẾT NỐI APPSHEET
+        // ==========================================
+        const APP_ID = 'fb394ab7-2164-4da6-a15e-9e06fefaccb0';
+        const API_KEY = 'V2-wpK1r-oW88b-9sL5Z-DMxbg-zUWg1-FX50y-91Plm-sPMOc';
+        const TABLE_NAME = 'Input';
+        const API_URL = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${TABLE_NAME}/Action`;
+        
+        // ⚠️ QUAN TRỌNG: Sửa tên cột này thành cột được đánh dấu là "Key" trong AppSheet
+        const APPSHEET_KEY_COLUMN = 'ID Key'; 
+        
+        // Cột ẩn không hiển thị trên bảng (ID Key vẫn dùng làm khóa khi lưu)
+        const HIDDEN_COLUMNS = [
+            '_RowNumber', 'Dấu thời gian',
+            'ID', 'ID Key', 'buffer_update_id', 'service_update_id',
+            'Check giờ đăng'
+        ];
+
+        function isHiddenColumn(col) {
+            const normalized = col.trim().toLowerCase();
+            return HIDDEN_COLUMNS.some(hidden => hidden.trim().toLowerCase() === normalized);
+        }
+
+        function isLinkColumn(col) {
+            const n = col.trim().toLowerCase();
+            return n === 'link video / ảnh' || n === 'link video / anh'
+                || n === 'link bài đăng' || n === 'link bai dang'
+                || (n.includes('link') && n.includes('video'))
+                || (n.includes('link') && n.includes('bài đăng'))
+                || (n.includes('link') && n.includes('bai dang'));
+        }
+
+        function escapeHtml(str) {
+            return String(str ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function toExternalUrl(url) {
+            const t = String(url ?? '').trim();
+            if (!t) return '';
+            return /^https?:\/\//i.test(t) ? t : `https://${t}`;
+        }
+
+        function renderLinkCell(url) {
+            const href = toExternalUrl(url);
+            if (!href) {
+                return '<span class="link-icon-btn is-empty inline-flex items-center justify-center w-9 h-9 rounded-lg" style="background: #f3e5f5; color: #b39ddb;" title="Chưa có link"><i class="fa-solid fa-link"></i></span>';
+            }
+            const safeHref = escapeHtml(href);
+            const safeTitle = escapeHtml(url);
+            return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer" class="link-icon-btn inline-flex items-center justify-center w-9 h-9 rounded-lg transition-colors" style="background: #e8eaf6; color: #7e57c2;" title="${safeTitle}"><i class="fa-solid fa-link"></i></a>`;
+        }
+
+        function normalizeColName(col) {
+            return col.trim().toLowerCase().replace(/\*+$/, '').trim();
+        }
+
+        /** Cột chỉ hiện icon Xem / Sửa (modal): Nội dung, Caption thô, Ý tưởng chính * */
+        function isContentModalColumn(col) {
+            const n = normalizeColName(col);
+            if (n.includes('nội dung') || n === 'content' || n.includes('noidung')) return true;
+            if (n.includes('caption') && (n.includes('thô') || n.includes('tho'))) return true;
+            if ((n.includes('ý tưởng') || n.includes('y tuong')) && (n.includes('chính') || n.includes('chinh'))) return true;
+            return false;
+        }
+
+        function renderContentModalCell(cellValue, col) {
+            const colLabel = escapeHtml(col.replace(/\*+$/, '').trim());
+            return `
+                <span class="content-text hidden">${escapeHtml(cellValue)}</span>
+                <div class="flex items-center justify-center gap-2">
+                    <button type="button" class="action-icon-btn view-btn view-content-btn" title="Xem ${colLabel}">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                    <button type="button" class="action-icon-btn edit-btn content-edit-btn" title="Sửa ${colLabel}">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                </div>
+            `;
+        }
+        
+        const STATUS_FILTER_LABEL = 'Trạng thái duyệt';
+        const STATUS_FILTER_EMPTY = '__EMPTY__';
+        let currentData = [];
+        let statusColumnName = null;
+
+        function findColumnByLabel(rows, label) {
+            if (!rows?.length) return null;
+            const target = label.trim().toLowerCase();
+            return Object.keys(rows[0]).find(key => key.trim().toLowerCase() === target) || null;
+        }
+
+        function findStatusColumn(rows) {
+            if (!rows?.length) return null;
+            const exact = findColumnByLabel(rows, STATUS_FILTER_LABEL);
+            if (exact) return exact;
+            return Object.keys(rows[0]).find(key => {
+                const n = normalizeColName(key);
+                const hasStatus = n.includes('trạng thái') || n.includes('trang thai');
+                const hasDuyet = n.includes('duyệt') || n.includes('duyet');
+                return hasStatus && hasDuyet;
+            }) || null;
+        }
+
+        function getRowStatusValue(row) {
+            return String(row[statusColumnName] ?? '').trim();
+        }
+
+        function getUniqueStatusValues(data) {
+            if (!statusColumnName) return { values: [], hasEmpty: false };
+            const values = new Set();
+            let hasEmpty = false;
+            data.forEach(row => {
+                const v = getRowStatusValue(row);
+                if (v) values.add(v);
+                else hasEmpty = true;
+            });
+            return {
+                values: [...values].sort((a, b) => a.localeCompare(b, 'vi')),
+                hasEmpty
+            };
+        }
+
+        function populateStatusFilter(data) {
+            const select = document.getElementById('statusFilter');
+            if (!select) return;
+            const prev = select.value;
+            const { values, hasEmpty } = getUniqueStatusValues(data);
+            select.innerHTML = '<option value="">Tất cả</option>';
+            values.forEach(val => {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = val;
+                select.appendChild(opt);
+            });
+            if (hasEmpty) {
+                const opt = document.createElement('option');
+                opt.value = STATUS_FILTER_EMPTY;
+                opt.textContent = '(Trống)';
+                select.appendChild(opt);
+            }
+            select.value = [...select.options].some(o => o.value === prev) ? prev : '';
+            select.disabled = false;
+        }
+
+        function getFilteredData() {
+            const select = document.getElementById('statusFilter');
+            const filterVal = select?.value ?? '';
+            if (!filterVal || !statusColumnName) return currentData;
+            if (filterVal === STATUS_FILTER_EMPTY) {
+                return currentData.filter(row => !getRowStatusValue(row));
+            }
+            return currentData.filter(row => getRowStatusValue(row) === filterVal);
+        }
+
+        function refreshTableView() {
+            const tableContainer = document.getElementById('tableContainer');
+            const emptyState = document.getElementById('emptyState');
+            const emptyStateText = document.getElementById('emptyStateText');
+            const filterBar = document.getElementById('filterBar');
+            const countEl = document.getElementById('filterResultCount');
+
+            if (!currentData?.length) {
+                filterBar?.classList.add('hidden');
+                tableContainer.classList.add('hidden');
+                return;
+            }
+
+            if (statusColumnName) {
+                filterBar?.classList.remove('hidden');
+            } else {
+                filterBar?.classList.add('hidden');
+            }
+
+            const filtered = getFilteredData();
+            if (countEl) {
+                countEl.textContent = `Hiển thị ${filtered.length} / ${currentData.length} dòng`;
+            }
+
+            if (filtered.length > 0) {
+                renderTable(filtered);
+                tableContainer.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+            } else {
+                tableContainer.classList.add('hidden');
+                emptyStateText.innerText = 'Không có dòng nào khớp bộ lọc "Trạng thái duyệt".';
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+            }
+        }
+
+        // ==========================================
+        // HÀM LẤY DỮ LIỆU TỪ APPSHEET (READ)
+        // ==========================================
+        async function fetchAppSheetData() {
+            const loading = document.getElementById('loadingIndicator');
+            const tableContainer = document.getElementById('tableContainer');
+            const emptyState = document.getElementById('emptyState');
+            const emptyStateText = document.getElementById('emptyStateText');
+            const filterBar = document.getElementById('filterBar');
+            
+            loading.classList.remove('hidden');
+            tableContainer.classList.add('hidden');
+            emptyState.classList.add('hidden');
+            filterBar?.classList.add('hidden');
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'ApplicationAccessKey': API_KEY, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ "Action": "Find", "Properties": { "Locale": "vi-VN", "Timezone": "Asia/Ho_Chi_Minh" }, "Rows": [] })
+                });
+
+                if (!response.ok) throw new Error(`Lỗi HTTP: ${response.status}`);
+                const data = await response.json();
+                currentData = data;
+                statusColumnName = findStatusColumn(data);
+                
+                if (data && data.length > 0) {
+                    const statusFilter = document.getElementById('statusFilter');
+                    if (statusFilter) statusFilter.value = '';
+                    populateStatusFilter(data);
+                    refreshTableView();
+                } else {
+                    statusColumnName = null;
+                    emptyStateText.innerText = "Bảng hiện tại chưa có dữ liệu nào.";
+                    emptyState.classList.remove('hidden');
+                    emptyState.classList.add('flex');
+                }
+            } catch (error) {
+                console.error("Lỗi khi lấy dữ liệu:", error);
+                emptyStateText.innerText = "Chưa thể tải dữ liệu thực tế. Nhấn 'Tải lại' hoặc kiểm tra kết nối API.";
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        // ==========================================
+        // HÀM HIỂN THỊ DỮ LIỆU RA BẢNG HTML
+        // ==========================================
+        function renderTable(data) {
+            const tableHead = document.getElementById('tableHead');
+            const tableBody = document.getElementById('tableBody');
+            tableHead.innerHTML = ''; tableBody.innerHTML = '';
+
+            const firstRow = data[0];
+            const columns = Object.keys(firstRow).filter(col => !isHiddenColumn(col));
+
+            // Render Tiêu đề cột (Th)
+            const trHead = document.createElement('tr');
+            columns.forEach(col => {
+                const th = document.createElement('th');
+                th.className = "px-4 py-3 font-semibold text-sm tracking-wide";
+                th.style.cssText = "color: #6a4c7a; background: #e8eaf6; border-bottom: 2px solid #d1c4e9;";
+                th.textContent = col;
+                trHead.appendChild(th);
+            });
+            tableHead.appendChild(trHead);
+
+            // Render Từng dòng dữ liệu (Tr)
+            data.forEach((row, rowIndex) => {
+                const tr = document.createElement('tr');
+                const rowBg = rowIndex % 2 === 0 ? '#faf8fc' : '#f3e5f5';
+                tr.className = "transition-colors group";
+                tr.style.backgroundColor = rowBg;
+                tr.onmouseenter = () => { tr.style.backgroundColor = '#e8eaf6'; };
+                tr.onmouseleave = () => { tr.style.backgroundColor = rowBg; };
+                const rowId = row[APPSHEET_KEY_COLUMN]; 
+
+                columns.forEach(col => {
+                    const td = document.createElement('td');
+                    td.className = "px-4 py-3 text-sm align-top";
+                    td.style.cssText = "color: #5c4d6d; border-top: 1px solid #e1bee7;";
+                    const cellValue = row[col] || '';
+                    if (isLinkColumn(col)) {
+                        td.className += ' text-center';
+                        td.innerHTML = renderLinkCell(cellValue);
+                    } else if (isContentModalColumn(col)) {
+                        td.className += ' text-center';
+                        td.dataset.rowId = rowId ?? '';
+                        td.dataset.col = col;
+                        td.innerHTML = renderContentModalCell(cellValue, col);
+                    } else {
+                        td.innerHTML = `<div class="whitespace-pre-wrap break-words w-full">${escapeHtml(cellValue)}</div>`;
+                    }
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // ==========================================
+        // XỬ LÝ SỰ KIỆN CLICK (SỬA, LƯU, HỦY)
+        // ==========================================
+        let activeContentTd = null;
+
+        const contentModal = document.getElementById('contentModal');
+        const contentModalView = document.getElementById('contentModalView');
+        const contentModalEdit = document.getElementById('contentModalEdit');
+        const contentModalSave = document.getElementById('contentModalSave');
+        const contentModalTitle = document.getElementById('contentModalTitle');
+
+        function getContentFromTd(td) {
+            const el = td.querySelector('.content-text');
+            return el ? el.textContent : '';
+        }
+
+        function setContentInTd(td, text) {
+            const el = td.querySelector('.content-text');
+            if (el) el.textContent = text;
+        }
+
+        function openContentModal(mode, td, colName) {
+            activeContentTd = td;
+            const text = getContentFromTd(td);
+            const isEdit = mode === 'edit';
+
+            contentModalTitle.textContent = isEdit ? `Sửa: ${colName}` : `Xem: ${colName}`;
+            contentModalView.textContent = text || '(Chưa có nội dung)';
+            contentModalView.classList.toggle('hidden', isEdit);
+            contentModalEdit.classList.toggle('hidden', !isEdit);
+            contentModalEdit.hidden = !isEdit;
+            contentModalEdit.value = text;
+            contentModalSave.classList.toggle('hidden', !isEdit);
+            contentModalCancel.textContent = isEdit ? 'Hủy' : 'Đóng';
+            contentModal.classList.add('is-open');
+            if (isEdit) contentModalEdit.focus();
+        }
+
+        function closeContentModal() {
+            contentModal.classList.remove('is-open');
+            activeContentTd = null;
+        }
+
+        document.getElementById('contentModalBackdrop').addEventListener('click', closeContentModal);
+        document.getElementById('contentModalClose').addEventListener('click', closeContentModal);
+        document.getElementById('contentModalCancel').addEventListener('click', closeContentModal);
+
+        document.getElementById('contentModalSave').addEventListener('click', async function() {
+            if (!activeContentTd) return;
+            const rowId = activeContentTd.dataset.rowId;
+            const columnName = activeContentTd.dataset.col;
+            const newText = contentModalEdit.value;
+
+            if (!rowId || rowId === 'undefined') {
+                showToast(`Lỗi: Không tìm thấy khóa chính (${APPSHEET_KEY_COLUMN})`, 'error');
+                return;
+            }
+
+            const btn = contentModalSave;
+            const prev = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Đang lưu...';
+            btn.disabled = true;
+
+            await updateAppSheetData(rowId, columnName, newText, activeContentTd, btn);
+            btn.innerHTML = prev;
+            btn.disabled = false;
+        });
+
+        document.getElementById('tableBody').addEventListener('click', function(e) {
+            const viewBtn = e.target.closest('.view-content-btn');
+            if (viewBtn) {
+                const td = viewBtn.closest('td');
+                openContentModal('view', td, td.dataset.col || 'Nội dung');
+                return;
+            }
+            const editBtn = e.target.closest('.content-edit-btn');
+            if (editBtn) {
+                const td = editBtn.closest('td');
+                openContentModal('edit', td, td.dataset.col || 'Nội dung');
+            }
+        });
+
+        // ==========================================
+        // HÀM CẬP NHẬT DỮ LIỆU LÊN APPSHEET (EDIT)
+        // ==========================================
+        async function updateAppSheetData(rowId, columnName, newContent, tdElement, saveBtnElement) {
+            try {
+                const rowData = {};
+                rowData[APPSHEET_KEY_COLUMN] = rowId; 
+                rowData[columnName] = newContent;
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'ApplicationAccessKey': API_KEY, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ "Action": "Edit", "Properties": { "Locale": "vi-VN", "Timezone": "Asia/Ho_Chi_Minh" }, "Rows": [ rowData ] })
+                });
+
+                if (!response.ok) throw new Error(await response.text());
+                
+                showToast('Đã lưu thành công lên AppSheet!', 'success');
+                
+                setContentInTd(tdElement, newContent);
+                closeContentModal();
+            } catch (error) {
+                let errorMsg = error.message;
+                try { if(JSON.parse(error.message).Message) errorMsg = JSON.parse(error.message).Message; } catch(e) {}
+                showToast(`Lỗi AppSheet: ${errorMsg}`, 'error');
+            } finally {
+                saveBtnElement.textContent = 'Lưu';
+                saveBtnElement.disabled = false;
+            }
+        }
+
+        // ==========================================
+        // HÀM HIỂN THỊ THÔNG BÁO (TOAST)
+        // ==========================================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const bgStyle = type === 'success' ? 'background: #a5d6a7;' : 'background: #ef9a9a;';
+            let iconClass = type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark';
+            
+            toast.className = `flex items-center gap-3 px-4 py-3 rounded shadow-lg text-white text-sm font-medium toast-enter`;
+            toast.style.cssText = bgStyle + ' color: #fff;';
+            toast.innerHTML = `<i class="fa-solid ${iconClass}"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            // Animation Trigger
+            requestAnimationFrame(() => { toast.classList.remove('toast-enter'); toast.classList.add('toast-enter-active'); });
+            
+            // Tự động xóa
+            setTimeout(() => { 
+                toast.classList.add('toast-leave-active'); 
+                setTimeout(() => toast.remove(), 300); 
+            }, 3500);
+        }
+
+        // Lắng nghe sự kiện nút Tải lại
+        document.getElementById('refreshBtn').addEventListener('click', fetchAppSheetData);
+        document.getElementById('statusFilter').addEventListener('change', refreshTableView);
+
+        // Khởi động load data ngay khi vào trang
+        window.onload = fetchAppSheetData;
+    </script>
+</body>
+</html>
