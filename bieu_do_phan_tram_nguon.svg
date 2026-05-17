@@ -1,0 +1,47 @@
+﻿<svg width="1200" height="700" viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="700" fill="#ffffff"/>
+  <text x="600" y="60" text-anchor="middle" font-size="40" font-family="Arial, sans-serif" font-weight="700" fill="#111827">Hiệu quả nguồn đăng bài</text>
+
+  <!-- Pie chart -->
+  <g transform="translate(300,360)">
+    <!-- 54.3% -->
+    <path d="M 0 0 L 0 -180 A 180 180 0 1 1 -51.423 -172.503 Z" fill="#7C3AED" stroke="#ffffff" stroke-width="2"/>
+    <!-- 45.7% -->
+    <path d="M 0 0 L -51.423 -172.503 A 180 180 0 0 1 0 -180 Z" fill="#EF4444" stroke="#ffffff" stroke-width="2"/>
+
+    <text x="60" y="-40" font-size="26" font-family="Arial, sans-serif" font-weight="700" fill="#111827">54.3%</text>
+    <text x="-140" y="40" font-size="26" font-family="Arial, sans-serif" font-weight="700" fill="#111827">45.7%</text>
+
+    <circle cx="0" cy="0" r="70" fill="#ffffff"/>
+    <text x="0" y="10" text-anchor="middle" font-size="22" font-family="Arial, sans-serif" font-weight="700" fill="#374151">Tổng 100%</text>
+  </g>
+
+  <!-- Legend/Table -->
+  <g transform="translate(610,150)" font-family="Arial, sans-serif">
+    <text x="0" y="0" font-size="32" font-weight="700" fill="#111827">Bảng phần trăm</text>
+
+    <rect x="0" y="40" width="24" height="24" fill="#7C3AED"/>
+    <text x="40" y="59" font-size="24" fill="#111827">TikTok Xưởng Đàn</text>
+    <text x="520" y="59" text-anchor="end" font-size="24" font-weight="700" fill="#111827">54.3%</text>
+
+    <rect x="0" y="95" width="24" height="24" fill="#EF4444"/>
+    <text x="40" y="114" font-size="24" fill="#111827">YouTube Guitar Sài Thành</text>
+    <text x="520" y="114" text-anchor="end" font-size="24" font-weight="700" fill="#111827">45.7%</text>
+
+    <rect x="0" y="150" width="24" height="24" fill="#3B82F6"/>
+    <text x="40" y="169" font-size="24" fill="#111827">FB Guitar Sài Thành</text>
+    <text x="520" y="169" text-anchor="end" font-size="24" font-weight="700" fill="#111827">0.0%</text>
+
+    <rect x="0" y="205" width="24" height="24" fill="#10B981"/>
+    <text x="40" y="224" font-size="24" fill="#111827">FB Academy</text>
+    <text x="520" y="224" text-anchor="end" font-size="24" font-weight="700" fill="#111827">0.0%</text>
+
+    <rect x="0" y="260" width="24" height="24" fill="#F59E0B"/>
+    <text x="40" y="279" font-size="24" fill="#111827">FB Giá Tận Xưởng</text>
+    <text x="520" y="279" text-anchor="end" font-size="24" font-weight="700" fill="#111827">0.0%</text>
+
+    <rect x="0" y="315" width="24" height="24" fill="#A16207"/>
+    <text x="40" y="334" font-size="24" fill="#111827">FB Thanh Lý Đàn Giá Rẻ</text>
+    <text x="520" y="334" text-anchor="end" font-size="24" font-weight="700" fill="#111827">0.0%</text>
+  </g>
+</svg>
