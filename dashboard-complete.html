@@ -1127,6 +1127,238 @@
 
         .dash-toast.success { background: #43a047; }
         .dash-toast.error { background: #e53935; }
+
+        /* Đánh giá hiệu suất */
+        .perf-eval-section {
+            margin-bottom: 30px;
+        }
+
+        .perf-eval-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #888;
+            letter-spacing: 0.06em;
+            margin-bottom: 14px;
+        }
+
+        .best-performer-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .best-performer-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .best-performer-head i { color: #ffb300; }
+
+        .best-performer-body {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .best-performer-winner {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .best-performer-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffe082, #ffb300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .best-performer-name { font-size: 18px; font-weight: 700; color: #333; }
+        .best-performer-meta { font-size: 12px; color: #888; margin-top: 4px; }
+
+        .best-performer-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .best-performer-stat strong {
+            display: block;
+            font-size: 16px;
+            color: #2a6b7f;
+        }
+
+        .best-performer-stat span {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .best-performer-placeholder {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-size: 13px;
+            color: #8a6d00;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .perf-eval-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        @media (max-width: 1100px) {
+            .perf-eval-grid { grid-template-columns: 1fr; }
+        }
+
+        .perf-eval-card-full {
+            margin-top: 18px;
+        }
+
+        .perf-eval-card-full .perf-table th,
+        .perf-eval-card-full .perf-table td {
+            font-size: 12px;
+        }
+
+        .perf-eval-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .perf-eval-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            gap: 10px;
+        }
+
+        .perf-eval-card-head h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .perf-eval-card-head h3 i { color: #4dd0e1; }
+
+        .perf-eval-sub {
+            font-size: 11px;
+            color: #aaa;
+            font-weight: 500;
+        }
+
+        .perf-table-wrap { overflow-x: auto; }
+
+        .perf-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .perf-table th {
+            text-align: left;
+            padding: 10px 8px;
+            color: #999;
+            font-weight: 600;
+            font-size: 10px;
+            letter-spacing: 0.03em;
+            border-bottom: 1px solid #f0f0f0;
+            white-space: nowrap;
+        }
+
+        .perf-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #f8f8f8;
+            color: #444;
+            vertical-align: middle;
+        }
+
+        .perf-table tr:last-child td { border-bottom: none; }
+
+        .perf-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+        .grade-badge {
+            display: inline-block;
+            min-width: 28px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .grade-s { background: #fff8e1; color: #f9a825; }
+        .grade-a { background: #e8f5e9; color: #2e7d32; }
+        .grade-b { background: #e3f2fd; color: #1565c0; }
+        .grade-c { background: #fff3e0; color: #ef6c00; }
+        .grade-d { background: #ffebee; color: #c62828; }
+
+        .growth-up { color: #43a047; font-weight: 600; }
+        .growth-down { color: #e53935; font-weight: 600; }
+        .growth-flat { color: #999; }
+
+        .perf-detail-btn {
+            border: 1px solid #e0e8f0;
+            background: #f5f7fa;
+            color: #666;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .perf-detail-btn:hover { background: #e8f4f8; color: #2a6b7f; }
+
+        .perf-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f5f5f5;
+            font-size: 11px;
+            color: #888;
+        }
+
+        .perf-legend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .perf-legend i {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+        }
     </style>
 </head>
 <body>
@@ -1324,6 +1556,112 @@
                     </div>
                 </div>
             </div>
+
+
+            <!-- Đánh giá hiệu suất -->
+            <section class="perf-eval-section">
+                <div class="perf-eval-title">ĐÁNH GIÁ HIỆU SUẤT</div>
+                <div class="best-performer-card">
+                    <div class="best-performer-head">
+                        <i class="fas fa-trophy"></i>
+                        NGƯỜI ĐĂNG HIỆU SUẤT TỐT NHẤT THÁNG NÀY
+                    </div>
+                    <div id="bestPerformerContent" class="best-performer-body">
+                        <div class="best-performer-placeholder">
+                            <i class="fas fa-hourglass-half"></i>
+                            Chờ cột «Người phụ trách» từ sheet. Dashboard tự hiển thị sau khi có data.
+                        </div>
+                    </div>
+                </div>
+                <div class="perf-eval-grid">
+                    <div class="perf-eval-card">
+                        <div class="perf-eval-card-head">
+                            <h3><i class="fas fa-bullhorn"></i> HIỆU SUẤT KÊNH</h3>
+                        </div>
+                        <div class="perf-table-wrap">
+                            <table class="perf-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>KÊNH</th>
+                                        <th class="num">BÀI</th>
+                                        <th class="num">VIEWS</th>
+                                        <th class="num">TƯƠNG TÁC</th>
+                                        <th class="num">ĐIỂM</th>
+                                        <th>XẾP LOẠI</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="perfChannelBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="perf-legend">
+                            <span><i style="background:#ffd54f;"></i> S &gt;90</span>
+                            <span><i style="background:#81c784;"></i> A 70–89</span>
+                            <span><i style="background:#64b5f6;"></i> B 50–69</span>
+                            <span><i style="background:#ffb74d;"></i> C 30–49</span>
+                            <span><i style="background:#e57373;"></i> D &lt;30</span>
+                        </div>
+                    </div>
+                    <div class="perf-eval-card">
+                        <div class="perf-eval-card-head">
+                            <h3><i class="fas fa-chart-line"></i> SO SÁNH THEO KÊNH</h3>
+                            <span class="perf-eval-sub">KPI &amp; tăng trưởng view</span>
+                        </div>
+                        <div class="perf-table-wrap">
+                            <table class="perf-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>KÊNH</th>
+                                        <th class="num">BÀI T.NÀY</th>
+                                        <th class="num">VIEWS</th>
+                                        <th class="num">VS T.TRƯỚC</th>
+                                        <th class="num">KPI%</th>
+                                        <th class="num">ĐIỂM</th>
+                                        <th>XẾP LOẠI</th>
+                                        <th>CHI TIẾT</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="perfStaffBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="perf-eval-card perf-eval-card-full">
+                    <div class="perf-eval-card-head">
+                        <h3><i class="fas fa-user-pen"></i> ĐO HIỆU SUẤT ĐĂNG BÀI CỦA NHÂN SỰ</h3>
+                        <span class="perf-eval-sub" id="perfAssigneeColHint">Cột: Người phụ trách</span>
+                    </div>
+                    <div class="perf-table-wrap">
+                        <table class="perf-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>NGƯỜI PHỤ TRÁCH</th>
+                                    <th class="num">BÀI ĐĂNG</th>
+                                    <th class="num">VIEW</th>
+                                    <th class="num">LIKE</th>
+                                    <th class="num">BL</th>
+                                    <th class="num">TƯƠNG TÁC</th>
+                                    <th class="num">TB VIEW/BÀI</th>
+                                    <th class="num">VS T.TRƯỚC</th>
+                                    <th class="num">ĐIỂM</th>
+                                    <th>XẾP LOẠI</th>
+                                </tr>
+                            </thead>
+                            <tbody id="perfAssigneePostBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="perf-legend">
+                        <span><i style="background:#ffd54f;"></i> S &gt;90</span>
+                        <span><i style="background:#81c784;"></i> A 70–89</span>
+                        <span><i style="background:#64b5f6;"></i> B 50–69</span>
+                        <span><i style="background:#ffb74d;"></i> C 30–49</span>
+                        <span><i style="background:#e57373;"></i> D &lt;30</span>
+                    </div>
+                </div>
+            </section>
 
             <!-- Table Section -->
             <div class="table-section">
@@ -2210,6 +2548,260 @@
             bindKpiTargetProgress(rows);
         }
 
+
+        function getKpiTargetForChannel(channelName) {
+            const key = norm(channelName);
+            const list = kpiTargetCache.channels || [];
+            const found = list.find(function(c) { return norm(c.channel) === key; });
+            return found || null;
+        }
+
+        function gradeFromScore(score) {
+            const s = Math.max(0, Math.min(100, score));
+            if (s > 90) return { letter: 'S', cls: 'grade-s' };
+            if (s >= 70) return { letter: 'A', cls: 'grade-a' };
+            if (s >= 50) return { letter: 'B', cls: 'grade-b' };
+            if (s >= 30) return { letter: 'C', cls: 'grade-c' };
+            return { letter: 'D', cls: 'grade-d' };
+        }
+
+        function calcPerformanceScore(stats, maxStats, kpiTarget) {
+            const parts = [];
+            if (kpiTarget) {
+                if (kpiTarget.posts > 0) parts.push(Math.min(100, (stats.posts / kpiTarget.posts) * 100));
+                if (kpiTarget.views > 0) parts.push(Math.min(100, (stats.views / kpiTarget.views) * 100));
+            }
+            if (parts.length) {
+                return parts.reduce(function(a, b) { return a + b; }, 0) / parts.length;
+            }
+            const maxV = maxStats.views || 1;
+            const maxE = maxStats.engagement || 1;
+            return Math.min(100, (stats.views / maxV) * 70 + (maxE > 0 ? (stats.engagement / maxE) * 30 : 0));
+        }
+
+        function calcKpiPct(stats, kpiTarget) {
+            if (!kpiTarget) return null;
+            const parts = [];
+            if (kpiTarget.posts > 0) parts.push((stats.posts / kpiTarget.posts) * 100);
+            if (kpiTarget.views > 0) parts.push((stats.views / kpiTarget.views) * 100);
+            if (!parts.length) return null;
+            return parts.reduce(function(a, b) { return a + b; }, 0) / parts.length;
+        }
+
+        function formatGrowthPct(pct) {
+            if (!Number.isFinite(pct)) return '<span class="growth-flat">—</span>';
+            const cls = pct > 0 ? 'growth-up' : (pct < 0 ? 'growth-down' : 'growth-flat');
+            const sign = pct > 0 ? '+' : '';
+            return '<span class="' + cls + '">' + sign + formatNum(pct, 1) + '%</span>';
+        }
+
+        function groupRowsByAssignee(rows) {
+            const ak = columnKeys.assignee;
+            if (!ak) return [];
+            const sample = rows.find(function(r) { return !isTotalRow(r) && String(r[ak] ?? '').trim(); }) || rows[0];
+            const engCols = getEngagementCols(sample);
+            const viewCol = columnKeys.views || findColKey(sample, ['view']);
+            const groups = new Map();
+            rows.filter(function(r) { return !isTotalRow(r) && String(r[ak] ?? '').trim(); }).forEach(function(row) {
+                const displayName = getCellText(row, ak);
+                const key = norm(displayName);
+                if (!groups.has(key)) {
+                    groups.set(key, { name: displayName, posts: 0, views: 0, likes: 0, comments: 0, engagement: 0 });
+                }
+                const g = groups.get(key);
+                g.posts += 1;
+                if (viewCol) g.views += parseNum(row[viewCol]);
+                if (engCols.likeCol) g.likes += parseNum(row[engCols.likeCol]);
+                if (engCols.commentCol) g.comments += parseNum(row[engCols.commentCol]);
+                g.engagement += rowEngagementSum(row, engCols);
+            });
+            return Array.from(groups.values()).sort(function(a, b) { return b.views - a.views; });
+        }
+
+        function filterRowsByMonthOffset(monthOffset) {
+            const dateCol = columnKeys.date;
+            if (!dateCol) return [];
+            const sel = getDefaultKpiMonthSelection();
+            let y = sel.year;
+            let m = sel.month + monthOffset;
+            while (m < 1) { m += 12; y -= 1; }
+            while (m > 12) { m -= 12; y += 1; }
+            return reportData.filter(function(row) {
+                if (isTotalRow(row)) return false;
+                const d = parseRowDate(row[dateCol]);
+                if (!d) return false;
+                return d.getFullYear() === y && (d.getMonth() + 1) === m;
+            });
+        }
+
+        function buildPerfStatsMap(groups, prevGroups) {
+            const prevMap = new Map();
+            prevGroups.forEach(function(g) { prevMap.set(norm(g.name), g); });
+            return groups.map(function(g) {
+                const prev = prevMap.get(norm(g.name));
+                const prevViews = prev ? prev.views : 0;
+                const growth = prevViews > 0 ? ((g.views - prevViews) / prevViews) * 100 : (g.views > 0 ? 100 : 0);
+                return Object.assign({}, g, { prevViews: prevViews, growth: growth });
+            });
+        }
+
+        function bindBestPerformer(rows) {
+            const box = document.getElementById('bestPerformerContent');
+            if (!box) return;
+            const ak = columnKeys.assignee;
+            if (!ak) {
+                box.innerHTML = '<div class="best-performer-placeholder"><i class="fas fa-hourglass-half"></i> Chờ cột «Người phụ trách» từ sheet. Dashboard tự hiển thị sau khi có data.</div>';
+                return;
+            }
+            const people = groupRowsByAssignee(rows);
+            if (!people.length) {
+                box.innerHTML = '<div class="best-performer-placeholder"><i class="fas fa-info-circle"></i> Chưa có dữ liệu người phụ trách trong khoảng lọc.</div>';
+                return;
+            }
+            const maxStats = {
+                views: Math.max.apply(null, people.map(function(p) { return p.views; })),
+                engagement: Math.max.apply(null, people.map(function(p) { return p.engagement; }))
+            };
+            let best = null;
+            let bestScore = -1;
+            people.forEach(function(p) {
+                const score = calcPerformanceScore(p, maxStats, null);
+                if (score > bestScore) { bestScore = score; best = p; }
+            });
+            if (!best) return;
+            const grade = gradeFromScore(bestScore);
+            const initial = best.name.trim().charAt(0).toUpperCase() || '?';
+            box.innerHTML =
+                '<div class="best-performer-winner">' +
+                '<div class="best-performer-avatar">' + escapeHtml(initial) + '</div>' +
+                '<div><div class="best-performer-name">' + escapeHtml(best.name) + '</div>' +
+                '<div class="best-performer-meta">Xếp loại <span class="grade-badge ' + grade.cls + '">' + grade.letter + '</span> · Điểm ' + formatNum(bestScore, 1) + '</div></div></div>' +
+                '<div class="best-performer-stats">' +
+                '<div class="best-performer-stat"><strong>' + formatNum(best.posts) + '</strong><span>Bài đăng</span></div>' +
+                '<div class="best-performer-stat"><strong>' + formatNum(best.views) + '</strong><span>Lượt xem</span></div>' +
+                '<div class="best-performer-stat"><strong>' + formatNum(best.engagement) + '</strong><span>Tương tác</span></div>' +
+                '</div>';
+        }
+
+        function bindPerfChannelTable(rows) {
+            const tbody = document.getElementById('perfChannelBody');
+            if (!tbody) return;
+            const grouped = groupRowsByChannel(rows);
+            if (!grouped.length) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;padding:16px;">Chưa có dữ liệu kênh</td></tr>';
+                return;
+            }
+            const maxStats = {
+                views: Math.max.apply(null, grouped.map(function(g) { return g.views; })),
+                engagement: Math.max.apply(null, grouped.map(function(g) { return g.engagement; }))
+            };
+            tbody.innerHTML = grouped.map(function(g, i) {
+                const kpi = getKpiTargetForChannel(g.name);
+                const score = calcPerformanceScore(g, maxStats, kpi);
+                const grade = gradeFromScore(score);
+                return '<tr>' +
+                    '<td>' + (i + 1) + '</td>' +
+                    '<td>' + escapeHtml(g.name) + '</td>' +
+                    '<td class="num">' + formatNum(g.posts) + '</td>' +
+                    '<td class="num">' + formatNum(g.views) + '</td>' +
+                    '<td class="num">' + formatNum(g.engagement) + '</td>' +
+                    '<td class="num">' + formatNum(score, 1) + '</td>' +
+                    '<td><span class="grade-badge ' + grade.cls + '">' + grade.letter + '</span></td>' +
+                    '</tr>';
+            }).join('');
+        }
+
+        function bindPerfStaffTable(rows) {
+            const tbody = document.getElementById('perfStaffBody');
+            if (!tbody) return;
+            const currentGroups = groupRowsByChannel(rows);
+            const prevRows = filterRowsByMonthOffset(-1);
+            const prevGroups = groupRowsByChannel(prevRows);
+            const stats = buildPerfStatsMap(currentGroups, prevGroups);
+            if (!stats.length) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#999;padding:16px;">Chưa có dữ liệu kênh</td></tr>';
+                return;
+            }
+            const maxStats = {
+                views: Math.max.apply(null, stats.map(function(s) { return s.views; })),
+                engagement: Math.max.apply(null, stats.map(function(s) { return s.engagement; }))
+            };
+            tbody.innerHTML = stats.map(function(s, i) {
+                const kpi = getKpiTargetForChannel(s.name);
+                const score = calcPerformanceScore(s, maxStats, kpi);
+                const grade = gradeFromScore(score);
+                const kpiPct = calcKpiPct(s, kpi);
+                const detail = 'Bài: ' + formatNum(s.posts) + ' · View: ' + formatNum(s.views) + ' · TT: ' + formatNum(s.engagement) +
+                    (kpiPct != null ? ' · KPI: ' + formatNum(kpiPct, 1) + '%' : '');
+                return '<tr>' +
+                    '<td>' + (i + 1) + '</td>' +
+                    '<td>' + escapeHtml(s.name) + '</td>' +
+                    '<td class="num">' + formatNum(s.posts) + '</td>' +
+                    '<td class="num">' + formatNum(s.views) + '</td>' +
+                    '<td class="num">' + formatGrowthPct(s.growth) + '</td>' +
+                    '<td class="num">' + (kpiPct != null ? formatNum(kpiPct, 1) + '%' : '—') + '</td>' +
+                    '<td class="num">' + formatNum(score, 1) + '</td>' +
+                    '<td><span class="grade-badge ' + grade.cls + '">' + grade.letter + '</span></td>' +
+                    '<td><button type="button" class="perf-detail-btn" title="' + escapeHtml(detail) + '">Xem</button></td>' +
+                    '</tr>';
+            }).join('');
+            tbody.querySelectorAll('.perf-detail-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    showDashToast(btn.getAttribute('title') || '', 'success');
+                });
+            });
+        }
+
+        function bindPerfAssigneePostTable(rows) {
+            const tbody = document.getElementById('perfAssigneePostBody');
+            const hint = document.getElementById('perfAssigneeColHint');
+            if (!tbody) return;
+            const ak = columnKeys.assignee;
+            if (!ak) {
+                if (hint) hint.textContent = 'Chưa có cột Người phụ trách';
+                tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:#999;padding:16px;">Chờ cột «Người phụ trách» từ sheet để đo hiệu suất đăng bài theo nhân sự.</td></tr>';
+                return;
+            }
+            if (hint) hint.textContent = 'Cột: ' + ak;
+            const currentGroups = groupRowsByAssignee(rows);
+            const prevRows = filterRowsByMonthOffset(-1);
+            const prevGroups = groupRowsByAssignee(prevRows);
+            const stats = buildPerfStatsMap(currentGroups, prevGroups);
+            if (!stats.length) {
+                tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:#999;padding:16px;">Chưa có dữ liệu người phụ trách trong khoảng lọc.</td></tr>';
+                return;
+            }
+            const maxStats = {
+                views: Math.max.apply(null, stats.map(function(s) { return s.views; })),
+                engagement: Math.max.apply(null, stats.map(function(s) { return s.engagement; }))
+            };
+            tbody.innerHTML = stats.map(function(s, i) {
+                const avgViews = s.posts > 0 ? s.views / s.posts : 0;
+                const score = calcPerformanceScore(s, maxStats, null);
+                const grade = gradeFromScore(score);
+                return '<tr>' +
+                    '<td>' + (i + 1) + '</td>' +
+                    '<td>' + escapeHtml(s.name) + '</td>' +
+                    '<td class="num">' + formatNum(s.posts) + '</td>' +
+                    '<td class="num">' + formatNum(s.views) + '</td>' +
+                    '<td class="num">' + formatNum(s.likes || 0) + '</td>' +
+                    '<td class="num">' + formatNum(s.comments || 0) + '</td>' +
+                    '<td class="num">' + formatNum(s.engagement) + '</td>' +
+                    '<td class="num">' + formatNum(avgViews, 0) + '</td>' +
+                    '<td class="num">' + formatGrowthPct(s.growth) + '</td>' +
+                    '<td class="num">' + formatNum(score, 1) + '</td>' +
+                    '<td><span class="grade-badge ' + grade.cls + '">' + grade.letter + '</span></td>' +
+                    '</tr>';
+            }).join('');
+        }
+
+        function bindPerformanceEvaluation(rows) {
+            bindBestPerformer(rows);
+            bindPerfChannelTable(rows);
+            bindPerfStaffTable(rows);
+            bindPerfAssigneePostTable(rows);
+        }
+
         function bindChannelTable(rows) {
             const tbody = document.getElementById('channelTableBody');
             if (!tbody || !columnKeys.channel) return;
@@ -2251,7 +2843,6 @@
                 <td>${formatNum(tShares)}</td>
                 <td><div class="rate-cell"><span>${formatNum(totalRate, 1)}%</span><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100, Math.round(totalRate * 10))}%;"></div></div></div></td>
             </tr>`;
-            html = html.replace(/<motion\.div/g, '<div').replace(/<\/motion\.div>/g, '</div>')
             tbody.innerHTML = html;
         }
 
@@ -2679,9 +3270,11 @@
                 setText('kpiShares', '0');
                 setText('kpiComments', '0');
                 setText('kpiEngagementRate', '—');
+                try { bindPerformanceEvaluation([]); } catch (e) {}
                 return;
             }
             try { bindKpis(rows); } catch (e) { console.error('bindKpis', e); }
+            try { bindPerformanceEvaluation(rows); } catch (e) { console.error('bindPerformanceEvaluation', e); }
             try { bindChannelTable(rows); } catch (e) { console.error('bindChannelTable', e); }
             try { bindTopPosts(rows); } catch (e) { console.error('bindTopPosts', e); }
             try { bindCampaigns(rows); } catch (e) { console.error('bindCampaigns', e); }
