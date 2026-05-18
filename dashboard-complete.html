@@ -1190,6 +1190,7 @@
         }
 
         .best-performer-name { font-size: 18px; font-weight: 700; color: #333; }
+        .best-performer-formula { font-size: 11px; color: #888; margin-top: 6px; line-height: 1.4; }
         .best-performer-meta { font-size: 12px; color: #888; margin-top: 4px; }
 
         .best-performer-stats {
@@ -1239,6 +1240,34 @@
         .perf-eval-card-full .perf-table td {
             font-size: 12px;
         }
+
+        .kpi-progress-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: flex-end;
+            min-width: 88px;
+        }
+
+        .kpi-progress-pct {
+            font-size: 12px;
+            font-weight: 700;
+            color: #555;
+        }
+
+        .kpi-progress-bar {
+            width: 100%;
+            min-width: 72px;
+            height: 8px;
+        }
+
+        .kpi-progress-bar .progress-fill {
+            transition: width 0.3s ease;
+        }
+
+        .kpi-pct-met { color: #43a047; }
+        .kpi-pct-warn { color: #ef6c00; }
+        .kpi-pct-low { color: #e53935; }
 
         .perf-eval-card {
             background: #fff;
@@ -1318,6 +1347,18 @@
         .grade-b { background: #e3f2fd; color: #1565c0; }
         .grade-c { background: #fff3e0; color: #ef6c00; }
         .grade-d { background: #ffebee; color: #c62828; }
+
+        .kpi-grade-xuat-sac { background: #fff8e1; color: #f57f17; }
+        .kpi-grade-tot { background: #e8f5e9; color: #2e7d32; }
+        .kpi-grade-tb { background: #fffde7; color: #f9a825; }
+        .kpi-grade-yeu { background: #fff3e0; color: #ef6c00; }
+        .kpi-grade-kem { background: #ffebee; color: #c62828; }
+
+        .best-performer-reward {
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+        }
 
         .growth-up { color: #43a047; font-weight: 600; }
         .growth-down { color: #e53935; font-weight: 600; }
@@ -1664,6 +1705,33 @@
                         <span><i style="background:#64b5f6;"></i> B 50–69</span>
                         <span><i style="background:#ffb74d;"></i> C 30–49</span>
                         <span><i style="background:#e57373;"></i> D &lt;30</span>
+                    </div>
+                </div>
+
+                <div class="perf-eval-card perf-eval-card-full">
+                    <div class="perf-eval-card-head">
+                        <h3><i class="fas fa-bullseye"></i> KPI THEO TÊN KÊNH</h3>
+                        <span class="perf-eval-sub" id="kpiByChannelHint">So sánh thực tế với bảng KPIs</span>
+                    </div>
+                    <div class="perf-table-wrap">
+                        <table class="perf-table kpi-channel-kpi-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>TÊN KÊNH</th>
+                                    <th class="num">BÀI (TT)</th>
+                                    <th class="num">BÀI (MT)</th>
+                                    <th class="num">TIẾN ĐỘ BÀI</th>
+                                    <th class="num">VIEW (TT)</th>
+                                    <th class="num">VIEW (MT)</th>
+                                    <th class="num">TIẾN ĐỘ VIEW</th>
+                                    <th class="num">REACH</th>
+                                    <th class="num">TƯƠNG TÁC</th>
+                                    <th class="num">KPI%</th>
+                                </tr>
+                            </thead>
+                            <tbody id="kpiByChannelBody"></tbody>
+                        </table>
                     </div>
                 </div>
             </section>
@@ -2584,6 +2652,53 @@
             return Math.min(100, (stats.views / maxV) * 70 + (maxE > 0 ? (stats.engagement / maxE) * 30 : 0));
         }
 
+        /** Xếp loại KPI theo bảng thưởng/phạt (90–100 Xuất sắc …). */
+        function gradeKpiFromScore(score) {
+            const s = Math.max(0, Math.min(100, score));
+            if (s >= 90) return { letter: 'Xuất sắc', icon: '⭐', cls: 'kpi-grade-xuat-sac', reward: 'Thưởng + tuyên dương' };
+            if (s >= 75) return { letter: 'Tốt', icon: '🟢', cls: 'kpi-grade-tot', reward: 'Giữ nguyên lương, có thể thưởng nhỏ' };
+            if (s >= 60) return { letter: 'Trung bình', icon: '🟡', cls: 'kpi-grade-tb', reward: 'Không thưởng, nhắc nhở cải thiện' };
+            if (s >= 45) return { letter: 'Yếu', icon: '🟠', cls: 'kpi-grade-yeu', reward: 'Cảnh báo, đặt mục tiêu rõ tháng sau' };
+            return { letter: 'Kém', icon: '🔴', cls: 'kpi-grade-kem', reward: 'Review công việc, xem xét điều chuyển' };
+        }
+
+        /**
+         * Điểm KPI = D₁×25% + D₃×35% + D₄×25% + D₅×15%
+         * D₁ Sản lượng bài | D₃ Reach | D₄ Tỷ lệ tương tác (TT÷Reach) | D₅ Reply comment
+         */
+        function calcBestPerformerKpiScore(stats, maxStats, kpiTotals, teamSize) {
+            const postTarget = kpiTotals && kpiTotals.posts > 0 && teamSize > 0
+                ? kpiTotals.posts / teamSize
+                : 0;
+            const d1 = postTarget > 0
+                ? Math.min(100, (stats.posts / postTarget) * 100)
+                : (maxStats.posts > 0 ? Math.min(100, (stats.posts / maxStats.posts) * 100) : 0);
+            const d3 = maxStats.reach > 0 ? Math.min(100, (stats.reach / maxStats.reach) * 100) : 0;
+            const engRate = stats.reach > 0 ? (stats.engagement / stats.reach) * 100 : 0;
+            const d4 = maxStats.engagementRate > 0
+                ? Math.min(100, (engRate / maxStats.engagementRate) * 100)
+                : (engRate > 0 ? 100 : 0);
+            const d5 = maxStats.comments > 0 ? Math.min(100, (stats.comments / maxStats.comments) * 100) : 0;
+            const score = (d1 * 0.25) + (d3 * 0.35) + (d4 * 0.25) + (d5 * 0.15);
+            return {
+                score: Math.min(100, score),
+                d1: d1,
+                d3: d3,
+                d4: d4,
+                d5: d5,
+                engagementRate: engRate,
+                reachPerPost: stats.posts > 0 ? stats.reach / stats.posts : 0,
+                viewsPerPost: stats.posts > 0 ? stats.views / stats.posts : 0
+            };
+        }
+
+        function enrichAssigneePerfStats(groups) {
+            return groups.map(function(g) {
+                const engagementRate = g.reach > 0 ? (g.engagement / g.reach) * 100 : 0;
+                return Object.assign({}, g, { engagementRate: engagementRate });
+            });
+        }
+
         function calcKpiPct(stats, kpiTarget) {
             if (!kpiTarget) return null;
             const parts = [];
@@ -2591,6 +2706,149 @@
             if (kpiTarget.views > 0) parts.push((stats.views / kpiTarget.views) * 100);
             if (!parts.length) return null;
             return parts.reduce(function(a, b) { return a + b; }, 0) / parts.length;
+        }
+
+        function pctOfTarget(actual, target) {
+            if (!target || target <= 0) return null;
+            return (actual / target) * 100;
+        }
+
+        function kpiPctClass(pct) {
+            if (pct == null || !Number.isFinite(pct)) return '';
+            if (pct >= 100) return 'kpi-pct-met';
+            if (pct >= 70) return '';
+            if (pct >= 45) return 'kpi-pct-warn';
+            return 'kpi-pct-low';
+        }
+
+        function renderKpiProgressCell(pct) {
+            if (pct == null || !Number.isFinite(pct)) {
+                return '<span style="color:#999;">—</span>';
+            }
+            const p = Math.min(100, Math.max(0, pct));
+            const fillColor = p >= 100 ? '#43a047' : (p >= 70 ? '#4dd0e1' : (p >= 45 ? '#ffb74d' : '#e57373'));
+            return '<div class="kpi-progress-cell">' +
+                '<span class="kpi-progress-pct ' + kpiPctClass(p) + '">' + formatNum(p, 1) + '%</span>' +
+                '<div class="progress-bar kpi-progress-bar"><div class="progress-fill" style="width:' + p + '%;background:' + fillColor + ';"></div></div>' +
+                '</div>';
+        }
+
+        function buildKpiByChannelRows(rows) {
+            const actualGroups = groupRowsByChannel(rows);
+            const targetChannels = (kpiTargetCache && kpiTargetCache.channels) ? kpiTargetCache.channels : [];
+            const map = new Map();
+
+            actualGroups.forEach(function(g) {
+                const kpi = getKpiTargetForChannel(g.name);
+                map.set(norm(g.name), {
+                    name: g.name,
+                    posts: g.posts,
+                    views: g.views,
+                    reach: g.reach || 0,
+                    engagement: g.engagement || 0,
+                    targetPosts: kpi ? kpi.posts : 0,
+                    targetViews: kpi ? kpi.views : 0
+                });
+            });
+
+            targetChannels.forEach(function(t) {
+                const ch = String(t.channel || '').trim();
+                if (!ch) return;
+                const key = norm(ch);
+                if (map.has(key)) {
+                    const row = map.get(key);
+                    if (!row.targetPosts && t.posts) row.targetPosts = t.posts;
+                    if (!row.targetViews && t.views) row.targetViews = t.views;
+                } else {
+                    map.set(key, {
+                        name: ch,
+                        posts: 0,
+                        views: 0,
+                        reach: 0,
+                        engagement: 0,
+                        targetPosts: t.posts || 0,
+                        targetViews: t.views || 0
+                    });
+                }
+            });
+
+            return Array.from(map.values()).sort(function(a, b) { return b.views - a.views; });
+        }
+
+        function bindKpiByChannelTable(rows) {
+            const tbody = document.getElementById('kpiByChannelBody');
+            const hint = document.getElementById('kpiByChannelHint');
+            if (!tbody) return;
+
+            const sel = getDefaultKpiMonthSelection();
+            if (hint) {
+                hint.textContent = 'Tháng ' + sel.month + '/' + sel.year + ' · Nguồn mục tiêu: bảng KPIs';
+            }
+
+            if (!columnKeys.channel) {
+                tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:#999;padding:16px;">Chưa có cột kênh trên bảng Báo cáo.</td></tr>';
+                return;
+            }
+
+            const list = buildKpiByChannelRows(rows);
+            if (!list.length) {
+                tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:#999;padding:16px;">Chưa có dữ liệu kênh. Cấu hình mục tiêu trong «Cài đặt KPI».</td></tr>';
+                return;
+            }
+
+            let sumPosts = 0, sumViews = 0, sumReach = 0, sumEng = 0;
+            let sumTargetPosts = 0, sumTargetViews = 0;
+
+            const htmlRows = list.map(function(row, i) {
+                const postsPct = pctOfTarget(row.posts, row.targetPosts);
+                const viewsPct = pctOfTarget(row.views, row.targetViews);
+                const kpiOverall = calcKpiPct(
+                    { posts: row.posts, views: row.views },
+                    { posts: row.targetPosts, views: row.targetViews }
+                );
+
+                sumPosts += row.posts;
+                sumViews += row.views;
+                sumReach += row.reach;
+                sumEng += row.engagement;
+                sumTargetPosts += row.targetPosts;
+                sumTargetViews += row.targetViews;
+
+                return '<tr>' +
+                    '<td>' + (i + 1) + '</td>' +
+                    '<td>' + escapeHtml(row.name) + '</td>' +
+                    '<td class="num">' + formatNum(row.posts) + '</td>' +
+                    '<td class="num">' + (row.targetPosts > 0 ? formatNum(row.targetPosts) : '—') + '</td>' +
+                    '<td class="num">' + renderKpiProgressCell(postsPct) + '</td>' +
+                    '<td class="num">' + formatNum(row.views) + '</td>' +
+                    '<td class="num">' + (row.targetViews > 0 ? formatNum(row.targetViews) : '—') + '</td>' +
+                    '<td class="num">' + renderKpiProgressCell(viewsPct) + '</td>' +
+                    '<td class="num">' + formatNum(row.reach) + '</td>' +
+                    '<td class="num">' + formatNum(row.engagement) + '</td>' +
+                    '<td class="num ' + kpiPctClass(kpiOverall) + '"><strong>' + (kpiOverall != null ? formatNum(kpiOverall, 1) + '%' : '—') + '</strong></td>' +
+                    '</tr>';
+            }).join('');
+
+            const totalPostsPct = pctOfTarget(sumPosts, sumTargetPosts);
+            const totalViewsPct = pctOfTarget(sumViews, sumTargetViews);
+            const totalKpi = calcKpiPct(
+                { posts: sumPosts, views: sumViews },
+                { posts: sumTargetPosts, views: sumTargetViews }
+            );
+
+            tbody.innerHTML = htmlRows +
+                '<tr style="background:#f5f9fc;font-weight:700;">' +
+                '<td></td><td>Tổng</td>' +
+                '<td class="num">' + formatNum(sumPosts) + '</td>' +
+                '<td class="num">' + (sumTargetPosts > 0 ? formatNum(sumTargetPosts) : '—') + '</td>' +
+                '<td class="num">' + renderKpiProgressCell(totalPostsPct) + '</td>' +
+                '<td class="num">' + formatNum(sumViews) + '</td>' +
+                '<td class="num">' + (sumTargetViews > 0 ? formatNum(sumTargetViews) : '—') + '</td>' +
+                '<td class="num">' + renderKpiProgressCell(totalViewsPct) + '</td>' +
+                '<td class="num">' + formatNum(sumReach) + '</td>' +
+                '<td class="num">' + formatNum(sumEng) + '</td>' +
+                '<td class="num ' + kpiPctClass(totalKpi) + '"><strong>' + (totalKpi != null ? formatNum(totalKpi, 1) + '%' : '—') + '</strong></td>' +
+                '</tr>';
         }
 
         function formatGrowthPct(pct) {
@@ -2611,13 +2869,14 @@
                 const displayName = getCellText(row, ak);
                 const key = norm(displayName);
                 if (!groups.has(key)) {
-                    groups.set(key, { name: displayName, posts: 0, views: 0, likes: 0, comments: 0, engagement: 0 });
+                    groups.set(key, { name: displayName, posts: 0, views: 0, likes: 0, comments: 0, reach: 0, engagement: 0 });
                 }
                 const g = groups.get(key);
                 g.posts += 1;
                 if (viewCol) g.views += parseNum(row[viewCol]);
                 if (engCols.likeCol) g.likes += parseNum(row[engCols.likeCol]);
                 if (engCols.commentCol) g.comments += parseNum(row[engCols.commentCol]);
+                if (engCols.reachCol) g.reach += parseNum(row[engCols.reachCol]);
                 g.engagement += rowEngagementSum(row, engCols);
             });
             return Array.from(groups.values()).sort(function(a, b) { return b.views - a.views; });
@@ -2663,28 +2922,45 @@
                 box.innerHTML = '<div class="best-performer-placeholder"><i class="fas fa-info-circle"></i> Chưa có dữ liệu người phụ trách trong khoảng lọc.</div>';
                 return;
             }
+            const enriched = enrichAssigneePerfStats(people);
+            const kpiTotals = (kpiTargetCache && kpiTargetCache.totals) ? kpiTargetCache.totals : DEFAULT_KPI_TOTALS;
             const maxStats = {
-                views: Math.max.apply(null, people.map(function(p) { return p.views; })),
-                engagement: Math.max.apply(null, people.map(function(p) { return p.engagement; }))
+                posts: Math.max.apply(null, enriched.map(function(p) { return p.posts; })) || 1,
+                reach: Math.max.apply(null, enriched.map(function(p) { return p.reach; })) || 1,
+                comments: Math.max.apply(null, enriched.map(function(p) { return p.comments; })) || 1,
+                engagementRate: Math.max.apply(null, enriched.map(function(p) { return p.engagementRate; })) || 1
             };
             let best = null;
+            let bestKpi = null;
             let bestScore = -1;
-            people.forEach(function(p) {
-                const score = calcPerformanceScore(p, maxStats, null);
-                if (score > bestScore) { bestScore = score; best = p; }
+            enriched.forEach(function(p) {
+                const kpi = calcBestPerformerKpiScore(p, maxStats, kpiTotals, enriched.length);
+                if (kpi.score > bestScore) {
+                    bestScore = kpi.score;
+                    best = p;
+                    bestKpi = kpi;
+                }
             });
-            if (!best) return;
-            const grade = gradeFromScore(bestScore);
+            if (!best || !bestKpi) return;
+            const grade = gradeKpiFromScore(bestScore);
             const initial = best.name.trim().charAt(0).toUpperCase() || '?';
             box.innerHTML =
                 '<div class="best-performer-winner">' +
                 '<div class="best-performer-avatar">' + escapeHtml(initial) + '</div>' +
                 '<div><div class="best-performer-name">' + escapeHtml(best.name) + '</div>' +
-                '<div class="best-performer-meta">Xếp loại <span class="grade-badge ' + grade.cls + '">' + grade.letter + '</span> · Điểm ' + formatNum(bestScore, 1) + '</div></div></div>' +
+                '<div class="best-performer-meta">' + grade.icon + ' <span class="grade-badge ' + grade.cls + '">' + escapeHtml(grade.letter) + '</span> · Điểm KPI ' + formatNum(bestScore, 1) + '/100</div>' +
+                '<div class="best-performer-reward">' + escapeHtml(grade.reward) + '</div>' +
+                '<div class="best-performer-formula" title="D₁: Sản lượng bài · D₃: Reach · D₄: (TT÷Reach)×100% · D₅: Reply comment">Điểm KPI = (D₁×25%) + (D₃×35%) + (D₄×25%) + (D₅×15%)</div></div></div>' +
                 '<div class="best-performer-stats">' +
-                '<div class="best-performer-stat"><strong>' + formatNum(best.posts) + '</strong><span>Bài đăng</span></div>' +
-                '<div class="best-performer-stat"><strong>' + formatNum(best.views) + '</strong><span>Lượt xem</span></div>' +
-                '<div class="best-performer-stat"><strong>' + formatNum(best.engagement) + '</strong><span>Tương tác</span></div>' +
+                '<div class="best-performer-stat"><strong>' + formatNum(bestKpi.d1, 1) + '</strong><span>D₁ Sản lượng bài (25%)</span></div>' +
+                '<div class="best-performer-stat"><strong>' + formatNum(bestKpi.d3, 1) + '</strong><span>D₃ Reach (35%)</span></div>' +
+                '<div class="best-performer-stat"><strong>' + formatNum(bestKpi.d4, 1) + '</strong><span>D₄ Engagement rate (25%)</span></div>' +
+                '<div class="best-performer-stat"><strong>' + formatNum(bestKpi.d5, 1) + '</strong><span>D₅ Reply comment (15%)</span></div>' +
+                '</div>' +
+                '<div class="best-performer-stats" style="margin-top:10px;padding-top:10px;border-top:1px dashed #eee;">' +
+                '<div class="best-performer-stat"><strong>' + formatNum(bestKpi.reachPerPost, 0) + '</strong><span>Reach TB/bài</span></div>' +
+                '<div class="best-performer-stat"><strong>' + formatNum(bestKpi.viewsPerPost, 0) + '</strong><span>Views TB/bài</span></div>' +
+                '<div class="best-performer-stat"><strong>' + formatNum(bestKpi.engagementRate, 1) + '%</strong><span>Tỷ lệ tương tác</span></div>' +
                 '</div>';
         }
 
@@ -2805,6 +3081,7 @@
             bindPerfChannelTable(rows);
             bindPerfStaffTable(rows);
             bindPerfAssigneePostTable(rows);
+            bindKpiByChannelTable(rows);
         }
 
         function bindChannelTable(rows) {
@@ -3276,6 +3553,7 @@
                 setText('kpiComments', '0');
                 setText('kpiEngagementRate', '—');
                 try { bindPerformanceEvaluation([]); } catch (e) {}
+                try { bindKpiByChannelTable([]); } catch (e) {}
                 return;
             }
             try { bindKpis(rows); } catch (e) { console.error('bindKpis', e); }
