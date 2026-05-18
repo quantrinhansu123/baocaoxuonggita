@@ -861,7 +861,9 @@
         }
 
     </style>
-</head>
+  <style id="force-black-text">
+    html body, html body * { color: #000 !important; }
+  </style></head>
 <body>
     <div class="container">
         <!-- Main Content -->
@@ -1194,7 +1196,10 @@
         const APPROVAL_STATUS_COLUMNS = ["Trạng thái duyệt", "Trang thai duyet", "trang thai duyet"];
         const CONTENT_COLUMNS = ["Nội dung", "Noi dung", "content"];
         const CHANNEL_COLUMNS = ["Đăng lên kênh nào?", "Dang len kenh nao?", "Kênh", "Kenh", "Platform"];
-        const OWNER_COLUMNS = ["Người đăng", "Nguoi dang", "Người phụ trách", "Nguoi phu trach", "Owner"];
+        const OWNER_COLUMNS = [
+            "Bạn là ai?", "Ban la ai", "Bạn là ai",
+            "Người đăng", "Nguoi dang", "Người phụ trách", "Nguoi phu trach", "Owner"
+        ];
         const DATE_COLUMNS = ["Ngày muốn đăng", "Ngay muon dang", "Ngày đăng", "Ngay dang"];
         const chipColors = ["#5b8cb8", "#c89942", "#5e9468", "#c97a5e", "#8a6ba8", "#c46b87"];
 
@@ -1230,10 +1235,14 @@
                 .trim();
         }
 
+        function normColumnKey(key) {
+            return normalizeText(String(key).replace(/\*+$/g, "").trim());
+        }
+
         function findColumn(row, candidates) {
             const keys = Object.keys(row || {});
-            const normalizedCandidates = new Set(candidates.map(normalizeText));
-            return keys.find((key) => normalizedCandidates.has(normalizeText(key)));
+            const normalizedCandidates = new Set(candidates.map(normColumnKey));
+            return keys.find((key) => normalizedCandidates.has(normColumnKey(key)));
         }
 
         function splitStatusValue(value) {
@@ -1669,5 +1678,6 @@
     </script>
 </body>
 </html>
+
 
 

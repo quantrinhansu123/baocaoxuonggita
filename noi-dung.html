@@ -121,8 +121,30 @@
             appearance: none; cursor: pointer;
         }
         #statusFilter:focus { outline: none; border-color: #b39ddb; box-shadow: 0 0 0 2px rgba(179, 157, 219, 0.35); }
+        .checkbox-filter { position: relative; min-width: 140px; }
+        .filter-menu-btn {
+            min-width: 140px; border: 1px solid #d1c4e9; padding: 0.5rem 2rem 0.5rem 0.75rem;
+            border-radius: 0.5rem; font-family: inherit; font-size: 0.875rem; color: #5c4d6d;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238e7a9b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center;
+            cursor: pointer; font-weight: 600; text-align: left;
+        }
+        .filter-menu {
+            position: absolute; top: calc(100% + 6px); left: 0; min-width: 100%;
+            width: max(100%, 200px); background: #fff; border: 1px solid #e1bee7;
+            border-radius: 0.5rem; box-shadow: 0 12px 32px rgba(106, 76, 122, 0.15);
+            padding: 0.5rem; display: none; z-index: 40; max-height: 240px; overflow-y: auto;
+        }
+        .checkbox-filter.open .filter-menu { display: grid; gap: 2px; }
+        .filter-check {
+            display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.5rem;
+            border-radius: 0.375rem; font-size: 0.8125rem; font-weight: 600; color: #5c4d6d; cursor: pointer;
+        }
+        .filter-check:hover { background: #f3e5f5; }
+        .filter-check input { accent-color: #9575cd; }
     </style>
-</head>
+  <style id="force-black-text">
+    html body, html body * { color: #000 !important; }
+  </style></head>
 <body class="p-3 md:p-5 min-h-screen text-[#5c4d6d]">
 
     <div class="w-full">
@@ -139,6 +161,11 @@
                     <select id="statusFilter" title="Lọc theo trạng thái duyệt">
                         <option value="">Tất cả</option>
                     </select>
+                    <span class="text-sm font-medium whitespace-nowrap" style="color: #6a4c7a;">Người đăng</span>
+                    <div class="checkbox-filter" id="ownerFilter" data-default-label="Tất cả">
+                        <button type="button" class="filter-menu-btn"><span class="filter-menu-text">Tất cả</span></button>
+                        <div class="filter-menu"></div>
+                    </div>
                     <span id="filterResultCount" class="text-sm whitespace-nowrap" style="color: #8e7a9b;"></span>
                 </div>
                 <button id="refreshBtn" class="px-5 py-2.5 text-white text-sm font-medium rounded-lg shadow-sm transition-colors flex items-center gap-2 hover:opacity-90" style="background: #b39ddb;">
@@ -355,13 +382,31 @@
         
         const STATUS_FILTER_LABEL = 'Trạng thái duyệt';
         const STATUS_FILTER_EMPTY = '__EMPTY__';
+        const OWNER_FILTER_LABELS = [
+            'Bạn là ai?', 'Ban la ai', 'Bạn là ai', 'Ban la ai?',
+            'Người đăng', 'Nguoi dang', 'Người phụ trách', 'Nguoi phu trach', 'Owner'
+        ];
         let currentData = [];
         let statusColumnName = null;
+        let ownerColumnName = null;
+        const ownerFilter = document.getElementById('ownerFilter');
+
+        function normalizeText(value) {
+            return String(value ?? '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .trim();
+        }
+
+        function normColumnKey(key) {
+            return normalizeText(String(key).replace(/\*+$/g, '').trim());
+        }
 
         function findColumnByLabel(rows, label) {
             if (!rows?.length) return null;
-            const target = label.trim().toLowerCase();
-            return Object.keys(rows[0]).find(key => key.trim().toLowerCase() === target) || null;
+            const target = normColumnKey(label);
+            return Object.keys(rows[0]).find(key => normColumnKey(key) === target) || null;
         }
 
         function findStatusColumn(rows) {
@@ -374,6 +419,110 @@
                 const hasDuyet = n.includes('duyệt') || n.includes('duyet');
                 return hasStatus && hasDuyet;
             }) || null;
+        }
+
+        function findOwnerColumn(rows) {
+            if (!rows?.length) return null;
+            for (const label of OWNER_FILTER_LABELS) {
+                const exact = findColumnByLabel(rows, label);
+                if (exact) return exact;
+            }
+            return Object.keys(rows[0]).find(key => {
+                const n = normColumnKey(key);
+                return n.includes('ban la ai')
+                    || n.includes('nguoi dang')
+                    || ((n.includes('nguoi') || n.includes('người')) && (n.includes('phu trach') || n.includes('phụ trách')));
+            }) || null;
+        }
+
+        function getRowOwnerValue(row) {
+            return String(row[ownerColumnName] ?? '').trim();
+        }
+
+        function updateCheckboxFilterLabel(filter) {
+            if (!filter) return;
+            const label = filter.querySelector('.filter-menu-text');
+            const selected = getSelectedFilterValues(filter);
+            if (!selected.length) {
+                label.textContent = filter.dataset.defaultLabel || 'Tất cả';
+            } else if (selected.length === 1) {
+                label.textContent = selected[0];
+            } else {
+                label.textContent = `${selected.length} mục đã chọn`;
+            }
+        }
+
+        function getSelectedFilterValues(filter) {
+            if (!filter) return [];
+            const allInput = filter.querySelector('input[value="all"]');
+            if (!allInput || allInput.checked) return [];
+            return Array.from(filter.querySelectorAll('input[type="checkbox"]:checked'))
+                .map(input => input.value)
+                .filter(value => value !== 'all');
+        }
+
+        function setCheckboxFilterAll(filter) {
+            if (!filter) return;
+            filter.querySelectorAll('input[type="checkbox"]').forEach(input => {
+                input.checked = input.value === 'all';
+            });
+            updateCheckboxFilterLabel(filter);
+        }
+
+        function fillCheckboxFilter(filter, values, defaultLabel) {
+            if (!filter) return;
+            const menu = filter.querySelector('.filter-menu');
+            filter.dataset.defaultLabel = defaultLabel;
+            menu.innerHTML = '';
+
+            const allLabel = document.createElement('label');
+            allLabel.className = 'filter-check';
+            const allInput = document.createElement('input');
+            allInput.type = 'checkbox';
+            allInput.value = 'all';
+            allInput.checked = true;
+            const allText = document.createElement('span');
+            allText.textContent = defaultLabel;
+            allLabel.append(allInput, allText);
+            menu.appendChild(allLabel);
+
+            [...new Set(values.map(v => String(v || '').trim()).filter(Boolean))]
+                .sort((a, b) => a.localeCompare(b, 'vi'))
+                .forEach(value => {
+                    const label = document.createElement('label');
+                    label.className = 'filter-check';
+                    const input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.value = value;
+                    const text = document.createElement('span');
+                    text.textContent = value;
+                    label.append(input, text);
+                    menu.appendChild(label);
+                });
+
+            menu.querySelectorAll('input[type="checkbox"]').forEach(input => {
+                input.addEventListener('change', () => {
+                    const all = menu.querySelector('input[value="all"]');
+                    const valueInputs = Array.from(menu.querySelectorAll('input[type="checkbox"]'))
+                        .filter(item => item.value !== 'all');
+                    if (input.value === 'all' && input.checked) {
+                        valueInputs.forEach(item => { item.checked = false; });
+                    } else if (input.value !== 'all' && input.checked) {
+                        all.checked = false;
+                    }
+                    if (!valueInputs.some(item => item.checked)) all.checked = true;
+                    updateCheckboxFilterLabel(filter);
+                    refreshTableView();
+                });
+            });
+
+            updateCheckboxFilterLabel(filter);
+        }
+
+        function populateOwnerFilter(data) {
+            if (!ownerFilter || !ownerColumnName) return;
+            const values = data.map(row => getRowOwnerValue(row)).filter(Boolean);
+            fillCheckboxFilter(ownerFilter, values, 'Tất cả');
         }
 
         function getRowStatusValue(row) {
@@ -418,13 +567,21 @@
         }
 
         function getFilteredData() {
+            let rows = currentData;
             const select = document.getElementById('statusFilter');
             const filterVal = select?.value ?? '';
-            if (!filterVal || !statusColumnName) return currentData;
-            if (filterVal === STATUS_FILTER_EMPTY) {
-                return currentData.filter(row => !getRowStatusValue(row));
+            if (filterVal && statusColumnName) {
+                if (filterVal === STATUS_FILTER_EMPTY) {
+                    rows = rows.filter(row => !getRowStatusValue(row));
+                } else {
+                    rows = rows.filter(row => getRowStatusValue(row) === filterVal);
+                }
             }
-            return currentData.filter(row => getRowStatusValue(row) === filterVal);
+            const selectedOwners = getSelectedFilterValues(ownerFilter).map(normalizeText);
+            if (selectedOwners.length && ownerColumnName) {
+                rows = rows.filter(row => selectedOwners.includes(normalizeText(getRowOwnerValue(row))));
+            }
+            return rows;
         }
 
         function refreshTableView() {
@@ -440,7 +597,7 @@
                 return;
             }
 
-            if (statusColumnName) {
+            if (statusColumnName || ownerColumnName) {
                 filterBar?.classList.remove('hidden');
             } else {
                 filterBar?.classList.add('hidden');
@@ -458,7 +615,7 @@
                 emptyState.classList.remove('flex');
             } else {
                 tableContainer.classList.add('hidden');
-                emptyStateText.innerText = 'Không có dòng nào khớp bộ lọc "Trạng thái duyệt".';
+                emptyStateText.innerText = 'Không có dòng nào khớp bộ lọc đang chọn.';
                 emptyState.classList.remove('hidden');
                 emptyState.classList.add('flex');
             }
@@ -490,14 +647,18 @@
                 const data = await response.json();
                 currentData = data;
                 statusColumnName = findStatusColumn(data);
+                ownerColumnName = findOwnerColumn(data);
                 
                 if (data && data.length > 0) {
                     const statusFilter = document.getElementById('statusFilter');
                     if (statusFilter) statusFilter.value = '';
+                    setCheckboxFilterAll(ownerFilter);
                     populateStatusFilter(data);
+                    populateOwnerFilter(data);
                     refreshTableView();
                 } else {
                     statusColumnName = null;
+                    ownerColumnName = null;
                     emptyStateText.innerText = "Bảng hiện tại chưa có dữ liệu nào.";
                     emptyState.classList.remove('hidden');
                     emptyState.classList.add('flex');
@@ -714,8 +875,21 @@
         document.getElementById('refreshBtn').addEventListener('click', fetchAppSheetData);
         document.getElementById('statusFilter').addEventListener('change', refreshTableView);
 
+        ownerFilter?.querySelector('.filter-menu-btn')?.addEventListener('click', (event) => {
+            event.stopPropagation();
+            const open = ownerFilter.classList.contains('open');
+            document.querySelectorAll('.checkbox-filter').forEach(f => f.classList.remove('open'));
+            if (!open) ownerFilter.classList.add('open');
+        });
+        document.addEventListener('click', (event) => {
+            if (!event.target.closest('.checkbox-filter')) {
+                document.querySelectorAll('.checkbox-filter').forEach(f => f.classList.remove('open'));
+            }
+        });
+
         // Khởi động load data ngay khi vào trang
         window.onload = fetchAppSheetData;
     </script>
 </body>
 </html>
+

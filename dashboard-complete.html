@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -1359,7 +1359,12 @@
             height: 10px;
             border-radius: 3px;
         }
-    </style>
+</style>
+<style id="force-black-text">
+    html body, html body * {
+        color: #000 !important;
+    }
+</style>
 </head>
 <body>
     <div class="container">
@@ -2199,7 +2204,7 @@
 
         const COL = {
             channel: ['kênh', 'kenh', 'channel', 'nền tảng', 'nen tang', 'platform'],
-            assignee: ['người phụ trách', 'nguoi phu trach', 'người đăng', 'nguoi dang', 'owner', 'phụ trách', 'phu trach'],
+            assignee: ['bạn là ai', 'ban la ai', 'người phụ trách', 'nguoi phu trach', 'người đăng', 'nguoi dang', 'owner', 'phụ trách', 'phu trach'],
             posts: ['bài đăng', 'bai dang', 'posts', 'số bài', 'so bai'],
             views: ['view', 'lượt xem', 'luot xem', 'views'],
             reach: ['lượt tiếp cận', 'luot tiep can', 'reach', 'tiếp cận'],
@@ -2226,7 +2231,7 @@
         let columnKeys = {};
 
         function norm(s) {
-            return String(s ?? '').trim().toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
+            return String(s ?? '').trim().replace(/\*+$/g, '').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
         }
 
         function findColKey(sampleRow, aliases) {
