@@ -237,7 +237,26 @@
         const APP_ID = 'fb394ab7-2164-4da6-a15e-9e06fefaccb0';
         const API_KEY = 'V2-wpK1r-oW88b-9sL5Z-DMxbg-zUWg1-FX50y-91Plm-sPMOc';
         const TABLE_NAME = 'Input';
-        const API_URL = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${TABLE_NAME}/Action`;
+        const API_URL = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${encodeURIComponent(TABLE_NAME)}/Action`;
+
+        async function appsheetFindRows() {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'ApplicationAccessKey': API_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Action: 'Find', Properties: { Locale: 'vi-VN', Timezone: 'Asia/Ho_Chi_Minh' }, Rows: [] })
+            });
+            if (!response.ok) {
+                const text = await response.text();
+                let detail = text;
+                try {
+                    const err = JSON.parse(text);
+                    detail = err.detail || err.title || text;
+                } catch (e) { /* keep text */ }
+                throw new Error(detail);
+            }
+            const data = await response.json();
+            return Array.isArray(data) ? data : [];
+        }
         
         // ⚠️ QUAN TRỌNG: Sửa tên cột này thành cột được đánh dấu là "Key" trong AppSheet
         const APPSHEET_KEY_COLUMN = 'ID Key'; 
@@ -637,14 +656,7 @@
             filterBar?.classList.add('hidden');
 
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'ApplicationAccessKey': API_KEY, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ "Action": "Find", "Properties": { "Locale": "vi-VN", "Timezone": "Asia/Ho_Chi_Minh" }, "Rows": [] })
-                });
-
-                if (!response.ok) throw new Error(`Lỗi HTTP: ${response.status}`);
-                const data = await response.json();
+                const data = await appsheetFindRows();
                 currentData = data;
                 statusColumnName = findStatusColumn(data);
                 ownerColumnName = findOwnerColumn(data);
@@ -665,7 +677,10 @@
                 }
             } catch (error) {
                 console.error("Lỗi khi lấy dữ liệu:", error);
-                emptyStateText.innerText = "Chưa thể tải dữ liệu thực tế. Nhấn 'Tải lại' hoặc kiểm tra kết nối API.";
+                const msg = String(error.message || error);
+                emptyStateText.innerText = msg.includes('mismatch') || msg.includes('column')
+                    ? 'Lỗi AppSheet bảng Input: số cột sheet và schema không khớp. Vào AppSheet → bảng Input → Regenerate structure.'
+                    : ('Không tải được dữ liệu: ' + (msg.length > 200 ? msg.slice(0, 200) + '…' : msg));
                 emptyState.classList.remove('hidden');
                 emptyState.classList.add('flex');
             } finally {

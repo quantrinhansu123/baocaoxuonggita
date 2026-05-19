@@ -1192,7 +1192,33 @@
         const APP_ID = "fb394ab7-2164-4da6-a15e-9e06fefaccb0";
         const API_KEY = "V2-wpK1r-oW88b-9sL5Z-DMxbg-zUWg1-FX50y-91Plm-sPMOc";
         const TABLE_NAME = "Input";
-        const API_URL = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${TABLE_NAME}/Action`;
+        const API_URL = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${encodeURIComponent(TABLE_NAME)}/Action`;
+
+        async function appsheetFindRows() {
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "ApplicationAccessKey": API_KEY,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    Action: "Find",
+                    Properties: { Locale: "vi-VN", Timezone: "Asia/Ho_Chi_Minh" },
+                    Rows: []
+                })
+            });
+            if (!response.ok) {
+                const text = await response.text();
+                let detail = text;
+                try {
+                    const err = JSON.parse(text);
+                    detail = err.detail || err.title || text;
+                } catch (e) { /* keep text */ }
+                throw new Error(detail);
+            }
+            const data = await response.json();
+            return Array.isArray(data) ? data : [];
+        }
         const APPROVAL_STATUS_COLUMNS = ["Trạng thái duyệt", "Trang thai duyet", "trang thai duyet"];
         const CONTENT_COLUMNS = ["Nội dung", "Noi dung", "content"];
         const CHANNEL_COLUMNS = ["Đăng lên kênh nào?", "Dang len kenh nao?", "Kênh", "Kenh", "Platform"];
@@ -1544,21 +1570,7 @@
 
         async function loadInputDataForFiltersAndDetails() {
             try {
-                const response = await fetch(API_URL, {
-                    method: "POST",
-                    headers: {
-                        "ApplicationAccessKey": API_KEY,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        Action: "Find",
-                        Properties: { Locale: "vi-VN", Timezone: "Asia/Ho_Chi_Minh" },
-                        Rows: []
-                    })
-                });
-
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const rows = await response.json();
+                const rows = await appsheetFindRows();
                 const statusColumn = findColumn(rows?.[0], APPROVAL_STATUS_COLUMNS);
                 const statuses = statusColumn
                     ? rows.flatMap((row) => splitStatusValue(row[statusColumn]))

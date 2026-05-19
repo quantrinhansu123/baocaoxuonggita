@@ -577,20 +577,6 @@
             color: #333 !important;
         }
 
-        /* Bottom Section */
-        .bottom-section {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        .bottom-card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
         .card-header {
             display: flex;
             justify-content: space-between;
@@ -766,56 +752,6 @@
             color: #26c6da;
         }
 
-        /* Campaign Table */
-        .campaign-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .campaign-table th {
-            background: transparent;
-            padding: 10px 6px;
-            text-align: left;
-            font-size: 11px;
-            font-weight: 500;
-            color: #999;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .campaign-table th:not(:first-child) {
-            text-align: right;
-        }
-
-        .campaign-table td {
-            padding: 12px 6px;
-            font-size: 12px;
-            color: #333;
-            border-bottom: 1px solid #f5f5f5;
-        }
-
-        .campaign-table td:first-child {
-            font-weight: 500;
-            color: #333;
-        }
-
-        .campaign-table td:not(:first-child) {
-            text-align: right;
-        }
-
-        .campaign-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .roi-positive {
-            color: #4caf50 !important;
-            font-weight: 600 !important;
-        }
-
-        .roi-negative {
-            color: #f44336 !important;
-            font-weight: 600 !important;
-        }
-
         .content-thumb {
             width: 40px;
             height: 40px;
@@ -862,31 +798,6 @@
         .stat-label {
             color: #999;
             font-size: 11px;
-        }
-
-        .campaign-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #e0e8f0;
-            font-size: 13px;
-        }
-
-        .campaign-row:last-child {
-            border-bottom: none;
-        }
-
-        .campaign-name {
-            font-weight: 600;
-            color: #333;
-            flex: 1;
-        }
-
-        .campaign-metric {
-            color: #666;
-            min-width: 60px;
-            text-align: right;
         }
 
         .select-dropdown {
@@ -1623,6 +1534,7 @@
                     <div class="perf-eval-card">
                         <div class="perf-eval-card-head">
                             <h3><i class="fas fa-bullhorn"></i> HIỆU SUẤT KÊNH</h3>
+                            <span class="perf-eval-sub" id="perfChannelBaiHint">Bài: Báo cáo</span>
                         </div>
                         <div class="perf-table-wrap">
                             <table class="perf-table">
@@ -1651,7 +1563,7 @@
                     <div class="perf-eval-card">
                         <div class="perf-eval-card-head">
                             <h3><i class="fas fa-chart-line"></i> SO SÁNH THEO KÊNH</h3>
-                            <span class="perf-eval-sub">KPI &amp; tăng trưởng view</span>
+                            <span class="perf-eval-sub" id="perfChannelCompareBaiHint">KPI &amp; tăng trưởng view</span>
                         </div>
                         <div class="perf-table-wrap">
                             <table class="perf-table">
@@ -1754,59 +1666,6 @@
                 </table>
             </div>
 
-            <!-- Bottom Section -->
-            <div class="bottom-section">
-                <!-- Chiến dịch hiệu quả -->
-                <div class="bottom-card">
-                    <div class="card-header">
-                        <div class="card-title">Chiến dịch hiệu quả</div>
-                    </div>
-
-                    <table class="campaign-table">
-                        <thead>
-                            <tr>
-                                <th>Chiến dịch</th>
-                                <th>Like</th>
-                                <th>Share</th>
-                                <th>Tương tác</th>
-                                <th>ROI</th>
-                            </tr>
-                        </thead>
-                        <tbody id="campaignTableBody">
-                            <tr>
-                                <td>Khóa học Guitar online</td>
-                                <td>45.230</td>
-                                <td>3.245</td>
-                                <td class="roi-positive">323%</td>
-                            </tr>
-                            <tr>
-                                <td>Livestream cuối tuần</td>
-                                <td>38.760</td>
-                                <td>2.156</td>
-                                <td class="roi-positive">287%</td>
-                            </tr>
-                            <tr>
-                                <td>Ưu đãi học phí tháng 5</td>
-                                <td>25.430</td>
-                                <td>1.789</td>
-                                <td class="roi-positive">256%</td>
-                            </tr>
-                            <tr>
-                                <td>Minigame: Đoán bài hát</td>
-                                <td>12.450</td>
-                                <td>456</td>
-                                <td class="roi-positive">198%</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div class="view-all-wrapper">
-                        <a href="#" class="view-all-btn">Xem tất cả</a>
-                    </div>
-                </div>
-
-
-            </div>
         </div>
     </div>
 
@@ -1876,6 +1735,9 @@
 
         const KPI_TABLE_NAME = 'KPIs';
         const KPI_API_URL = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${encodeURIComponent(KPI_TABLE_NAME)}/Action`;
+        const INPUT_TABLE_NAME = 'Input';
+        const INPUT_API_URL = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${encodeURIComponent(INPUT_TABLE_NAME)}/Action`;
+        const INPUT_DATE_ALIASES = ['ngày muốn đăng', 'ngay muon dang', 'ngày đăng', 'ngay dang', 'date', 'ngày tạo', 'created'];
         const KPI_KEY_COLUMN = 'ID';
         const KPI_COL = {
             key: ['id'],
@@ -2294,6 +2156,8 @@
         };
 
         let reportData = [];
+        /** Dữ liệu bảng Input (đếm bài theo kênh cho HIỆU SUẤT KÊNH). */
+        let inputTableRows = [];
         let lineChartInstance = null;
         let pieChartInstance = null;
         let columnKeys = {};
@@ -2312,6 +2176,24 @@
             return null;
         }
 
+        /** Tránh gán cột «Tỉ lệ tương tác» vào engagement (substring «tuong tac»). */
+        function findEngagementColKey(sampleRow) {
+            if (!sampleRow) return null;
+            const aliases = COL.engagement;
+            for (const key of Object.keys(sampleRow)) {
+                const nk = norm(key);
+                for (const a of aliases) {
+                    const na = norm(a);
+                    if (nk === na) return key;
+                    if (nk.includes(na)) {
+                        if (na === 'tuong tac' && (nk.includes('ti le') || nk.includes('ty le'))) continue;
+                        return key;
+                    }
+                }
+            }
+            return null;
+        }
+
         function findExactColKey(sampleRow, names) {
             if (!sampleRow) return null;
             const wanted = names.map(norm);
@@ -2326,6 +2208,8 @@
             for (const [name, aliases] of Object.entries(COL)) {
                 if (name === 'rowId' || name === 'postLink' || name === 'assignee') {
                     map[name] = findExactColKey(row, aliases) || findColKey(row, aliases);
+                } else if (name === 'engagement') {
+                    map[name] = findEngagementColKey(row);
                 } else {
                     map[name] = findColKey(row, aliases);
                 }
@@ -2466,6 +2350,8 @@
                 reportData = await response.json();
                 if (!Array.isArray(reportData)) reportData = [];
                 if (reportData.length) columnKeys = buildColumnKeys(reportData[0]);
+                else columnKeys = {};
+                await fetchInputTableData();
                 setupMultiSelectFilters();
                 setupDateFilterBounds();
                 const kpiSel = getDefaultKpiMonthSelection();
@@ -2479,6 +2365,82 @@
             } finally {
                 if (loading) loading.style.display = 'none';
             }
+        }
+
+        async function fetchInputTableData() {
+            inputTableRows = [];
+            try {
+                const response = await fetch(INPUT_API_URL, {
+                    method: 'POST',
+                    headers: { 'ApplicationAccessKey': API_KEY, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        Action: 'Find',
+                        Properties: { Locale: 'vi-VN', Timezone: 'Asia/Ho_Chi_Minh' },
+                        Rows: []
+                    })
+                });
+                if (!response.ok) return;
+                const data = await response.json();
+                inputTableRows = Array.isArray(data) ? data : [];
+            } catch (e) {
+                console.warn('fetchInputTableData', e);
+                inputTableRows = [];
+            }
+        }
+
+        /**
+         * Đếm số dòng Input theo tên kênh, áp dụng cùng bộ lọc ngày / kênh / người phụ trách (nếu có cột).
+         */
+        function buildInputPostCountByChannel() {
+            const counts = new Map();
+            if (!inputTableRows.length) return { counts: counts, ready: false };
+
+            const sample = inputTableRows.find(function(r) { return r && Object.keys(r).length; });
+            if (!sample) return { counts: counts, ready: false };
+
+            const channelCol = findColKey(sample, COL.channel);
+            if (!channelCol) return { counts: counts, ready: false };
+
+            const dateCol = findColKey(sample, INPUT_DATE_ALIASES);
+            const assigneeInputCol = findColKey(sample, COL.assignee);
+
+            const fromEl = document.getElementById('dateFrom');
+            const toEl = document.getElementById('dateTo');
+            const fromVal = fromEl && fromEl.value;
+            const toVal = toEl && toEl.value;
+            if ((fromVal || toVal) && !dateCol) {
+                return { counts: counts, ready: false };
+            }
+
+            const from = fromVal ? toDateOnly(new Date(fromVal + 'T00:00:00')) : null;
+            const to = toVal ? toDateOnly(new Date(toVal + 'T00:00:00')) : null;
+
+            const channelFilter = document.getElementById('dashChannelFilter');
+            const assigneeFilter = document.getElementById('dashAssigneeFilter');
+            const selectedChannels = getSelectedFilterValues(channelFilter).map(norm);
+            const selectedAssignees = getSelectedFilterValues(assigneeFilter).map(norm);
+
+            inputTableRows.forEach(function(row) {
+                if (!row || typeof row !== 'object') return;
+                const ch = getCellText(row, channelCol);
+                if (!ch) return;
+                if (selectedChannels.length && !selectedChannels.includes(norm(ch))) return;
+                if (assigneeInputCol && selectedAssignees.length) {
+                    const who = norm(getCellText(row, assigneeInputCol));
+                    if (!who || !selectedAssignees.includes(who)) return;
+                }
+                if (dateCol && (fromVal || toVal)) {
+                    const d = parseRowDate(row[dateCol]);
+                    if (!d) return;
+                    const day = toDateOnly(d);
+                    if (from && day < from) return;
+                    if (to && day > to) return;
+                }
+                const key = norm(ch);
+                counts.set(key, (counts.get(key) || 0) + 1);
+            });
+
+            return { counts: counts, ready: true };
         }
 
         function getMetricMap(rows) {
@@ -2534,6 +2496,62 @@
             if (totalReach <= 0) return 0;
             const totalEng = list.reduce((a, r) => a + rowEngagementSum(r, cols), 0);
             return (totalEng / totalReach) * 100;
+        }
+
+        /** Tổng cột «Tương tác» (số) ÷ tổng Reach — khi không tách Like/Cmt/Share. */
+        function calcEngagementRateFromEngagementCol(rows) {
+            const ec = columnKeys.engagement;
+            const list = (rows || []).filter(r => !isTotalRow(r));
+            const sample = list[0];
+            const reachCol = columnKeys.reach || (sample ? getEngagementCols(sample).reachCol : null);
+            if (!ec || !reachCol || !list.length) return null;
+            if (columnKeys.engagementRate && ec === columnKeys.engagementRate) return null;
+            let te = 0;
+            let tr = 0;
+            list.forEach(function(r) {
+                te += parseNum(r[ec]);
+                tr += parseNum(r[reachCol]);
+            });
+            if (tr <= 0) return null;
+            return (te / tr) * 100;
+        }
+
+        /** Trung bình (có trọng số theo Reach) từ cột «Tỉ lệ tương tác» trên sheet. */
+        function aggregateSheetEngagementRatePct(dataRows) {
+            const col = columnKeys.engagementRate;
+            if (!col || !dataRows.length) return null;
+            const sample = dataRows.find(function(r) { return !isTotalRow(r); }) || dataRows[0];
+            const reachCol = columnKeys.reach || getEngagementCols(sample).reachCol;
+            const vals = [];
+            const weights = [];
+            dataRows.forEach(function(r) {
+                if (isTotalRow(r)) return;
+                const v = parseNum(r[col]);
+                if (!Number.isFinite(v)) return;
+                vals.push(v);
+                weights.push(reachCol ? parseNum(r[reachCol]) : 1);
+            });
+            if (!vals.length) return null;
+            const maxV = Math.max.apply(null, vals.map(function(x) { return Math.abs(x); }));
+            const scale = maxV > 0 && maxV <= 1 ? 100 : 1;
+            let wSum = 0;
+            let w = 0;
+            let plain = 0;
+            let n = 0;
+            vals.forEach(function(v, i) {
+                const pv = v * scale;
+                const rw = weights[i];
+                if (reachCol && rw > 0) {
+                    wSum += pv * rw;
+                    w += rw;
+                } else {
+                    plain += pv;
+                    n++;
+                }
+            });
+            if (w > 0) return wSum / w;
+            if (n > 0) return plain / n;
+            return null;
         }
 
         function rowEngagementRatePct(row, cols) {
@@ -2610,14 +2628,19 @@
             const totalLikes = sumDataCol(engCols.likeCol) || (columnKeys.likes ? sum('likes') : 0);
             const totalShares = sumDataCol(engCols.shareCol) || (columnKeys.shares ? sum('shares') : 0);
             const comments = totalRow ? parseNum(totalRow[columnKeys.comments]) : (columnKeys.comments ? sum('comments') : fromMetric('binh luan'));
-            const rate = calcEngagementRatePct(rows);
+            const fromEngCol = calcEngagementRateFromEngagementCol(rows);
+            const sheetAvg = aggregateSheetEngagementRatePct(dataRows);
+            let rate = calcEngagementRatePct(rows);
+            if (rate <= 0 && fromEngCol != null) rate = fromEngCol;
+            if (rate <= 0 && sheetAvg != null) rate = sheetAvg;
 
             setText('kpiPosts', formatNum(posts));
             setText('kpiViews', formatNum(views));
             if (engCols.likeCol || columnKeys.likes) setText('kpiLikes', formatNum(totalLikes));
             if (engCols.shareCol || columnKeys.shares) setText('kpiShares', formatNum(totalShares));
             if (columnKeys.comments || comments) setText('kpiComments', formatNum(comments));
-            setText('kpiEngagementRate', rate > 0 ? formatNum(rate, 1) + '%' : (engCols.reachCol ? formatNum(0, 1) + '%' : '—'));
+            const canShowRate = !!(engCols.reachCol || columnKeys.engagementRate || fromEngCol != null || sheetAvg != null);
+            setText('kpiEngagementRate', canShowRate ? formatNum(rate, 1) + '%' : '—');
             bindKpiTargetProgress(rows);
         }
 
@@ -2781,8 +2804,12 @@
             if (!tbody) return;
 
             const sel = getDefaultKpiMonthSelection();
+            const inputPosts = buildInputPostCountByChannel();
             if (hint) {
-                hint.textContent = 'Tháng ' + sel.month + '/' + sel.year + ' · Nguồn mục tiêu: bảng KPIs';
+                const baseHint = 'Tháng ' + sel.month + '/' + sel.year + ' · Nguồn mục tiêu: bảng KPIs';
+                hint.textContent = baseHint + (inputPosts.ready
+                    ? ' · Bài (TT): đếm từ bảng Input'
+                    : ' · Bài (TT): Báo cáo (chưa tải Input hoặc thiếu cột kênh)');
             }
 
             if (!columnKeys.channel) {
@@ -2791,7 +2818,11 @@
             }
 
             const list = buildKpiByChannelRows(rows);
-            if (!list.length) {
+            const listPosts = list.map(function(row) {
+                const postsActual = inputPosts.ready ? (inputPosts.counts.get(norm(row.name)) || 0) : row.posts;
+                return Object.assign({}, row, { posts: postsActual });
+            });
+            if (!listPosts.length) {
                 tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:#999;padding:16px;">Chưa có dữ liệu kênh. Cấu hình mục tiêu trong «Cài đặt KPI».</td></tr>';
                 return;
             }
@@ -2799,7 +2830,7 @@
             let sumPosts = 0, sumViews = 0, sumReach = 0, sumEng = 0;
             let sumTargetPosts = 0, sumTargetViews = 0;
 
-            const htmlRows = list.map(function(row, i) {
+            const htmlRows = listPosts.map(function(row, i) {
                 const postsPct = pctOfTarget(row.posts, row.targetPosts);
                 const viewsPct = pctOfTarget(row.views, row.targetViews);
                 const kpiOverall = calcKpiPct(
@@ -2966,8 +2997,13 @@
 
         function bindPerfChannelTable(rows) {
             const tbody = document.getElementById('perfChannelBody');
+            const baiHint = document.getElementById('perfChannelBaiHint');
             if (!tbody) return;
             const grouped = groupRowsByChannel(rows);
+            const inputPosts = buildInputPostCountByChannel();
+            if (baiHint) {
+                baiHint.textContent = inputPosts.ready ? 'Bài: đếm từ bảng Input' : 'Bài: Báo cáo (chưa tải Input hoặc thiếu cột kênh)';
+            }
             if (!grouped.length) {
                 tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;padding:16px;">Chưa có dữ liệu kênh</td></tr>';
                 return;
@@ -2977,13 +3013,15 @@
                 engagement: Math.max.apply(null, grouped.map(function(g) { return g.engagement; }))
             };
             tbody.innerHTML = grouped.map(function(g, i) {
+                const postsDisplay = inputPosts.ready ? (inputPosts.counts.get(norm(g.name)) || 0) : g.posts;
+                const statsForScore = Object.assign({}, g, { posts: postsDisplay });
                 const kpi = getKpiTargetForChannel(g.name);
-                const score = calcPerformanceScore(g, maxStats, kpi);
+                const score = calcPerformanceScore(statsForScore, maxStats, kpi);
                 const grade = gradeFromScore(score);
                 return '<tr>' +
                     '<td>' + (i + 1) + '</td>' +
                     '<td>' + escapeHtml(g.name) + '</td>' +
-                    '<td class="num">' + formatNum(g.posts) + '</td>' +
+                    '<td class="num">' + formatNum(postsDisplay) + '</td>' +
                     '<td class="num">' + formatNum(g.views) + '</td>' +
                     '<td class="num">' + formatNum(g.engagement) + '</td>' +
                     '<td class="num">' + formatNum(score, 1) + '</td>' +
@@ -2994,11 +3032,18 @@
 
         function bindPerfStaffTable(rows) {
             const tbody = document.getElementById('perfStaffBody');
+            const baiHint = document.getElementById('perfChannelCompareBaiHint');
             if (!tbody) return;
             const currentGroups = groupRowsByChannel(rows);
             const prevRows = filterRowsByMonthOffset(-1);
             const prevGroups = groupRowsByChannel(prevRows);
             const stats = buildPerfStatsMap(currentGroups, prevGroups);
+            const inputPosts = buildInputPostCountByChannel();
+            if (baiHint) {
+                baiHint.textContent = inputPosts.ready
+                    ? 'Bài t.này: đếm từ bảng Input · View & VS tháng trước: Báo cáo'
+                    : 'KPI & tăng trưởng view · Bài: Báo cáo (chưa tải Input hoặc thiếu cột kênh)';
+            }
             if (!stats.length) {
                 tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#999;padding:16px;">Chưa có dữ liệu kênh</td></tr>';
                 return;
@@ -3008,16 +3053,18 @@
                 engagement: Math.max.apply(null, stats.map(function(s) { return s.engagement; }))
             };
             tbody.innerHTML = stats.map(function(s, i) {
+                const postsDisplay = inputPosts.ready ? (inputPosts.counts.get(norm(s.name)) || 0) : s.posts;
+                const sMerged = Object.assign({}, s, { posts: postsDisplay });
                 const kpi = getKpiTargetForChannel(s.name);
-                const score = calcPerformanceScore(s, maxStats, kpi);
+                const score = calcPerformanceScore(sMerged, maxStats, kpi);
                 const grade = gradeFromScore(score);
-                const kpiPct = calcKpiPct(s, kpi);
-                const detail = 'Bài: ' + formatNum(s.posts) + ' · View: ' + formatNum(s.views) + ' · TT: ' + formatNum(s.engagement) +
+                const kpiPct = calcKpiPct(sMerged, kpi);
+                const detail = 'Bài: ' + formatNum(postsDisplay) + ' · View: ' + formatNum(s.views) + ' · TT: ' + formatNum(s.engagement) +
                     (kpiPct != null ? ' · KPI: ' + formatNum(kpiPct, 1) + '%' : '');
                 return '<tr>' +
                     '<td>' + (i + 1) + '</td>' +
                     '<td>' + escapeHtml(s.name) + '</td>' +
-                    '<td class="num">' + formatNum(s.posts) + '</td>' +
+                    '<td class="num">' + formatNum(postsDisplay) + '</td>' +
                     '<td class="num">' + formatNum(s.views) + '</td>' +
                     '<td class="num">' + formatGrowthPct(s.growth) + '</td>' +
                     '<td class="num">' + (kpiPct != null ? formatNum(kpiPct, 1) + '%' : '—') + '</td>' +
@@ -3089,6 +3136,7 @@
             if (!tbody || !columnKeys.channel) return;
             const grouped = groupRowsByChannel(rows);
             if (!grouped.length) return;
+            const inputPosts = buildInputPostCountByChannel();
 
             function channelClass(name) {
                 const n = norm(name);
@@ -3103,12 +3151,13 @@
             let tPosts = 0, tViews = 0, tLikes = 0, tShares = 0, tReach = 0, tEng = 0;
 
             grouped.forEach(g => {
+                const postsDisplay = inputPosts.ready ? (inputPosts.counts.get(norm(g.name)) || 0) : g.posts;
                 const rate = g.reach > 0 ? (g.engagement / g.reach) * 100 : 0;
-                tPosts += g.posts; tViews += g.views; tLikes += g.likes; tShares += g.shares; tReach += g.reach; tEng += g.engagement;
+                tPosts += postsDisplay; tViews += g.views; tLikes += g.likes; tShares += g.shares; tReach += g.reach; tEng += g.engagement;
                 const pct = Math.min(100, Math.round(rate * 10));
                 html += `<tr>
                     <td><span class="channel-cell"><span class="channel-icon ${channelClass(g.name)}"></span>${escapeHtml(g.name)}</span></td>
-                    <td>${formatNum(g.posts)}</td>
+                    <td>${formatNum(postsDisplay)}</td>
                     <td>${formatNum(g.views)}</td>
                     <td>${formatNum(g.likes)}</td>
                     <td>${formatNum(g.shares)}</td>
@@ -3197,27 +3246,6 @@
                 e.preventDefault();
                 openExternalLink(btn.getAttribute('data-href'));
             };
-        }
-
-        function bindCampaigns(rows) {
-            const tbody = document.getElementById('campaignTableBody');
-            if (!tbody || !columnKeys.campaign) return;
-            const camps = rows.filter(r => String(r[columnKeys.campaign] ?? '').trim());
-            if (!camps.length) return;
-            tbody.innerHTML = camps.slice(0, 8).map(row => {
-                const roi = columnKeys.roi ? row[columnKeys.roi] : '';
-                const roiClass = String(roi).includes('-') ? 'roi-negative' : 'roi-positive';
-                const roiText = roi !== '' && roi != null ? (String(roi).includes('%') ? roi : parseNum(roi) + '%') : '—';
-                const likeCol = columnKeys.likes;
-                const shareCol = columnKeys.shares;
-                return `<tr>
-                    <td>${row[columnKeys.campaign]}</td>
-                    <td>${likeCol ? formatNum(parseNum(row[likeCol])) : '—'}</td>
-                    <td>${shareCol ? formatNum(parseNum(row[shareCol])) : '—'}</td>
-                    <td>${formatNum(parseNum(row[columnKeys.engagement]))}</td>
-                    <td class="${roiClass}">${roiText}</td>
-                </tr>`;
-            }).join('');
         }
 
         function bindCharts(rows) {
@@ -3560,7 +3588,6 @@
             try { bindPerformanceEvaluation(rows); } catch (e) { console.error('bindPerformanceEvaluation', e); }
             try { bindChannelTable(rows); } catch (e) { console.error('bindChannelTable', e); }
             try { bindTopPosts(rows); } catch (e) { console.error('bindTopPosts', e); }
-            try { bindCampaigns(rows); } catch (e) { console.error('bindCampaigns', e); }
             try { bindCharts(rows); } catch (e) { console.error('bindCharts', e); }
         }
 
