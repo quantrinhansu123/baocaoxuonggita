@@ -595,6 +595,25 @@
             border-radius: 10px;
             padding: 12px;
         }
+        .detail-actions {
+            margin-top: 14px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .detail-action-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 9px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+        .detail-action-btn:hover { opacity: 0.9; }
+        .detail-action-btn.view { background: #e8eaf6; color: #3f51b5; }
+        .detail-action-btn.delete { background: #ffebee; color: #c62828; }
+        .detail-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         /* Right Panel - Form */
         .right-panel {
@@ -1217,6 +1236,10 @@
                     <span class="detail-label">Nội dung</span>
                     <div class="detail-content" id="eventDetailContent"></div>
                 </div>
+                <div class="detail-actions">
+                    <button type="button" class="detail-action-btn view" id="eventDetailViewBtn">Xem</button>
+                    <button type="button" class="detail-action-btn delete" id="eventDetailDeleteBtn">Xóa</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1259,6 +1282,8 @@
             "Người đăng", "Nguoi dang", "Người phụ trách", "Nguoi phu trach", "Owner"
         ];
         const DATE_COLUMNS = ["Ngày muốn đăng", "Ngay muon dang", "Ngày đăng", "Ngay dang"];
+        const LINK_COLUMNS = ["Link bài đăng", "Link bai dang", "Link video / ảnh", "Link video / anh", "Link"];
+        const KEY_COLUMNS = ["ID Key", "ID", "_RowNumber"];
         const chipColors = ["#5b8cb8", "#c89942", "#5e9468", "#c97a5e", "#8a6ba8", "#c46b87"];
         const VIETNAM_HOLIDAYS = {
             "2026-01-01": "Tết Dương lịch",
@@ -1289,6 +1314,8 @@
         const eventDetailTag = document.getElementById("eventDetailTag");
         const eventDetailContent = document.getElementById("eventDetailContent");
         const eventDetailClose = document.getElementById("eventDetailClose");
+        const eventDetailViewBtn = document.getElementById("eventDetailViewBtn");
+        const eventDetailDeleteBtn = document.getElementById("eventDetailDeleteBtn");
         const approvalStatusChips = document.getElementById("approvalStatusChips");
         const channelFilter = document.getElementById("channelFilter");
         const ownerFilter = document.getElementById("ownerFilter");
@@ -1296,6 +1323,26 @@
         const startDateFilter = document.getElementById("startDateFilter");
         const endDateFilter = document.getElementById("endDateFilter");
         const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+        let activeDetailCard = null;
+
+        function extractUrlFromText(s) {
+            const m = String(s ?? "").match(/https?:\/\/[^\s<>"']+/i);
+            if (!m) return "";
+            return m[0].replace(/[.,;)\]]+$/, "");
+        }
+
+        function normalizeExternalUrl(raw) {
+            const t = String(raw ?? "").trim();
+            if (!t) return "";
+            const embedded = extractUrlFromText(t);
+            const urlText = embedded || t;
+            try {
+                const u = /^https?:\/\//i.test(urlText) ? new URL(urlText) : new URL(`https://${urlText}`);
+                return (u.protocol === "http:" || u.protocol === "https:") ? u.href : "";
+            } catch {
+                return "";
+            }
+        }
 
         function normalizeText(value) {
             return (value || "")
@@ -1500,6 +1547,9 @@
             eventDetailPlatform.textContent = holidayName;
             eventDetailTag.textContent = "Ngày lễ";
             eventDetailContent.textContent = holidayName;
+            activeDetailCard = null;
+            eventDetailViewBtn.disabled = true;
+            eventDetailDeleteBtn.disabled = true;
             eventDetailModal.classList.add("show");
             eventDetailModal.setAttribute("aria-hidden", "false");
             eventDetailClose.focus();
@@ -1649,6 +1699,8 @@
             const channelColumn = findColumn(rows?.[0], CHANNEL_COLUMNS);
             const ownerColumn = findColumn(rows?.[0], OWNER_COLUMNS);
             const dateColumn = findColumn(rows?.[0], DATE_COLUMNS);
+            const linkColumn = findColumn(rows?.[0], LINK_COLUMNS);
+            const keyColumn = findColumn(rows?.[0], KEY_COLUMNS);
             if (!contentColumn && !statusColumn && !channelColumn && !ownerColumn && !dateColumn) return;
 
             const contents = contentColumn
@@ -1684,6 +1736,12 @@
                 }
                 if (dates[index]) {
                     card.dataset.publishDate = dates[index];
+                }
+                if (linkColumn && rows[index] && rows[index][linkColumn] != null) {
+                    card.dataset.postLink = String(rows[index][linkColumn] || "").trim();
+                }
+                if (keyColumn && rows[index] && rows[index][keyColumn] != null) {
+                    card.dataset.rowKey = String(rows[index][keyColumn] || "").trim();
                 }
             });
         }
@@ -1741,6 +1799,9 @@
             eventDetailPlatform.textContent = getEventPlatform(card);
             eventDetailTag.textContent = tag;
             eventDetailContent.textContent = content;
+            activeDetailCard = card;
+            eventDetailViewBtn.disabled = !normalizeExternalUrl(card.dataset.postLink || "");
+            eventDetailDeleteBtn.disabled = !card.dataset.rowKey;
             eventDetailModal.classList.add("show");
             eventDetailModal.setAttribute("aria-hidden", "false");
             eventDetailClose.focus();
@@ -1749,6 +1810,44 @@
         function closeEventDetail() {
             eventDetailModal.classList.remove("show");
             eventDetailModal.setAttribute("aria-hidden", "true");
+            activeDetailCard = null;
+        }
+
+        async function deleteEventByCard(card) {
+            const rowKey = card?.dataset?.rowKey;
+            if (!rowKey) {
+                alert("Không tìm thấy khóa dòng để xóa trên AppSheet.");
+                return;
+            }
+            if (!confirm("Bạn có chắc muốn xóa nội dung này?")) return;
+
+            const btn = eventDetailDeleteBtn;
+            const prevText = btn.textContent;
+            btn.textContent = "Đang xóa...";
+            btn.disabled = true;
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: {
+                        "ApplicationAccessKey": API_KEY,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        Action: "Delete",
+                        Properties: { Locale: "vi-VN", Timezone: "Asia/Ho_Chi_Minh" },
+                        Rows: [{ "ID Key": rowKey }]
+                    })
+                });
+                if (!response.ok) throw new Error(await response.text());
+                card.remove();
+                applyTopFilters();
+                closeEventDetail();
+            } catch (error) {
+                alert(`Xóa thất bại: ${error.message || error}`);
+                btn.disabled = false;
+            } finally {
+                btn.textContent = prevText;
+            }
         }
 
         document.querySelectorAll(".event-card").forEach((card) => {
@@ -1765,6 +1864,18 @@
         renderVietnamHolidayNotices();
 
         eventDetailClose.addEventListener("click", closeEventDetail);
+        eventDetailViewBtn.addEventListener("click", () => {
+            const link = normalizeExternalUrl(activeDetailCard?.dataset?.postLink || "");
+            if (!link) {
+                alert("Bài này chưa có link để xem.");
+                return;
+            }
+            window.open(link, "_blank", "noopener,noreferrer");
+        });
+        eventDetailDeleteBtn.addEventListener("click", () => {
+            if (!activeDetailCard) return;
+            deleteEventByCard(activeDetailCard);
+        });
         eventDetailModal.addEventListener("click", (event) => {
             if (event.target === eventDetailModal) closeEventDetail();
         });

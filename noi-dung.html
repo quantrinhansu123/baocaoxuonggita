@@ -77,6 +77,9 @@
         .action-icon-btn.view-btn:hover { background: #d1c4e9; }
         .action-icon-btn.edit-btn { background: #f3e5f5; color: #7e57c2; }
         .action-icon-btn.edit-btn:hover { background: #e1bee7; }
+        .action-icon-btn.delete-btn { background: #ffebee; color: #c62828; border-color: #ffcdd2; }
+        .action-icon-btn.delete-btn:hover { background: #ffcdd2; }
+        .action-icon-btn.delete-btn:disabled { opacity: 0.45; cursor: not-allowed; }
         .action-icon-btn.is-empty { opacity: 0.35; pointer-events: none; cursor: default; }
         #contentModal { display: none; }
         #contentModal.is-open { display: flex; }
@@ -398,6 +401,16 @@
                 </div>
             `;
         }
+
+        function renderDeleteCell(rowId) {
+            const safeId = rowId == null ? '' : escapeHtml(String(rowId));
+            const disabled = !safeId ? ' disabled' : '';
+            return `
+                <button type="button" class="action-icon-btn delete-btn row-delete-btn" data-row-id="${safeId}" title="Xóa dòng này"${disabled}>
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            `;
+        }
         
         const STATUS_FILTER_LABEL = 'Trạng thái duyệt';
         const STATUS_FILTER_EMPTY = '__EMPTY__';
@@ -708,6 +721,11 @@
                 th.textContent = col;
                 trHead.appendChild(th);
             });
+            const actionTh = document.createElement('th');
+            actionTh.className = "px-4 py-3 font-semibold text-sm tracking-wide text-center";
+            actionTh.style.cssText = "color: #6a4c7a; background: #e8eaf6; border-bottom: 2px solid #d1c4e9; width: 88px;";
+            actionTh.textContent = 'Xóa';
+            trHead.appendChild(actionTh);
             tableHead.appendChild(trHead);
 
             // Render Từng dòng dữ liệu (Tr)
@@ -738,6 +756,11 @@
                     }
                     tr.appendChild(td);
                 });
+                const deleteTd = document.createElement('td');
+                deleteTd.className = "px-4 py-3 text-sm align-top text-center";
+                deleteTd.style.cssText = "color: #5c4d6d; border-top: 1px solid #e1bee7;";
+                deleteTd.innerHTML = renderDeleteCell(rowId);
+                tr.appendChild(deleteTd);
                 tableBody.appendChild(tr);
             });
         }
@@ -827,6 +850,16 @@
             if (editBtn) {
                 const td = editBtn.closest('td');
                 openContentModal('edit', td, td.dataset.col || 'Nội dung');
+                return;
+            }
+            const deleteBtn = e.target.closest('.row-delete-btn');
+            if (deleteBtn) {
+                const rowId = deleteBtn.getAttribute('data-row-id');
+                if (!rowId) {
+                    showToast(`Lỗi: Không tìm thấy khóa chính (${APPSHEET_KEY_COLUMN})`, 'error');
+                    return;
+                }
+                deleteAppSheetRow(rowId, deleteBtn);
             }
         });
 
@@ -858,6 +891,33 @@
             } finally {
                 saveBtnElement.textContent = 'Lưu';
                 saveBtnElement.disabled = false;
+            }
+        }
+
+        async function deleteAppSheetRow(rowId, deleteBtnElement) {
+            if (!confirm('Bạn có chắc muốn xóa dòng này không?')) return;
+            const btn = deleteBtnElement;
+            const prev = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+            try {
+                const rowData = {};
+                rowData[APPSHEET_KEY_COLUMN] = rowId;
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'ApplicationAccessKey': API_KEY, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ Action: 'Delete', Properties: { Locale: 'vi-VN', Timezone: 'Asia/Ho_Chi_Minh' }, Rows: [rowData] })
+                });
+                if (!response.ok) throw new Error(await response.text());
+                currentData = currentData.filter(row => String(row[APPSHEET_KEY_COLUMN] ?? '') !== String(rowId));
+                refreshTableView();
+                showToast('Đã xóa dòng thành công!', 'success');
+            } catch (error) {
+                let errorMsg = error.message;
+                try { if (JSON.parse(error.message).Message) errorMsg = JSON.parse(error.message).Message; } catch (e) {}
+                showToast(`Lỗi xóa dòng: ${errorMsg}`, 'error');
+                btn.innerHTML = prev;
+                btn.disabled = false;
             }
         }
 

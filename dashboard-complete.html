@@ -2194,6 +2194,21 @@
             return null;
         }
 
+        /** Nhận diện cột tỷ lệ tương tác kể cả tên rút gọn (ER, ...%). */
+        function findEngagementRateColKey(sampleRow) {
+            if (!sampleRow) return null;
+            const keys = Object.keys(sampleRow);
+            for (const key of keys) {
+                const nk = norm(key);
+                if (COL.engagementRate.some(function(a) { return nk === norm(a) || nk.includes(norm(a)); })) return key;
+                const hasTuongTac = nk.includes('tuong tac');
+                const hasRateHint = nk.includes('ti le') || nk.includes('ty le') || nk.includes('rate') || nk.includes('%');
+                if (hasTuongTac && hasRateHint) return key;
+                if (nk === 'er' || nk === 'engagement rate') return key;
+            }
+            return null;
+        }
+
         function findExactColKey(sampleRow, names) {
             if (!sampleRow) return null;
             const wanted = names.map(norm);
@@ -2210,6 +2225,8 @@
                     map[name] = findExactColKey(row, aliases) || findColKey(row, aliases);
                 } else if (name === 'engagement') {
                     map[name] = findEngagementColKey(row);
+                } else if (name === 'engagementRate') {
+                    map[name] = findEngagementRateColKey(row);
                 } else {
                     map[name] = findColKey(row, aliases);
                 }
@@ -2554,6 +2571,20 @@
             return null;
         }
 
+        /** Lấy tỷ lệ tương tác từ dòng metric tổng nếu có (vd: ER, tỷ lệ tương tác). */
+        function getEngagementRateFromMetricRows(rows) {
+            const map = getMetricMap(rows || []);
+            const keys = ['ty le tuong tac', 'ti le tuong tac', 'engagement rate', 'er'];
+            for (const k of keys) {
+                const raw = map[norm(k)];
+                if (raw == null || raw === '') continue;
+                const parsed = parseNum(raw);
+                if (!Number.isFinite(parsed)) continue;
+                return Math.abs(parsed) <= 1 ? parsed * 100 : parsed;
+            }
+            return null;
+        }
+
         function rowEngagementRatePct(row, cols) {
             if (!cols.reachCol) return 0;
             const reach = parseNum(row[cols.reachCol]);
@@ -2630,16 +2661,18 @@
             const comments = totalRow ? parseNum(totalRow[columnKeys.comments]) : (columnKeys.comments ? sum('comments') : fromMetric('binh luan'));
             const fromEngCol = calcEngagementRateFromEngagementCol(rows);
             const sheetAvg = aggregateSheetEngagementRatePct(dataRows);
+            const metricRate = getEngagementRateFromMetricRows(rows);
             let rate = calcEngagementRatePct(rows);
             if (rate <= 0 && fromEngCol != null) rate = fromEngCol;
             if (rate <= 0 && sheetAvg != null) rate = sheetAvg;
+            if (rate <= 0 && metricRate != null) rate = metricRate;
 
             setText('kpiPosts', formatNum(posts));
             setText('kpiViews', formatNum(views));
             if (engCols.likeCol || columnKeys.likes) setText('kpiLikes', formatNum(totalLikes));
             if (engCols.shareCol || columnKeys.shares) setText('kpiShares', formatNum(totalShares));
             if (columnKeys.comments || comments) setText('kpiComments', formatNum(comments));
-            const canShowRate = !!(engCols.reachCol || columnKeys.engagementRate || fromEngCol != null || sheetAvg != null);
+            const canShowRate = !!(engCols.reachCol || columnKeys.engagementRate || fromEngCol != null || sheetAvg != null || metricRate != null);
             setText('kpiEngagementRate', canShowRate ? formatNum(rate, 1) + '%' : '—');
             bindKpiTargetProgress(rows);
         }
