@@ -1,5 +1,6 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +17,8 @@
             box-sizing: border-box;
         }
 
-        html, body {
+        html,
+        body {
             height: 100%;
             margin: 0;
         }
@@ -481,10 +483,21 @@
             border-radius: 50%;
         }
 
-        .legend-dot.facebook { background: #6ee7d6; }
-        .legend-dot.youtube { background: #ffb3c1; }
-        .legend-dot.tiktok { background: #a8b5e0; }
-        .legend-dot.website { background: #ffd966; }
+        .legend-dot.facebook {
+            background: #6ee7d6;
+        }
+
+        .legend-dot.youtube {
+            background: #ffb3c1;
+        }
+
+        .legend-dot.tiktok {
+            background: #a8b5e0;
+        }
+
+        .legend-dot.website {
+            background: #ffd966;
+        }
 
         /* Table Section */
         .table-section {
@@ -556,7 +569,9 @@
             height: 14px;
         }
 
-        .website-bg { background: #4dd0e1; }
+        .website-bg {
+            background: #4dd0e1;
+        }
 
         .rate-cell {
             display: flex;
@@ -697,9 +712,18 @@
             height: 12px;
         }
 
-        .facebook-bg { background: #1877f2; }
-        .youtube-bg { background: #ff0000; }
-        .tiktok-bg { background: #000000; }
+        .facebook-bg {
+            background: #1877f2;
+        }
+
+        .youtube-bg {
+            background: #ff0000;
+        }
+
+        .tiktok-bg {
+            background: #000000;
+        }
+
         .instagram-bg {
             background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
         }
@@ -824,7 +848,9 @@
             font-family: inherit;
         }
 
-        .btn-kpi-settings:hover { background: #ffecb3; }
+        .btn-kpi-settings:hover {
+            background: #ffecb3;
+        }
 
         .kpi-settings-overlay {
             display: none;
@@ -837,7 +863,9 @@
             padding: 20px;
         }
 
-        .kpi-settings-overlay.show { display: flex; }
+        .kpi-settings-overlay.show {
+            display: flex;
+        }
 
         .kpi-settings-modal {
             background: #fff;
@@ -867,7 +895,9 @@
             gap: 10px;
         }
 
-        .kpi-settings-header h2 i { color: #4dd0e1; }
+        .kpi-settings-header h2 i {
+            color: #4dd0e1;
+        }
 
         .kpi-settings-close {
             border: none;
@@ -880,9 +910,14 @@
             font-family: inherit;
         }
 
-        .kpi-settings-body { padding: 20px 22px; overflow-y: auto; }
+        .kpi-settings-body {
+            padding: 20px 22px;
+            overflow-y: auto;
+        }
 
-        .kpi-settings-section { margin-bottom: 22px; }
+        .kpi-settings-section {
+            margin-bottom: 22px;
+        }
 
         .kpi-settings-section h3 {
             font-size: 12px;
@@ -899,7 +934,9 @@
         }
 
         @media (max-width: 700px) {
-            .kpi-total-grid { grid-template-columns: 1fr; }
+            .kpi-total-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .kpi-field label {
@@ -925,7 +962,11 @@
             box-shadow: 0 0 0 2px rgba(77, 208, 225, 0.2);
         }
 
-        .kpi-field .hint { font-size: 11px; color: #999; margin-top: 4px; }
+        .kpi-field .hint {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
 
         .kpi-channel-table-wrap {
             border: 1px solid #f0f0f0;
@@ -933,7 +974,10 @@
             overflow: hidden;
         }
 
-        .kpi-channel-table { width: 100%; border-collapse: collapse; }
+        .kpi-channel-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
         .kpi-channel-table th {
             background: #fafafa;
@@ -967,7 +1011,9 @@
             padding: 4px 8px;
         }
 
-        .kpi-channel-del:hover { color: #e57373; }
+        .kpi-channel-del:hover {
+            color: #e57373;
+        }
 
         .btn-add-channel {
             width: 100%;
@@ -1021,7 +1067,10 @@
             font-family: inherit;
         }
 
-        .btn-kpi-save:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-kpi-save:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
 
         .dash-toast {
             position: fixed;
@@ -1033,11 +1082,16 @@
             font-size: 13px;
             font-weight: 600;
             color: #fff;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
 
-        .dash-toast.success { background: #43a047; }
-        .dash-toast.error { background: #e53935; }
+        .dash-toast.success {
+            background: #43a047;
+        }
+
+        .dash-toast.error {
+            background: #e53935;
+        }
 
         /* Đánh giá hiệu suất */
         .perf-eval-section {
@@ -1070,7 +1124,9 @@
             margin-bottom: 12px;
         }
 
-        .best-performer-head i { color: #ffb300; }
+        .best-performer-head i {
+            color: #ffb300;
+        }
 
         .best-performer-body {
             display: flex;
@@ -1100,9 +1156,24 @@
             font-weight: 700;
         }
 
-        .best-performer-name { font-size: 18px; font-weight: 700; color: #333; }
-        .best-performer-formula { font-size: 11px; color: #888; margin-top: 6px; line-height: 1.4; }
-        .best-performer-meta { font-size: 12px; color: #888; margin-top: 4px; }
+        .best-performer-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .best-performer-formula {
+            font-size: 11px;
+            color: #888;
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        .best-performer-meta {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
 
         .best-performer-stats {
             display: flex;
@@ -1140,7 +1211,9 @@
         }
 
         @media (max-width: 1100px) {
-            .perf-eval-grid { grid-template-columns: 1fr; }
+            .perf-eval-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .perf-eval-card-full {
@@ -1176,9 +1249,17 @@
             transition: width 0.3s ease;
         }
 
-        .kpi-pct-met { color: #43a047; }
-        .kpi-pct-warn { color: #ef6c00; }
-        .kpi-pct-low { color: #e53935; }
+        .kpi-pct-met {
+            color: #43a047;
+        }
+
+        .kpi-pct-warn {
+            color: #ef6c00;
+        }
+
+        .kpi-pct-low {
+            color: #e53935;
+        }
 
         .perf-eval-card {
             background: #fff;
@@ -1205,7 +1286,9 @@
             gap: 8px;
         }
 
-        .perf-eval-card-head h3 i { color: #4dd0e1; }
+        .perf-eval-card-head h3 i {
+            color: #4dd0e1;
+        }
 
         .perf-eval-sub {
             font-size: 11px;
@@ -1213,7 +1296,9 @@
             font-weight: 500;
         }
 
-        .perf-table-wrap { overflow-x: auto; }
+        .perf-table-wrap {
+            overflow-x: auto;
+        }
 
         .perf-table {
             width: 100%;
@@ -1239,9 +1324,14 @@
             vertical-align: middle;
         }
 
-        .perf-table tr:last-child td { border-bottom: none; }
+        .perf-table tr:last-child td {
+            border-bottom: none;
+        }
 
-        .perf-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+        .perf-table .num {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
 
         .grade-badge {
             display: inline-block;
@@ -1253,17 +1343,55 @@
             text-align: center;
         }
 
-        .grade-s { background: #fff8e1; color: #f9a825; }
-        .grade-a { background: #e8f5e9; color: #2e7d32; }
-        .grade-b { background: #e3f2fd; color: #1565c0; }
-        .grade-c { background: #fff3e0; color: #ef6c00; }
-        .grade-d { background: #ffebee; color: #c62828; }
+        .grade-s {
+            background: #fff8e1;
+            color: #f9a825;
+        }
 
-        .kpi-grade-xuat-sac { background: #fff8e1; color: #f57f17; }
-        .kpi-grade-tot { background: #e8f5e9; color: #2e7d32; }
-        .kpi-grade-tb { background: #fffde7; color: #f9a825; }
-        .kpi-grade-yeu { background: #fff3e0; color: #ef6c00; }
-        .kpi-grade-kem { background: #ffebee; color: #c62828; }
+        .grade-a {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .grade-b {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .grade-c {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .grade-d {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .kpi-grade-xuat-sac {
+            background: #fff8e1;
+            color: #f57f17;
+        }
+
+        .kpi-grade-tot {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .kpi-grade-tb {
+            background: #fffde7;
+            color: #f9a825;
+        }
+
+        .kpi-grade-yeu {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .kpi-grade-kem {
+            background: #ffebee;
+            color: #c62828;
+        }
 
         .best-performer-reward {
             font-size: 11px;
@@ -1271,9 +1399,19 @@
             margin-top: 4px;
         }
 
-        .growth-up { color: #43a047; font-weight: 600; }
-        .growth-down { color: #e53935; font-weight: 600; }
-        .growth-flat { color: #999; }
+        .growth-up {
+            color: #43a047;
+            font-weight: 600;
+        }
+
+        .growth-down {
+            color: #e53935;
+            font-weight: 600;
+        }
+
+        .growth-flat {
+            color: #999;
+        }
 
         .perf-detail-btn {
             border: 1px solid #e0e8f0;
@@ -1286,7 +1424,10 @@
             font-family: inherit;
         }
 
-        .perf-detail-btn:hover { background: #e8f4f8; color: #2a6b7f; }
+        .perf-detail-btn:hover {
+            background: #e8f4f8;
+            color: #2a6b7f;
+        }
 
         .perf-legend {
             display: flex;
@@ -1311,18 +1452,21 @@
             height: 10px;
             border-radius: 3px;
         }
-</style>
-<style id="force-black-text">
-    html body, html body * {
-        color: #000 !important;
-    }
-</style>
+    </style>
+    <style id="force-black-text">
+        html body,
+        html body * {
+            color: #000 !important;
+        }
+    </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Main Content -->
         <div class="main-content">
-            <div id="dashboardLoading" style="display:none;position:fixed;inset:0;background:rgba(255,255,255,0.85);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
+            <div id="dashboardLoading"
+                style="display:none;position:fixed;inset:0;background:rgba(255,255,255,0.85);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
                 <i class="fas fa-spinner fa-spin" style="font-size:2rem;color:#4dd0e1;"></i>
                 <span style="color:#666;">Đang tải bảng Báo cáo...</span>
             </div>
@@ -1336,14 +1480,16 @@
                     <div class="filter-group-inline">
                         <span class="filter-inline-label">Kênh</span>
                         <div class="checkbox-filter" id="dashChannelFilter" data-default-label="Tất cả kênh">
-                            <button type="button" class="filter-menu-btn"><span class="filter-menu-text">Tất cả kênh</span></button>
+                            <button type="button" class="filter-menu-btn"><span class="filter-menu-text">Tất cả
+                                    kênh</span></button>
                             <div class="filter-menu"></div>
                         </div>
                     </div>
                     <div class="filter-group-inline">
                         <span class="filter-inline-label">Người phụ trách</span>
                         <div class="checkbox-filter" id="dashAssigneeFilter" data-default-label="Tất cả">
-                            <button type="button" class="filter-menu-btn"><span class="filter-menu-text">Tất cả</span></button>
+                            <button type="button" class="filter-menu-btn"><span class="filter-menu-text">Tất
+                                    cả</span></button>
                             <div class="filter-menu"></div>
                         </div>
                     </div>
@@ -1360,7 +1506,8 @@
                     <button type="button" id="kpiSettingsBtn" class="btn-kpi-settings" title="Cài đặt KPI mục tiêu">
                         <i class="fas fa-gear"></i> Cài đặt KPI
                     </button>
-                    <button type="button" id="refreshBtn" class="date-range" style="border:none;cursor:pointer;" title="Tải lại từ AppSheet">
+                    <button type="button" id="refreshBtn" class="date-range" style="border:none;cursor:pointer;"
+                        title="Tải lại từ AppSheet">
                         <i class="fas fa-rotate-right"></i> Tải lại
                     </button>
                     <div class="last-update" id="lastUpdate">
@@ -1382,7 +1529,14 @@
                 <div class="kpi-card">
                     <div class="kpi-top">
                         <div class="kpi-icon-circle">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
                         </div>
                         <div class="kpi-info">
                             <div class="kpi-label">Tổng bài đăng</div>
@@ -1397,7 +1551,11 @@
                 <div class="kpi-card">
                     <div class="kpi-top">
                         <div class="kpi-icon-circle">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
                         </div>
                         <div class="kpi-info">
                             <div class="kpi-label">Lượt xem</div>
@@ -1412,7 +1570,17 @@
                 <div class="kpi-card">
                     <div class="kpi-top">
                         <div class="kpi-icon-circle">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z">
+                                </path>
+                                <path
+                                    d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z">
+                                </path>
+                                <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
+                                <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
+                            </svg>
                         </div>
                         <div class="kpi-info">
                             <div class="kpi-label">Tỉ lệ tương tác</div>
@@ -1427,7 +1595,12 @@
                 <div class="kpi-card">
                     <div class="kpi-top">
                         <div class="kpi-icon-circle">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3">
+                                </path>
+                            </svg>
                         </div>
                         <div class="kpi-info">
                             <div class="kpi-label">Like</div>
@@ -1442,7 +1615,14 @@
                 <div class="kpi-card">
                     <div class="kpi-top">
                         <div class="kpi-icon-circle">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
                         </div>
                         <div class="kpi-info">
                             <div class="kpi-label">Share</div>
@@ -1457,7 +1637,10 @@
                 <div class="kpi-card">
                     <div class="kpi-top">
                         <div class="kpi-icon-circle">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
                         </div>
                         <div class="kpi-info">
                             <div class="kpi-label">Bình luận</div>
@@ -1476,11 +1659,14 @@
                     <div class="chart-card">
                         <div class="chart-header">
                             <div>
-                                <div class="chart-title">Tăng trưởng lượt xem</div>
-                                <div style="font-size: 12px; color: #999;">Lượt xem theo thời gian</div>
+                                <div class="chart-title" id="lineChartTitle">Tăng trưởng lượt xem</div>
+                                <div id="lineChartSubtitle" style="font-size: 12px; color: #999;">Lượt xem theo thời gian</div>
                             </div>
-                            <select class="select-dropdown">
-                                <option>Lượt xem</option>
+                            <select class="select-dropdown" id="lineChartMetricSelect">
+                                <option value="views">Lượt xem</option>
+                                <option value="likes">Số like</option>
+                                <option value="comments">Số bình luận</option>
+                                <option value="shares">Lượt share</option>
                             </select>
                         </div>
                         <div class="chart-container">
@@ -1494,7 +1680,7 @@
                         </div>
                         <div id="topPostsList"></div>
                         <div class="view-all-wrapper">
-                            <a href="#" class="view-all-btn">Xem tất cả</a>
+                            <button type="button" class="view-all-btn" id="viewAllTopPostsBtn" style="border: none; font-family: inherit; font-size: inherit;">Xem tất cả</button>
                         </div>
                     </div>
                 </div>
@@ -1673,7 +1859,8 @@
         <div class="kpi-settings-modal" role="dialog" aria-labelledby="kpiSettingsTitle">
             <div class="kpi-settings-header">
                 <h2 id="kpiSettingsTitle"><i class="fas fa-gear"></i> Cài đặt KPI mục tiêu</h2>
-                <button type="button" class="kpi-settings-close" id="kpiSettingsClose"><i class="fas fa-xmark"></i> Đóng</button>
+                <button type="button" class="kpi-settings-close" id="kpiSettingsClose"><i class="fas fa-xmark"></i>
+                    Đóng</button>
             </div>
             <div class="kpi-settings-body">
                 <div class="kpi-settings-section">
@@ -1720,11 +1907,36 @@
                 </div>
             </div>
             <div class="kpi-settings-footer">
-                <button type="button" class="btn-kpi-reset" id="kpiResetDefaultsBtn"><i class="fas fa-rotate-left"></i> Đặt lại mặc định</button>
-                <button type="button" class="btn-kpi-save" id="kpiSaveBtn"><i class="fas fa-floppy-disk"></i> Lưu KPI</button>
+                <button type="button" class="btn-kpi-reset" id="kpiResetDefaultsBtn"><i class="fas fa-rotate-left"></i>
+                    Đặt lại mặc định</button>
+                <button type="button" class="btn-kpi-save" id="kpiSaveBtn"><i class="fas fa-floppy-disk"></i> Lưu
+                    KPI</button>
             </div>
         </div>
     </div>
+    
+    <!-- Modal Xem tất cả bài đăng hiệu suất cao -->
+    <div id="topPostsModalOverlay" class="kpi-settings-overlay" aria-hidden="true">
+        <div class="kpi-settings-modal" role="dialog" aria-labelledby="topPostsModalTitle" style="max-width: 850px;">
+            <div class="kpi-settings-header">
+                <h2 id="topPostsModalTitle"><i class="fas fa-trophy" style="color: #ffb300;"></i> Danh sách bài đăng hiệu suất cao</h2>
+                <button type="button" class="kpi-settings-close" id="topPostsModalClose"><i class="fas fa-xmark"></i> Đóng</button>
+            </div>
+            <div class="kpi-settings-body" style="overflow-y: auto; max-height: 70vh; padding: 20px;">
+                <div class="post-header" style="margin-bottom: 8px;">
+                    <div class="post-stat-header post-id-header">Tiêu đề</div>
+                    <div class="post-stat-header">View</div>
+                    <div class="post-stat-header">Like</div>
+                    <div class="post-stat-header">BL</div>
+                    <div class="post-stat-header" style="text-align:center;">Link</div>
+                </div>
+                <div id="topPostsModalList" style="display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Danh sách bài đăng sẽ được render ở đây -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="dashToastContainer"></div>
 
     <script>
@@ -1771,7 +1983,7 @@
             el.className = 'dash-toast ' + (type || 'success');
             el.textContent = message;
             box.appendChild(el);
-            setTimeout(function() { el.remove(); }, 4000);
+            setTimeout(function () { el.remove(); }, 4000);
         }
 
         function buildKpiColumnKeys(row) {
@@ -1867,7 +2079,7 @@
             const cCol = kpiColumnKeys.channel;
             const eCol = kpiColumnKeys.engagement;
 
-            rows.forEach(function(row) {
+            rows.forEach(function (row) {
                 const my = parseKpiMonthYear(row);
                 if (my.month !== month || my.year !== year) return;
                 if (isKpiTotalRow(row)) {
@@ -1901,7 +2113,7 @@
             const cached = buildKpiTargetFromRows(kpiTableData, year, month);
             if (!cached.totals.posts && !cached.totals.views && !cached.channels.length) {
                 cached.totals = Object.assign({}, DEFAULT_KPI_TOTALS);
-                cached.channels = DEFAULT_KPI_CHANNELS.map(function(c) { return Object.assign({}, c); });
+                cached.channels = DEFAULT_KPI_CHANNELS.map(function (c) { return Object.assign({}, c); });
             }
             kpiTargetCache = cached;
             return cached;
@@ -1912,14 +2124,14 @@
             if (!tbody) return;
             tbody.innerHTML = '';
             const list = channels.length ? channels : [{ channel: '', posts: '', views: '' }];
-            list.forEach(function(row) {
+            list.forEach(function (row) {
                 const tr = document.createElement('tr');
                 tr.innerHTML =
                     '<td><input type="text" class="kpi-ch-name" value="' + escapeHtml(row.channel || '') + '" placeholder="Tên kênh"></td>' +
                     '<td><input type="number" class="kpi-ch-posts" min="0" value="' + (row.posts !== '' && row.posts != null ? row.posts : '') + '" placeholder="0"></td>' +
                     '<td><input type="number" class="kpi-ch-views" min="0" value="' + (row.views !== '' && row.views != null ? row.views : '') + '" placeholder="0"></td>' +
                     '<td><button type="button" class="kpi-channel-del" title="Xóa dòng">&times;</button></td>';
-                tr.querySelector('.kpi-channel-del').addEventListener('click', function() {
+                tr.querySelector('.kpi-channel-del').addEventListener('click', function () {
                     tr.remove();
                     if (!tbody.querySelector('tr')) renderKpiChannelRows([{ channel: '', posts: '', views: '' }]);
                 });
@@ -1929,7 +2141,7 @@
 
         function collectKpiChannelRowsFromForm() {
             const rows = [];
-            document.querySelectorAll('#kpiChannelRows tr').forEach(function(tr) {
+            document.querySelectorAll('#kpiChannelRows tr').forEach(function (tr) {
                 const channel = (tr.querySelector('.kpi-ch-name') || {}).value;
                 const ch = channel ? channel.trim() : '';
                 if (!ch) return;
@@ -1979,7 +2191,7 @@
                 year: sel.year,
                 month: sel.month,
                 totals: Object.assign({}, DEFAULT_KPI_TOTALS),
-                channels: DEFAULT_KPI_CHANNELS.map(function(c) { return Object.assign({}, c); })
+                channels: DEFAULT_KPI_CHANNELS.map(function (c) { return Object.assign({}, c); })
             });
         }
 
@@ -2015,7 +2227,7 @@
                 const yCol = kpiColumnKeys.year || 'Năm';
                 const eCol = kpiColumnKeys.engagement;
 
-                const existing = kpiTableData.filter(function(row) {
+                const existing = kpiTableData.filter(function (row) {
                     const my = parseKpiMonthYear(row);
                     return my.month === month && my.year === year;
                 });
@@ -2038,7 +2250,7 @@
                 if (eCol) totalRow[eCol] = totals.engagement;
                 rowsToAdd.push(totalRow);
 
-                channels.forEach(function(ch, i) {
+                channels.forEach(function (ch, i) {
                     const r = {};
                     r[KPI_KEY_COLUMN] = prefix + '-CH-' + slugifyChannelId(ch.channel) + '-' + (i + 1);
                     r[cCol] = ch.channel;
@@ -2074,13 +2286,13 @@
             if (!targets || (!targets.totals.posts && !targets.totals.views)) return;
 
             const viewCol = columnKeys.views || findColKey(rows[0] || {}, ['view']);
-            const dataRows = rows.filter(function(r) { return !isTotalRow(r); });
+            const dataRows = rows.filter(function (r) { return !isTotalRow(r); });
             const posts = dataRows.length;
-            const views = viewCol ? dataRows.reduce(function(a, r) { return a + parseNum(r[viewCol]); }, 0) : 0;
+            const views = viewCol ? dataRows.reduce(function (a, r) { return a + parseNum(r[viewCol]); }, 0) : 0;
             const engCols = getEngagementCols(dataRows[0] || rows[0] || {});
-            const likes = engCols.likeCol ? dataRows.reduce(function(a, r) { return a + parseNum(r[engCols.likeCol]); }, 0) : 0;
-            const shares = engCols.shareCol ? dataRows.reduce(function(a, r) { return a + parseNum(r[engCols.shareCol]); }, 0) : 0;
-            const comments = columnKeys.comments ? dataRows.reduce(function(a, r) { return a + parseNum(r[columnKeys.comments]); }, 0) : 0;
+            const likes = engCols.likeCol ? dataRows.reduce(function (a, r) { return a + parseNum(r[engCols.likeCol]); }, 0) : 0;
+            const shares = engCols.shareCol ? dataRows.reduce(function (a, r) { return a + parseNum(r[engCols.shareCol]); }, 0) : 0;
+            const comments = columnKeys.comments ? dataRows.reduce(function (a, r) { return a + parseNum(r[columnKeys.comments]); }, 0) : 0;
             const engagement = likes + shares + comments;
 
             updateKpiProgressEl('kpiPostsChange', posts, targets.totals.posts);
@@ -2105,13 +2317,13 @@
             if (closeBtn) closeBtn.addEventListener('click', closeKpiSettingsModal);
             const overlay = document.getElementById('kpiSettingsOverlay');
             if (overlay) {
-                overlay.addEventListener('click', function(e) {
+                overlay.addEventListener('click', function (e) {
                     if (e.target.id === 'kpiSettingsOverlay') closeKpiSettingsModal();
                 });
             }
             const addBtn = document.getElementById('kpiAddChannelBtn');
             if (addBtn) {
-                addBtn.addEventListener('click', function() {
+                addBtn.addEventListener('click', function () {
                     const channels = collectKpiChannelRowsFromForm();
                     channels.push({ channel: '', posts: '', views: '' });
                     renderKpiChannelRows(channels);
@@ -2123,7 +2335,7 @@
             if (saveBtn) saveBtn.addEventListener('click', saveKpiSettings);
             const monthInput = document.getElementById('kpiTargetMonth');
             if (monthInput) {
-                monthInput.addEventListener('change', async function(e) {
+                monthInput.addEventListener('change', async function (e) {
                     if (!e.target.value) return;
                     const p = e.target.value.split('-').map(Number);
                     const target = await loadKpiTargetsForMonth(p[0], p[1]);
@@ -2160,6 +2372,7 @@
         let inputTableRows = [];
         let lineChartInstance = null;
         let pieChartInstance = null;
+        let currentLineChartMetric = 'views';
         let columnKeys = {};
 
         function norm(s) {
@@ -2200,7 +2413,7 @@
             const keys = Object.keys(sampleRow);
             for (const key of keys) {
                 const nk = norm(key);
-                if (COL.engagementRate.some(function(a) { return nk === norm(a) || nk.includes(norm(a)); })) return key;
+                if (COL.engagementRate.some(function (a) { return nk === norm(a) || nk.includes(norm(a)); })) return key;
                 const hasTuongTac = nk.includes('tuong tac');
                 const hasRateHint = nk.includes('ti le') || nk.includes('ty le') || nk.includes('rate') || nk.includes('%');
                 if (hasTuongTac && hasRateHint) return key;
@@ -2412,7 +2625,7 @@
             const counts = new Map();
             if (!inputTableRows.length) return { counts: counts, ready: false };
 
-            const sample = inputTableRows.find(function(r) { return r && Object.keys(r).length; });
+            const sample = inputTableRows.find(function (r) { return r && Object.keys(r).length; });
             if (!sample) return { counts: counts, ready: false };
 
             const channelCol = findColKey(sample, COL.channel);
@@ -2437,7 +2650,7 @@
             const selectedChannels = getSelectedFilterValues(channelFilter).map(norm);
             const selectedAssignees = getSelectedFilterValues(assigneeFilter).map(norm);
 
-            inputTableRows.forEach(function(row) {
+            inputTableRows.forEach(function (row) {
                 if (!row || typeof row !== 'object') return;
                 const ch = getCellText(row, channelCol);
                 if (!ch) return;
@@ -2525,7 +2738,7 @@
             if (columnKeys.engagementRate && ec === columnKeys.engagementRate) return null;
             let te = 0;
             let tr = 0;
-            list.forEach(function(r) {
+            list.forEach(function (r) {
                 te += parseNum(r[ec]);
                 tr += parseNum(r[reachCol]);
             });
@@ -2537,11 +2750,11 @@
         function aggregateSheetEngagementRatePct(dataRows) {
             const col = columnKeys.engagementRate;
             if (!col || !dataRows.length) return null;
-            const sample = dataRows.find(function(r) { return !isTotalRow(r); }) || dataRows[0];
+            const sample = dataRows.find(function (r) { return !isTotalRow(r); }) || dataRows[0];
             const reachCol = columnKeys.reach || getEngagementCols(sample).reachCol;
             const vals = [];
             const weights = [];
-            dataRows.forEach(function(r) {
+            dataRows.forEach(function (r) {
                 if (isTotalRow(r)) return;
                 const v = parseNum(r[col]);
                 if (!Number.isFinite(v)) return;
@@ -2549,13 +2762,13 @@
                 weights.push(reachCol ? parseNum(r[reachCol]) : 1);
             });
             if (!vals.length) return null;
-            const maxV = Math.max.apply(null, vals.map(function(x) { return Math.abs(x); }));
+            const maxV = Math.max.apply(null, vals.map(function (x) { return Math.abs(x); }));
             const scale = maxV > 0 && maxV <= 1 ? 100 : 1;
             let wSum = 0;
             let w = 0;
             let plain = 0;
             let n = 0;
-            vals.forEach(function(v, i) {
+            vals.forEach(function (v, i) {
                 const pv = v * scale;
                 const rw = weights[i];
                 if (reachCol && rw > 0) {
@@ -2681,7 +2894,7 @@
         function getKpiTargetForChannel(channelName) {
             const key = norm(channelName);
             const list = kpiTargetCache.channels || [];
-            const found = list.find(function(c) { return norm(c.channel) === key; });
+            const found = list.find(function (c) { return norm(c.channel) === key; });
             return found || null;
         }
 
@@ -2701,7 +2914,7 @@
                 if (kpiTarget.views > 0) parts.push(Math.min(100, (stats.views / kpiTarget.views) * 100));
             }
             if (parts.length) {
-                return parts.reduce(function(a, b) { return a + b; }, 0) / parts.length;
+                return parts.reduce(function (a, b) { return a + b; }, 0) / parts.length;
             }
             const maxV = maxStats.views || 1;
             const maxE = maxStats.engagement || 1;
@@ -2749,7 +2962,7 @@
         }
 
         function enrichAssigneePerfStats(groups) {
-            return groups.map(function(g) {
+            return groups.map(function (g) {
                 const engagementRate = g.reach > 0 ? (g.engagement / g.reach) * 100 : 0;
                 return Object.assign({}, g, { engagementRate: engagementRate });
             });
@@ -2761,7 +2974,7 @@
             if (kpiTarget.posts > 0) parts.push((stats.posts / kpiTarget.posts) * 100);
             if (kpiTarget.views > 0) parts.push((stats.views / kpiTarget.views) * 100);
             if (!parts.length) return null;
-            return parts.reduce(function(a, b) { return a + b; }, 0) / parts.length;
+            return parts.reduce(function (a, b) { return a + b; }, 0) / parts.length;
         }
 
         function pctOfTarget(actual, target) {
@@ -2794,7 +3007,7 @@
             const targetChannels = (kpiTargetCache && kpiTargetCache.channels) ? kpiTargetCache.channels : [];
             const map = new Map();
 
-            actualGroups.forEach(function(g) {
+            actualGroups.forEach(function (g) {
                 const kpi = getKpiTargetForChannel(g.name);
                 map.set(norm(g.name), {
                     name: g.name,
@@ -2807,7 +3020,7 @@
                 });
             });
 
-            targetChannels.forEach(function(t) {
+            targetChannels.forEach(function (t) {
                 const ch = String(t.channel || '').trim();
                 if (!ch) return;
                 const key = norm(ch);
@@ -2828,7 +3041,7 @@
                 }
             });
 
-            return Array.from(map.values()).sort(function(a, b) { return b.views - a.views; });
+            return Array.from(map.values()).sort(function (a, b) { return b.views - a.views; });
         }
 
         function bindKpiByChannelTable(rows) {
@@ -2851,7 +3064,7 @@
             }
 
             const list = buildKpiByChannelRows(rows);
-            const listPosts = list.map(function(row) {
+            const listPosts = list.map(function (row) {
                 const postsActual = inputPosts.ready ? (inputPosts.counts.get(norm(row.name)) || 0) : row.posts;
                 return Object.assign({}, row, { posts: postsActual });
             });
@@ -2863,7 +3076,7 @@
             let sumPosts = 0, sumViews = 0, sumReach = 0, sumEng = 0;
             let sumTargetPosts = 0, sumTargetViews = 0;
 
-            const htmlRows = listPosts.map(function(row, i) {
+            const htmlRows = listPosts.map(function (row, i) {
                 const postsPct = pctOfTarget(row.posts, row.targetPosts);
                 const viewsPct = pctOfTarget(row.views, row.targetViews);
                 const kpiOverall = calcKpiPct(
@@ -2925,11 +3138,11 @@
         function groupRowsByAssignee(rows) {
             const ak = columnKeys.assignee;
             if (!ak) return [];
-            const sample = rows.find(function(r) { return !isTotalRow(r) && String(r[ak] ?? '').trim(); }) || rows[0];
+            const sample = rows.find(function (r) { return !isTotalRow(r) && String(r[ak] ?? '').trim(); }) || rows[0];
             const engCols = getEngagementCols(sample);
             const viewCol = columnKeys.views || findColKey(sample, ['view']);
             const groups = new Map();
-            rows.filter(function(r) { return !isTotalRow(r) && String(r[ak] ?? '').trim(); }).forEach(function(row) {
+            rows.filter(function (r) { return !isTotalRow(r) && String(r[ak] ?? '').trim(); }).forEach(function (row) {
                 const displayName = getCellText(row, ak);
                 const key = norm(displayName);
                 if (!groups.has(key)) {
@@ -2943,7 +3156,7 @@
                 if (engCols.reachCol) g.reach += parseNum(row[engCols.reachCol]);
                 g.engagement += rowEngagementSum(row, engCols);
             });
-            return Array.from(groups.values()).sort(function(a, b) { return b.views - a.views; });
+            return Array.from(groups.values()).sort(function (a, b) { return b.views - a.views; });
         }
 
         function filterRowsByMonthOffset(monthOffset) {
@@ -2954,7 +3167,7 @@
             let m = sel.month + monthOffset;
             while (m < 1) { m += 12; y -= 1; }
             while (m > 12) { m -= 12; y += 1; }
-            return reportData.filter(function(row) {
+            return reportData.filter(function (row) {
                 if (isTotalRow(row)) return false;
                 const d = parseRowDate(row[dateCol]);
                 if (!d) return false;
@@ -2964,8 +3177,8 @@
 
         function buildPerfStatsMap(groups, prevGroups) {
             const prevMap = new Map();
-            prevGroups.forEach(function(g) { prevMap.set(norm(g.name), g); });
-            return groups.map(function(g) {
+            prevGroups.forEach(function (g) { prevMap.set(norm(g.name), g); });
+            return groups.map(function (g) {
                 const prev = prevMap.get(norm(g.name));
                 const prevViews = prev ? prev.views : 0;
                 const growth = prevViews > 0 ? ((g.views - prevViews) / prevViews) * 100 : (g.views > 0 ? 100 : 0);
@@ -2989,15 +3202,15 @@
             const enriched = enrichAssigneePerfStats(people);
             const kpiTotals = (kpiTargetCache && kpiTargetCache.totals) ? kpiTargetCache.totals : DEFAULT_KPI_TOTALS;
             const maxStats = {
-                posts: Math.max.apply(null, enriched.map(function(p) { return p.posts; })) || 1,
-                reach: Math.max.apply(null, enriched.map(function(p) { return p.reach; })) || 1,
-                comments: Math.max.apply(null, enriched.map(function(p) { return p.comments; })) || 1,
-                engagementRate: Math.max.apply(null, enriched.map(function(p) { return p.engagementRate; })) || 1
+                posts: Math.max.apply(null, enriched.map(function (p) { return p.posts; })) || 1,
+                reach: Math.max.apply(null, enriched.map(function (p) { return p.reach; })) || 1,
+                comments: Math.max.apply(null, enriched.map(function (p) { return p.comments; })) || 1,
+                engagementRate: Math.max.apply(null, enriched.map(function (p) { return p.engagementRate; })) || 1
             };
             let best = null;
             let bestKpi = null;
             let bestScore = -1;
-            enriched.forEach(function(p) {
+            enriched.forEach(function (p) {
                 const kpi = calcBestPerformerKpiScore(p, maxStats, kpiTotals, enriched.length);
                 if (kpi.score > bestScore) {
                     bestScore = kpi.score;
@@ -3042,10 +3255,10 @@
                 return;
             }
             const maxStats = {
-                views: Math.max.apply(null, grouped.map(function(g) { return g.views; })),
-                engagement: Math.max.apply(null, grouped.map(function(g) { return g.engagement; }))
+                views: Math.max.apply(null, grouped.map(function (g) { return g.views; })),
+                engagement: Math.max.apply(null, grouped.map(function (g) { return g.engagement; }))
             };
-            tbody.innerHTML = grouped.map(function(g, i) {
+            tbody.innerHTML = grouped.map(function (g, i) {
                 const postsDisplay = inputPosts.ready ? (inputPosts.counts.get(norm(g.name)) || 0) : g.posts;
                 const statsForScore = Object.assign({}, g, { posts: postsDisplay });
                 const kpi = getKpiTargetForChannel(g.name);
@@ -3082,10 +3295,10 @@
                 return;
             }
             const maxStats = {
-                views: Math.max.apply(null, stats.map(function(s) { return s.views; })),
-                engagement: Math.max.apply(null, stats.map(function(s) { return s.engagement; }))
+                views: Math.max.apply(null, stats.map(function (s) { return s.views; })),
+                engagement: Math.max.apply(null, stats.map(function (s) { return s.engagement; }))
             };
-            tbody.innerHTML = stats.map(function(s, i) {
+            tbody.innerHTML = stats.map(function (s, i) {
                 const postsDisplay = inputPosts.ready ? (inputPosts.counts.get(norm(s.name)) || 0) : s.posts;
                 const sMerged = Object.assign({}, s, { posts: postsDisplay });
                 const kpi = getKpiTargetForChannel(s.name);
@@ -3106,8 +3319,8 @@
                     '<td><button type="button" class="perf-detail-btn" title="' + escapeHtml(detail) + '">Xem</button></td>' +
                     '</tr>';
             }).join('');
-            tbody.querySelectorAll('.perf-detail-btn').forEach(function(btn) {
-                btn.addEventListener('click', function() {
+            tbody.querySelectorAll('.perf-detail-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
                     showDashToast(btn.getAttribute('title') || '', 'success');
                 });
             });
@@ -3133,10 +3346,10 @@
                 return;
             }
             const maxStats = {
-                views: Math.max.apply(null, stats.map(function(s) { return s.views; })),
-                engagement: Math.max.apply(null, stats.map(function(s) { return s.engagement; }))
+                views: Math.max.apply(null, stats.map(function (s) { return s.views; })),
+                engagement: Math.max.apply(null, stats.map(function (s) { return s.engagement; }))
             };
-            tbody.innerHTML = stats.map(function(s, i) {
+            tbody.innerHTML = stats.map(function (s, i) {
                 const avgViews = s.posts > 0 ? s.views / s.posts : 0;
                 const score = calcPerformanceScore(s, maxStats, null);
                 const grade = gradeFromScore(score);
@@ -3210,12 +3423,15 @@
             tbody.innerHTML = html;
         }
 
+        let currentTopPostsData = [];
+
         function bindTopPosts(rows) {
             const container = document.getElementById('topPostsList');
             if (!container || !rows.length) return;
 
             const sample = rows[0];
             const idCol = columnKeys.rowId || findExactColKey(sample, ['id']);
+            const titleCol = columnKeys.title || findColKey(sample, COL.title);
             const viewCol = columnKeys.views || findColKey(sample, ['view']);
             const likeCol = columnKeys.likes || findColKey(sample, ['like', 'likes']);
             const commentCol = columnKeys.comments || findColKey(sample, ['bình luận', 'binh luan', 'comment']);
@@ -3228,9 +3444,12 @@
 
             const filtered = rows.filter(r => !isTotalRow(r));
             const unique = dedupePostRows(filtered, idCol, viewCol, linkCol);
-            const sorted = unique
-                .sort((a, b) => parseNum(b[viewCol]) - parseNum(a[viewCol]))
-                .slice(0, 5);
+            
+            // Sắp xếp và lưu trữ toàn bộ dữ liệu bài viết
+            currentTopPostsData = unique.sort((a, b) => parseNum(b[viewCol]) - parseNum(a[viewCol]));
+            
+            // Chỉ lấy top 5 bài đăng xuất sắc nhất hiển thị trên dashboard
+            const sorted = currentTopPostsData.slice(0, 5);
 
             if (!sorted.length) {
                 container.innerHTML = '<p style="font-size:12px;color:#999;padding:8px 0;">Không có dữ liệu bài đăng.</p>';
@@ -3248,7 +3467,7 @@
 
             let html = `
                 <div class="post-header">
-                    <div class="post-stat-header post-id-header">ID</div>
+                    <div class="post-stat-header post-id-header">Tiêu đề</div>
                     <div class="post-stat-header">View</div>
                     <div class="post-stat-header">Like</div>
                     <div class="post-stat-header">BL</div>
@@ -3256,14 +3475,17 @@
                 </div>`;
 
             sorted.forEach((row, i) => {
-                const idVal = idCol ? String(row[idCol] ?? '—') : `#${i + 1}`;
+                const titleVal = titleCol ? String(row[titleCol] ?? '').trim() : '';
+                const idVal = idCol ? String(row[idCol] ?? '').trim() : '';
+                const displayVal = titleVal || idVal || `#${i + 1}`;
+
                 const views = formatNum(parseNum(row[viewCol]));
                 const likes = likeCol ? formatNum(parseNum(row[likeCol])) : '—';
                 const comments = commentCol ? formatNum(parseNum(row[commentCol])) : '—';
                 const link = linkCol ? row[linkCol] : '';
                 html += `<div class="post-item">
                     <div class="post-info">
-                        <div class="post-title" title="${escapeHtml(idVal)}">${escapeHtml(idVal)}</div>
+                        <div class="post-title" title="${escapeHtml(displayVal)}">${escapeHtml(displayVal)}</div>
                     </div>
                     <div class="post-stat">${views}</div>
                     <div class="post-stat">${likes}</div>
@@ -3289,27 +3511,79 @@
             if (lineChartInstance) { lineChartInstance.destroy(); lineChartInstance = null; }
             if (pieChartInstance) { pieChartInstance.destroy(); pieChartInstance = null; }
 
-            if (dateKey && viewsKey) {
-                const timeRows = rows.filter(r => r[dateKey] && !isTotalRow(r))
-                    .sort((a, b) => String(a[dateKey]).localeCompare(String(b[dateKey])));
-                if (timeRows.length) {
-                    const labels = timeRows.map(r => String(r[dateKey]).slice(0, 10));
-                    const data = timeRows.map(r => parseNum(r[viewsKey]));
+            let metricKey = viewsKey;
+            let metricLabel = 'Lượt xem';
+            let chartColor = '#6ee7d6';
+            let chartBg = 'rgba(110, 231, 214, 0.15)';
+            let titleText = 'Tăng trưởng lượt xem';
+            let subtitleText = 'Lượt xem theo thời gian';
+
+            if (currentLineChartMetric === 'likes') {
+                metricKey = columnKeys.likes || (rows[0] ? findColKey(rows[0], COL.likes) : null);
+                metricLabel = 'Lượt like';
+                titleText = 'Tăng trưởng lượt like';
+                subtitleText = 'Lượt like theo thời gian';
+            } else if (currentLineChartMetric === 'comments') {
+                metricKey = columnKeys.comments || (rows[0] ? findColKey(rows[0], COL.comments) : null);
+                metricLabel = 'Bình luận';
+                titleText = 'Tăng trưởng bình luận';
+                subtitleText = 'Bình luận theo thời gian';
+            } else if (currentLineChartMetric === 'shares') {
+                metricKey = columnKeys.shares || (rows[0] ? findColKey(rows[0], COL.shares) : null);
+                metricLabel = 'Lượt share';
+                titleText = 'Tăng trưởng lượt share';
+                subtitleText = 'Lượt share theo thời gian';
+            }
+
+            const titleEl = document.getElementById('lineChartTitle');
+            const subEl = document.getElementById('lineChartSubtitle');
+            if (titleEl) titleEl.textContent = titleText;
+            if (subEl) subEl.textContent = subtitleText;
+
+            if (dateKey && metricKey) {
+                const groups = {};
+                rows.forEach(r => {
+                    if (isTotalRow(r)) return;
+                    const d = parseRowDate(r[dateKey]);
+                    if (!d) return;
+                    
+                    const key = formatDateInput(d); // "YYYY-MM-DD"
+                    const val = parseNum(r[metricKey]);
+                    
+                    if (!groups[key]) {
+                        groups[key] = {
+                            dateObj: d,
+                            val: 0
+                        };
+                    }
+                    groups[key].val += val;
+                });
+                
+                const sortedKeys = Object.keys(groups).sort();
+                if (sortedKeys.length) {
+                    const labels = sortedKeys.map(k => {
+                        const d = groups[k].dateObj;
+                        const y = d.getFullYear();
+                        const m = String(d.getMonth() + 1).padStart(2, '0');
+                        const day = String(d.getDate()).padStart(2, '0');
+                        return `${m}/${day}/${y}`;
+                    });
+                    const data = sortedKeys.map(k => groups[k].val);
                     const lineEl = document.getElementById('lineChart');
                     if (lineEl) lineChartInstance = new Chart(lineEl, {
                         type: 'line',
                         data: {
                             labels,
                             datasets: [{
-                                label: 'Lượt xem',
+                                label: metricLabel,
                                 data,
-                                borderColor: '#6ee7d6',
-                                backgroundColor: 'rgba(110, 231, 214, 0.15)',
+                                borderColor: chartColor,
+                                backgroundColor: chartBg,
                                 borderWidth: 2,
                                 tension: 0.4,
                                 fill: true,
                                 pointRadius: 4,
-                                pointBackgroundColor: '#6ee7d6'
+                                pointBackgroundColor: chartColor
                             }]
                         },
                         options: {
@@ -3613,8 +3887,8 @@
                 setText('kpiShares', '0');
                 setText('kpiComments', '0');
                 setText('kpiEngagementRate', '—');
-                try { bindPerformanceEvaluation([]); } catch (e) {}
-                try { bindKpiByChannelTable([]); } catch (e) {}
+                try { bindPerformanceEvaluation([]); } catch (e) { }
+                try { bindKpiByChannelTable([]); } catch (e) { }
                 return;
             }
             try { bindKpis(rows); } catch (e) { console.error('bindKpis', e); }
@@ -3628,6 +3902,11 @@
         document.getElementById('dateFrom')?.addEventListener('change', applyDashboardFilters);
         document.getElementById('dateTo')?.addEventListener('change', applyDashboardFilters);
         document.getElementById('clearDateFilter')?.addEventListener('click', clearAllDashboardFilters);
+        document.getElementById('lineChartMetricSelect')?.addEventListener('change', function(e) {
+            currentLineChartMetric = e.target.value;
+            const filtered = getFilteredReportRows();
+            try { bindCharts(filtered); } catch (ex) { console.error('lineChartMetricSelect', ex); }
+        });
 
         document.querySelectorAll('.checkbox-filter .filter-menu-btn').forEach(button => {
             button.addEventListener('click', (e) => {
@@ -3644,8 +3923,86 @@
             }
         });
 
+        function openTopPostsModal() {
+            const container = document.getElementById('topPostsModalList');
+            const overlay = document.getElementById('topPostsModalOverlay');
+            if (!container || !overlay) return;
+
+            if (!currentTopPostsData.length) {
+                container.innerHTML = '<p style="font-size:12px;color:#999;padding:8px 0;text-align:center;">Không có dữ liệu bài đăng.</p>';
+                overlay.classList.add('show');
+                overlay.setAttribute('aria-hidden', 'false');
+                return;
+            }
+
+            const sample = currentTopPostsData[0];
+            const idCol = columnKeys.rowId || findExactColKey(sample, ['id']);
+            const titleCol = columnKeys.title || findColKey(sample, COL.title);
+            const viewCol = columnKeys.views || findColKey(sample, ['view']);
+            const likeCol = columnKeys.likes || findColKey(sample, ['like', 'likes']);
+            const commentCol = columnKeys.comments || findColKey(sample, ['bình luận', 'binh luan', 'comment']);
+            const linkCol = columnKeys.postLink || findExactColKey(sample, ['link bài đăng', 'link bai dang']);
+
+            const renderLink = (raw) => {
+                const href = normalizeExternalUrl(raw);
+                if (!href) {
+                    return '<span class="post-link-btn is-empty" title="Chưa có link"><i class="fas fa-link"></i></span>';
+                }
+                const label = extractLinkCellValue(raw) || href;
+                return `<button type="button" class="post-link-btn" data-href="${escapeHtml(href)}" title="${escapeHtml(label)}"><i class="fas fa-link"></i></button>`;
+            };
+
+            let html = '';
+            currentTopPostsData.forEach((row, i) => {
+                const titleVal = titleCol ? String(row[titleCol] ?? '').trim() : '';
+                const idVal = idCol ? String(row[idCol] ?? '').trim() : '';
+                const displayVal = titleVal || idVal || `#${i + 1}`;
+
+                const views = formatNum(parseNum(row[viewCol]));
+                const likes = likeCol ? formatNum(parseNum(row[likeCol])) : '—';
+                const comments = commentCol ? formatNum(parseNum(row[commentCol])) : '—';
+                const link = linkCol ? row[linkCol] : '';
+                html += `<div class="post-item">
+                    <div class="post-info">
+                        <div class="post-title" title="${escapeHtml(displayVal)}">${escapeHtml(displayVal)}</div>
+                    </div>
+                    <div class="post-stat">${views}</div>
+                    <div class="post-stat">${likes}</div>
+                    <div class="post-stat">${comments}</div>
+                    ${renderLink(link)}
+                </div>`;
+            });
+
+            container.innerHTML = html;
+            container.onclick = null;
+            container.onclick = (e) => {
+                const btn = e.target.closest('.post-link-btn[data-href]');
+                if (!btn) return;
+                e.preventDefault();
+                openExternalLink(btn.getAttribute('data-href'));
+            };
+
+            overlay.classList.add('show');
+            overlay.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeTopPostsModal() {
+            const overlay = document.getElementById('topPostsModalOverlay');
+            if (overlay) {
+                overlay.classList.remove('show');
+                overlay.setAttribute('aria-hidden', 'true');
+            }
+        }
+
+        document.getElementById('viewAllTopPostsBtn')?.addEventListener('click', openTopPostsModal);
+        document.getElementById('topPostsModalClose')?.addEventListener('click', closeTopPostsModal);
+        document.getElementById('topPostsModalOverlay')?.addEventListener('click', function(e) {
+            if (e.target.id === 'topPostsModalOverlay') closeTopPostsModal();
+        });
+
         initKpiSettingsUi();
         window.addEventListener('load', fetchReportData);
     </script>
 </body>
+
 </html>
