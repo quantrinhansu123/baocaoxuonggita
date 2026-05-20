@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch Ngày Đôi & Ngày Sale Lương 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+            padding: 24px 32px;
+            border-bottom: 3px solid #f5c518;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #f5c518;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .page-sub {
+            font-size: 14px;
+            font-weight: 500;
+            color: #aaa;
+        }
+
+        /* Controls */
+        .control-bar {
+            background: #ffffff;
+            margin: 24px 32px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-btn {
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: #0f3460;
+            color: #0f3460;
+            background: #f8f9ff;
+        }
+
+        .filter-btn.active {
+            background: #0f3460;
+            border-color: #0f3460;
+            color: #ffffff;
+        }
+
+        .search-input {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1.5px solid #e2e8f0;
+            font-size: 13px;
+            outline: none;
+            width: 250px;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: #0f3460;
+        }
+
+        /* Table View */
+        .table-view {
+            padding: 0 32px;
+        }
+
+        .table-container {
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .data-table th {
+            background: #1a1a2e;
+            color: #f5c518;
+            padding: 14px 20px;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+            color: #334155;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .month-row {
+            background: #f1f5f9;
+        }
+
+        .month-row td {
+            font-weight: 700;
+            color: #0f3460;
+            padding: 10px 20px;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        .type-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .type-sale {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .type-double {
+            background: #fdf4ff;
+            color: #c026d3;
+            border: 1px solid #fae8ff;
+        }
+
+        .col-date {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .col-day {
+            color: #64748b;
+        }
+
+        .col-action {
+            font-weight: 500;
+        }
+
+        /* Double day highlight row */
+        .highlight-row {
+            background: #faf5ff;
+        }
+
+        .highlight-row:hover {
+            background: #f3e8ff;
+        }
+
+        .highlight-row .col-date {
+            color: #9333ea;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: #64748b;
+        }
+
+        @media(max-width: 768px) {
+            .page-header,
+            .control-bar,
+            .table-view {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .control-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <div class="page-header">
+        <div class="page-title">LỊCH NGÀY ĐÔI VÀ NGÀY SALE LƯƠNG 5-15-25 NĂM 2026</div>
+        <div class="page-sub">
+            Các ngày đôi: 6.6 | 7.7 | 8.8 | 9.9 | 10.10 | 11.11 | 12.12 &nbsp;&nbsp;|&nbsp;&nbsp; Ngày sale lương: 5, 15, 25 hằng tháng
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="control-bar">
+        <div class="filter-group">
+            <span class="filter-label">Lọc theo loại:</span>
+            <button class="filter-btn active" data-type="all">Tất cả</button>
+            <button class="filter-btn" data-type="sale">Ngày Sale Lương</button>
+            <button class="filter-btn" data-type="double">Ngày Đôi (Siêu Sale)</button>
+        </div>
+
+        <div class="filter-group">
+            <input type="text" class="search-input" id="searchInput" placeholder="🔍 Tìm kiếm sự kiện, gợi ý hành động...">
+        </div>
+    </div>
+
+    <!-- Table View -->
+    <div class="table-view">
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 80px; text-align: center;">Tháng</th>
+                        <th style="width: 100px;">Ngày</th>
+                        <th style="width: 160px;">Loại</th>
+                        <th style="width: 120px;">Thứ</th>
+                        <th>Gợi ý hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Rendered dynamically -->
+                </tbody>
+            </table>
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="fa-solid fa-calendar-xmark" style="font-size: 32px; color: #cbd5e1; margin-bottom: 12px;"></i>
+                <p>Không tìm thấy sự kiện nào phù hợp.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DATA = [
+            // Tháng 1
+            { month: 'T1', date: '05/01', type: 'Sale lương', day: 'Thứ 2', action: 'Flash sale đàn entry, story 24h, Shopee flash deal' },
+            { month: 'T1', date: '15/01', type: 'Sale lương', day: 'Thứ 5', action: 'Mid-month deal + warm-up Tết' },
+            { month: 'T1', date: '25/01', type: 'Sale lương', day: 'Chủ nhật', action: 'Cuối tháng + tinh thần Tết — combo phụ kiện' },
+            // Tháng 2
+            { month: 'T2', date: '05/02', type: 'Sale lương', day: 'Thứ 5', action: 'Pre-Valentine deal, story đếm ngược' },
+            { month: 'T2', date: '15/02', type: 'Sale lương', day: 'Chủ nhật', action: 'Sau Valentine + Khai Xuân — nhu cầu học đàn tăng' },
+            { month: 'T2', date: '25/02', type: 'Sale lương', day: 'Thứ 4', action: 'Hậu Tết sale, học đàn đầu năm' },
+            // Tháng 3
+            { month: 'T3', date: '05/03', type: 'Sale lương', day: 'Thứ 5', action: 'Pre 8/3 — quà tặng phụ nữ' },
+            { month: 'T3', date: '15/03', type: 'Sale lương', day: 'Chủ nhật', action: 'Post 8/3 — duy trì momentum' },
+            { month: 'T3', date: '25/03', type: 'Sale lương', day: 'Thứ 4', action: 'Cuối tháng 3' },
+            // Tháng 4
+            { month: 'T4', date: '05/04', type: 'Sale lương', day: 'Chủ nhật', action: 'Đầu tháng 4, gần Giỗ Tổ' },
+            { month: 'T4', date: '15/04', type: 'Sale lương', day: 'Thứ 4', action: 'Warm-up cho 30/4' },
+            { month: 'T4', date: '25/04', type: 'Sale lương', day: 'Thứ 7', action: 'Trùng Giỗ Tổ Hùng Vương — kép' },
+            // Tháng 5
+            { month: 'T5', date: '05/05', type: 'Sale lương', day: 'Thứ 3', action: 'Post 30/4, duy trì sale' },
+            { month: 'T5', date: '15/05', type: 'Sale lương', day: 'Thứ 6', action: 'Mid-month T5' },
+            { month: 'T5', date: '25/05', type: 'Sale lương', day: 'Thứ 2', action: 'Cuối T5, gần Thiếu nhi' },
+            // Tháng 6
+            { month: 'T6', date: '05/06', type: 'Sale lương', day: 'Thứ 6', action: 'Pre 6.6 — hype ngày đôi' },
+            { month: 'T6', date: '06/06', type: '6.6', day: 'Thứ 7', action: 'SIÊU SALE 6.6 — deal đặc biệt, tăng ngân sách ads', isDouble: true },
+            { month: 'T6', date: '15/06', type: 'Sale lương', day: 'Thứ 2', action: 'Post 6.6 + Father\'s Day' },
+            { month: 'T6', date: '25/06', type: 'Sale lương', day: 'Thứ 5', action: 'Mid-year clearance bắt đầu' },
+            // Tháng 7
+            { month: 'T7', date: '05/07', type: 'Sale lương', day: 'Chủ nhật', action: 'Đầu tháng 7' },
+            { month: 'T7', date: '07/07', type: '7.7 (Thất Tịch)', day: 'Thứ 3', action: 'SIÊU SALE 7.7 — trend tình yêu Á Đông cực viral', isDouble: true },
+            { month: 'T7', date: '15/07', type: 'Sale lương', day: 'Thứ 4', action: 'Mid-month T7' },
+            { month: 'T7', date: '25/07', type: 'Sale lương', day: 'Thứ 7', action: 'Cuối T7' },
+            // Tháng 8
+            { month: 'T8', date: '05/08', type: 'Sale lương', day: 'Thứ 4', action: 'Đầu T8' },
+            { month: 'T8', date: '08/08', type: '8.8', day: 'Thứ 7', action: 'SALE 8.8 — tháng ít event, 8.8 nổi bật', isDouble: true },
+            { month: 'T8', date: '15/08', type: 'Sale lương', day: 'Thứ 7', action: 'Mid-month, back-to-school combo' },
+            { month: 'T8', date: '25/08', type: 'Sale lương', day: 'Thứ 2', action: 'Cuối T8' },
+            // Tháng 9
+            { month: 'T9', date: '05/09', type: 'Sale lương', day: 'Thứ 7', action: 'Đầu T9, sau Quốc khánh' },
+            { month: 'T9', date: '09/09', type: '9.9', day: 'Thứ 4', action: 'SIÊU SALE 9.9 — Mở đầu chuỗi Mega Sale cuối năm', isDouble: true },
+            { month: 'T9', date: '15/09', type: 'Sale lương', day: 'Thứ 3', action: 'Mid-month deal' },
+            { month: 'T9', date: '25/09', type: 'Sale lương', day: 'Thứ 6', action: 'Cuối T9, warm-up 10.10' },
+            // Tháng 10
+            { month: 'T10', date: '05/10', type: 'Sale lương', day: 'Thứ 2', action: 'Pre 10.10' },
+            { month: 'T10', date: '10/10', type: '10.10', day: 'Thứ 7', action: 'MEGA SALE 10.10 — Tập trung đẩy doanh số', isDouble: true },
+            { month: 'T10', date: '15/10', type: 'Sale lương', day: 'Thứ 5', action: 'Post 10.10, warm-up 20/10' },
+            { month: 'T10', date: '25/10', type: 'Sale lương', day: 'Chủ nhật', action: 'Cuối T10' },
+            // Tháng 11
+            { month: 'T11', date: '05/11', type: 'Sale lương', day: 'Thứ 5', action: 'Pre 11.11' },
+            { month: 'T11', date: '11/11', type: '11.11', day: 'Thứ 4', action: 'BIGGEST SALE 11.11 — Đỉnh điểm mua sắm e-com', isDouble: true },
+            { month: 'T11', date: '15/11', type: 'Sale lương', day: 'Chủ nhật', action: 'Post 11.11' },
+            { month: 'T11', date: '25/11', type: 'Sale lương', day: 'Thứ 4', action: 'Cuối T11, Black Friday' },
+            // Tháng 12
+            { month: 'T12', date: '05/12', type: 'Sale lương', day: 'Thứ 7', action: 'Pre 12.12' },
+            { month: 'T12', date: '12/12', type: '12.12', day: 'Thứ 7', action: 'FINAL MEGA SALE 12.12 — Dọn kho cuối năm', isDouble: true },
+            { month: 'T12', date: '15/12', type: 'Sale lương', day: 'Thứ 3', action: 'Warm-up Giáng Sinh' },
+            { month: 'T12', date: '25/12', type: 'Sale lương', day: 'Thứ 6', action: 'Giáng Sinh Sale, End of year' }
+        ];
+
+        let activeFilter = 'all';
+        let searchQuery = '';
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const emptyState = document.getElementById('emptyState');
+            
+            // Filter logic
+            const filtered = DATA.filter(row => {
+                // Category filter
+                if (activeFilter === 'sale' && row.isDouble) return false;
+                if (activeFilter === 'double' && !row.isDouble) return false;
+                
+                // Search filter
+                if (searchQuery) {
+                    const q = searchQuery.toLowerCase();
+                    if (!row.type.toLowerCase().includes(q) && 
+                        !row.action.toLowerCase().includes(q) &&
+                        !row.date.includes(q)) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            });
+
+            tbody.innerHTML = '';
+            
+            if (filtered.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            } else {
+                emptyState.style.display = 'none';
+            }
+
+            let lastMonth = '';
+
+            filtered.forEach(row => {
+                if (row.month !== lastMonth && activeFilter === 'all' && !searchQuery) {
+                    const tr = document.createElement('tr');
+                    tr.className = 'month-row';
+                    tr.innerHTML = `<td colspan="5">🗓️ Tháng ${row.month.replace('T', '')}</td>`;
+                    tbody.appendChild(tr);
+                    lastMonth = row.month;
+                }
+
+                const tr = document.createElement('tr');
+                if (row.isDouble) tr.className = 'highlight-row';
+                
+                const typeBadgeCls = row.isDouble ? 'type-double' : 'type-sale';
+                const typeIcon = row.isDouble ? '🟣' : '💳';
+                
+                tr.innerHTML = `
+                    <td style="text-align: center; color: ${row.isDouble ? '#9333ea' : '#64748b'}; font-weight: 600;">${row.month}</td>
+                    <td class="col-date">${row.date}</td>
+                    <td><span class="type-badge ${typeBadgeCls}">${typeIcon} &nbsp;${row.type}</span></td>
+                    <td class="col-day">${row.day}</td>
+                    <td class="col-action">${row.action}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Event Listeners
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                activeFilter = e.target.dataset.type;
+                renderTable();
+            });
+        });
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchQuery = e.target.value.trim();
+            renderTable();
+        });
+
+        // Initial render
+        renderTable();
+
+    </script>
+</body>
+
+</html>
