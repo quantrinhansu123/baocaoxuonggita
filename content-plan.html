@@ -387,6 +387,38 @@
             color: #d4cabe;
         }
 
+        .calendar-table td.holiday {
+            background: #fff1f1;
+        }
+
+        .calendar-table td.holiday .day-number {
+            color: #d93636;
+        }
+
+        .holiday-notice {
+            width: 100%;
+            border: 1px solid #ffd1d1;
+            border-radius: 8px;
+            background: #ffe7e7;
+            color: #c92525;
+            padding: 6px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1.3;
+            text-align: left;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(201, 37, 37, 0.08);
+        }
+
+        .holiday-notice:hover {
+            background: #ffdede;
+        }
+
+        .holiday-notice:focus {
+            outline: 2px solid #d93636;
+            outline-offset: 2px;
+        }
+
         /* Calendar Events */
         .event-card {
             background: white;
@@ -1228,6 +1260,19 @@
         ];
         const DATE_COLUMNS = ["Ngày muốn đăng", "Ngay muon dang", "Ngày đăng", "Ngay dang"];
         const chipColors = ["#5b8cb8", "#c89942", "#5e9468", "#c97a5e", "#8a6ba8", "#c46b87"];
+        const VIETNAM_HOLIDAYS = {
+            "2026-01-01": "Tết Dương lịch",
+            "2026-02-16": "Tết Nguyên đán",
+            "2026-02-17": "Tết Nguyên đán",
+            "2026-02-18": "Tết Nguyên đán",
+            "2026-02-19": "Tết Nguyên đán",
+            "2026-02-20": "Tết Nguyên đán",
+            "2026-04-27": "Nghỉ bù Giỗ Tổ Hùng Vương",
+            "2026-04-30": "Ngày Giải phóng miền Nam",
+            "2026-05-01": "Ngày Quốc tế Lao động",
+            "2026-09-01": "Ngày Quốc khánh Việt Nam",
+            "2026-09-02": "Ngày Quốc khánh Việt Nam"
+        };
 
         const platformNames = {
             "facebook-bg": "Facebook",
@@ -1406,6 +1451,81 @@
         function getFallbackCardDate(card) {
             const day = getEventDay(card);
             return day ? `2026-05-${String(day).padStart(2, "0")}` : "";
+        }
+
+        function getDisplayedMonthInfo() {
+            const title = document.querySelector(".month-title")?.textContent || "";
+            const match = title.match(/Tháng\s+(\d{1,2})\s+(\d{4})/i);
+            return match ? { month: Number(match[1]), year: Number(match[2]) } : { month: 5, year: 2026 };
+        }
+
+        function formatDateKey(year, month, day) {
+            return [
+                year,
+                String(month).padStart(2, "0"),
+                String(day).padStart(2, "0")
+            ].join("-");
+        }
+
+        function getCellDateKey(cell, monthInfo) {
+            const day = Number(cell.querySelector(".day-number")?.textContent.trim());
+            if (!day) return "";
+
+            let month = monthInfo.month;
+            let year = monthInfo.year;
+            if (cell.classList.contains("disabled")) {
+                if (day > 20) {
+                    month -= 1;
+                    if (month === 0) {
+                        month = 12;
+                        year -= 1;
+                    }
+                } else {
+                    month += 1;
+                    if (month === 13) {
+                        month = 1;
+                        year += 1;
+                    }
+                }
+            }
+
+            return formatDateKey(year, month, day);
+        }
+
+        function openHolidayDetail(dateKey, holidayName) {
+            const [year, month, day] = dateKey.split("-");
+            eventDetailTitle.textContent = holidayName;
+            eventDetailDate.textContent = `${day}/${month}/${year}`;
+            eventDetailTime.textContent = "Cả ngày";
+            eventDetailPlatform.textContent = holidayName;
+            eventDetailTag.textContent = "Ngày lễ";
+            eventDetailContent.textContent = holidayName;
+            eventDetailModal.classList.add("show");
+            eventDetailModal.setAttribute("aria-hidden", "false");
+            eventDetailClose.focus();
+        }
+
+        function renderVietnamHolidayNotices() {
+            const monthInfo = getDisplayedMonthInfo();
+            document.querySelectorAll(".calendar-table td").forEach((cell) => {
+                const dateKey = getCellDateKey(cell, monthInfo);
+                const holidayName = VIETNAM_HOLIDAYS[dateKey];
+                if (!holidayName) return;
+
+                cell.classList.add("holiday");
+                cell.querySelector(".day-number")?.classList.add("holiday");
+
+                const notice = document.createElement("button");
+                notice.className = "holiday-notice";
+                notice.type = "button";
+                notice.textContent = holidayName;
+                notice.setAttribute("aria-label", holidayName);
+                notice.addEventListener("click", (event) => {
+                    event.stopPropagation();
+                    openHolidayDetail(dateKey, holidayName);
+                });
+                cell.appendChild(notice);
+            });
         }
 
         function getCardChannel(card) {
@@ -1642,6 +1762,7 @@
                 }
             });
         });
+        renderVietnamHolidayNotices();
 
         eventDetailClose.addEventListener("click", closeEventDetail);
         eventDetailModal.addEventListener("click", (event) => {
