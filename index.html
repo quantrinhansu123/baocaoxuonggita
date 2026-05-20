@@ -1,5 +1,6 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,11 +8,19 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    html, body { font-family: 'Montserrat', sans-serif; height: 100%; margin: 0; overflow: hidden; }
+    html,
+    body {
+      font-family: 'Montserrat', sans-serif;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+
     body {
       position: relative;
       isolation: isolate;
     }
+
     body::before {
       content: "";
       position: fixed;
@@ -21,25 +30,43 @@
       background: url("LOGO.jpg") center center / min(48vmin, 520px) no-repeat;
       opacity: 0.6;
     }
-    .app-shell { position: relative; z-index: 1; }
-    #tabFrame { display: block; width: 100%; height: 100%; border: 0; }
+
+    .app-shell {
+      position: relative;
+      z-index: 1;
+    }
+
+    #tabFrame {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
   </style>
   <style id="force-black-text">
-    html body, html body * { color: #000 !important; }
-  </style></head>
+    html body,
+    html body * {
+      color: #000 !important;
+    }
+  </style>
+</head>
+
 <body class="bg-slate-100 text-slate-800 h-screen flex flex-col app-shell">
   <div class="shrink-0 px-4 py-3 border-b border-slate-200 bg-white/90 shadow-sm backdrop-blur-sm">
     <div id="tabs" class="flex flex-wrap gap-2"></div>
   </div>
   <div class="flex-1 min-h-0 bg-white/85 backdrop-blur-[1px]">
-    <iframe id="tabFrame" title="Nội dung tab" src="" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"></iframe>
+    <iframe id="tabFrame" title="Nội dung tab" src=""
+      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"></iframe>
   </div>
 
   <script>
     const tabItems = [
       { id: 'content-plan', label: 'Content Plan', file: 'content-plan.html' },
       { id: 'dashboard', label: 'Dashboard', file: 'dashboard-complete.html' },
-      { id: 'noi-dung', label: 'Nội dung', file: 'noi-dung.html' }
+      { id: 'noi-dung', label: 'Nội dung', file: 'noi-dung.html' },
+      { id: 'lich-mkt', label: ' Lịch MKT 2026', file: 'lich-mkt.html' },
+      { id: 'campaign-lon', label: ' Campaign Lớn', file: 'campaign-lon.html' }
     ];
 
     const tabsContainer = document.getElementById('tabs');
@@ -75,5 +102,5 @@
     });
   </script>
 </body>
-</html>
 
+</html>

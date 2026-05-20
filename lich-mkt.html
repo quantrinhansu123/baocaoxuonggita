@@ -1,0 +1,529 @@
+<!-- <!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch Chiến Dịch Marketing 2026 — Guitar Sài Thành</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f6fa;
+            color: #1a1a2e;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+            padding: 24px 28px 20px;
+            border-bottom: 3px solid #f5c518;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f5c518;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .page-sub {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        /* Legend */
+        .legend-bar {
+            background: #fff;
+            border-bottom: 1px solid #e8e8e8;
+            padding: 10px 28px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #555;
+            white-space: nowrap;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* Filters */
+        .filter-bar {
+            background: #fff;
+            border-bottom: 1px solid #e8e8e8;
+            padding: 12px 28px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .filter-btn {
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1.5px solid #ddd;
+            background: #f8f8f8;
+            font-size: 12px;
+            font-weight: 500;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: inherit;
+        }
+
+        .filter-btn:hover {
+            border-color: #0f3460;
+            color: #0f3460;
+        }
+
+        .filter-btn.active {
+            background: #0f3460;
+            border-color: #0f3460;
+            color: #fff;
+        }
+
+        .filter-sep { width: 1px; height: 24px; background: #e0e0e0; }
+
+        /* Search */
+        .search-input {
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1.5px solid #ddd;
+            font-size: 12px;
+            font-family: inherit;
+            width: 200px;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .search-input:focus {
+            border-color: #0f3460;
+        }
+
+        /* Table Wrapper */
+        .table-wrapper {
+            padding: 20px 28px;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            font-size: 13px;
+        }
+
+        .data-table thead tr {
+            background: #1a1a2e;
+            color: #f5c518;
+        }
+
+        .data-table th {
+            padding: 12px 14px;
+            font-weight: 600;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+            text-align: left;
+        }
+
+        .data-table td {
+            padding: 11px 14px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: top;
+            line-height: 1.5;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8f9ff;
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Month group row */
+        .month-group-row td {
+            background: #f0f2f8;
+            font-weight: 700;
+            font-size: 12px;
+            color: #0f3460;
+            padding: 7px 14px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        /* Columns */
+        .col-thang { width: 52px; text-align: center; }
+        .col-ngay { width: 110px; white-space: nowrap; }
+        .col-ten { min-width: 180px; font-weight: 600; color: #1a1a2e; }
+        .col-loai { width: 130px; }
+        .col-uu-tien { width: 100px; text-align: center; }
+        .col-goi-y { min-width: 220px; color: #444; }
+        .col-kenh { width: 160px; }
+        .col-ghi-chu { min-width: 160px; color: #777; font-style: italic; font-size: 12px; }
+
+        /* Month badge */
+        .month-badge {
+            display: inline-block;
+            background: #0f3460;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* Type badge */
+        .type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 9px;
+            border-radius: 12px;
+            font-size: 11.5px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .type-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .type-campaign-lon   { background: #fff0f0; color: #c0392b; }
+        .type-campaign-lon .type-dot   { background: #e74c3c; }
+
+        .type-le-vn          { background: #e8f5e9; color: #1b7a34; }
+        .type-le-vn .type-dot          { background: #27ae60; }
+
+        .type-quoc-te        { background: #f3e5f5; color: #7b1fa2; }
+        .type-quoc-te .type-dot        { background: #9c27b0; }
+
+        .type-ecom-sale      { background: #e3f2fd; color: #1565c0; }
+        .type-ecom-sale .type-dot      { background: #2196f3; }
+
+        .type-ngay-sale      { background: #fffde7; color: #b45309; }
+        .type-ngay-sale .type-dot      { background: #f59e0b; }
+
+        .type-ngay-doi       { background: #f3f3f3; color: #555; }
+        .type-ngay-doi .type-dot       { background: #888; }
+
+        /* Stars */
+        .stars { color: #f5c518; font-size: 13px; letter-spacing: 1px; }
+
+        /* Channel tags */
+        .kenh-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+        .kenh-tag {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-size: 11px;
+            background: #e8edf5;
+            color: #0f3460;
+            font-weight: 500;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        /* Summary bar */
+        .summary-bar {
+            padding: 8px 28px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .summary-bar span {
+            font-weight: 600;
+            color: #0f3460;
+        }
+
+        @media (max-width: 768px) {
+            .page-header, .legend-bar, .filter-bar, .table-wrapper, .summary-bar {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-header">
+    <div class="page-title">📅 LỊCH CHIẾN DỊCH MARKETING 2026 — GUITAR SÀI THÀNH</div>
+    <div class="page-sub">Tổng hợp: Ngày lễ VN · Quốc tế · Sale ecom (5-15-25 hàng tháng) · Ngày đổi · Campaign ưu tiên</div>
+</div>
+
+<div class="legend-bar">
+    <div class="legend-item"><div class="legend-dot" style="background:#e74c3c;"></div>Campaign lớn</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#27ae60;"></div>Lễ VN chính thức</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#9c27b0;"></div>Quốc tế / Trend</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#2196f3;"></div>E-com / Sale</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;"></div>Ngày sale lương (5-15-25)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#888;"></div>Ngày đổi</div>
+</div>
+
+<div class="filter-bar">
+    <div class="filter-group">
+        <span class="filter-label">Tháng:</span>
+        <button class="filter-btn active" data-month="all">Tất cả</button>
+        <button class="filter-btn" data-month="T1">T1</button>
+        <button class="filter-btn" data-month="T2">T2</button>
+        <button class="filter-btn" data-month="T3">T3</button>
+        <button class="filter-btn" data-month="T4">T4</button>
+        <button class="filter-btn" data-month="T5">T5</button>
+        <button class="filter-btn" data-month="T6">T6</button>
+        <button class="filter-btn" data-month="T7">T7</button>
+        <button class="filter-btn" data-month="T8">T8</button>
+        <button class="filter-btn" data-month="T9">T9</button>
+        <button class="filter-btn" data-month="T10">T10</button>
+        <button class="filter-btn" data-month="T11">T11</button>
+        <button class="filter-btn" data-month="T12">T12</button>
+    </div>
+    <div class="filter-sep"></div>
+    <div class="filter-group">
+        <span class="filter-label">Loại:</span>
+        <button class="filter-btn active" data-type="all">Tất cả</button>
+        <button class="filter-btn" data-type="campaign-lon">Campaign lớn</button>
+        <button class="filter-btn" data-type="le-vn">Lễ VN</button>
+        <button class="filter-btn" data-type="quoc-te">Quốc tế</button>
+        <button class="filter-btn" data-type="ecom-sale">E-com/Sale</button>
+        <button class="filter-btn" data-type="ngay-sale">Ngày sale lương</button>
+    </div>
+    <div class="filter-sep"></div>
+    <input type="text" class="search-input" id="searchInput" placeholder="🔍 Tìm kiếm sự kiện...">
+</div>
+
+<div class="summary-bar">
+    Hiển thị <span id="countVisible">0</span> / <span id="countTotal">0</span> sự kiện
+</div>
+
+<div class="table-wrapper">
+    <table class="data-table" id="mainTable">
+        <thead>
+            <tr>
+                <th class="col-thang">Tháng</th>
+                <th class="col-ngay">Ngày</th>
+                <th class="col-ten">Tên dịp / Sự kiện</th>
+                <th class="col-loai">Loại</th>
+                <th class="col-uu-tien">Ưu tiên</th>
+                <th class="col-goi-y">Gợi ý chiến dịch / Content</th>
+                <th class="col-kenh">Kênh đề xuất</th>
+                <th class="col-ghi-chu">Ghi chú</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+    </table>
+    <div class="empty-state" id="emptyState" style="display:none;">
+        Không tìm thấy sự kiện nào phù hợp.
+    </div>
+</div>
+
+<script>
+    const DATA = [
+        // T1
+        { thang:'T1', ngay:'01/01 (Thứ 5)', ten:'Tết Dương Lịch', loai:'campaign-lon', sao:5, goiY:'Content chào năm mới, countdown, lì xì viral, khuyến mãi khai xuân sớm', kenh:['FB','TikTok','Shopee'], ghiChu:'Ngày lễ chính thức 4 ngày' },
+        { thang:'T1', ngay:'05/01 (Thứ 2)', ten:'Ngày sale lương (5)', loai:'ngay-sale', sao:3, goiY:'Flash sale ngắn hạn, story khuyến mãi 24h', kenh:['FB','Shopee','TikTok Shop'], ghiChu:'Hành vi mua sau ngày nhận lương' },
+        { thang:'T1', ngay:'15/01 (Thứ 5)', ten:'Ngày sale lương (15)', loai:'ngay-sale', sao:3, goiY:'Hash deal đàn entry-level, reminder qua story', kenh:['Shopee','TikTok Shop'], ghiChu:'Cao điểm chi tiêu giữa tháng' },
+        { thang:'T1', ngay:'23/01 (Thứ 6)', ten:'Ông Công Ông Táo (23 tháng Chạp)', loai:'le-vn', sao:4, goiY:'Content truyền thống, nhắc Tết đang đến gần; teaser campaign Tết', kenh:['FB fanpage','Reels'], ghiChu:'Kết hợp warm-up cho Tết' },
+        { thang:'T1', ngay:'25/01 (CN)', ten:'Ngày sale lương (25)', loai:'ngay-sale', sao:3, goiY:'Combo sale + nội dung Tết đan xen', kenh:['Shopee','FB Groups'], ghiChu:'Gần Tết — tâm lý mua tặng quà cao' },
+        // T2
+        { thang:'T2', ngay:'14/02 (Thứ 7)', ten:"Valentine's Day", loai:'campaign-lon', sao:5, goiY:"'Tặng đàn cho người yêu' — content cặp đôi, gift set, live demo", kenh:['TikTok','FB','Instagram'], ghiChu:'Cao điểm quà tặng; target 18-25 tuổi' },
+        { thang:'T2', ngay:'16–20/02', ten:'Tết Nguyên Đán (Bính Ngọ)', loai:'campaign-lon', sao:5, goiY:'Campaign Tết toàn diện: trước/trong/sau Tết. Tri ân anh em, lì xì, khuyến mãi khai xuân', kenh:['Tất cả kênh'], ghiChu:'Ngày lễ dài nhất năm — chuẩn bị nội dung từ T1' },
+        { thang:'T2', ngay:'05/02 (Thứ 5)', ten:'Ngày sale lương (5)', loai:'ngay-sale', sao:3, goiY:'Flash sale đầu tháng, gần Valentine tăng urgency', kenh:['Shopee','TikTok Shop'], ghiChu:'Kết hợp với Valentine prep' },
+        { thang:'T2', ngay:'15/02 (CN)', ten:'Ngày sale lương (15)', loai:'ngay-sale', sao:3, goiY:'Sale sau Valentine + khai Xuân', kenh:['Shopee','FB'], ghiChu:'Sau Tết — nhu cầu học đàn tăng cao' },
+        { thang:'T2', ngay:'25/02 (Thứ 4)', ten:'Ngày sale lương (25)', loai:'ngay-sale', sao:3, goiY:'Sale cuối tháng, teaser March campaign', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        // T3
+        { thang:'T3', ngay:'08/03 (CN)', ten:"Ngày Quốc tế Phụ nữ (8/3)", loai:'campaign-lon', sao:5, goiY:"'Âm nhạc dành cho nàng' — content phụ nữ chơi đàn, quà tặng ý nghĩa, live show mini", kenh:['FB','TikTok','Instagram'], ghiChu:'Target phụ nữ 18-40 tuổi & mua tặng bạn gái/vợ' },
+        { thang:'T3', ngay:'05/03 (Thứ 4)', ten:'Ngày sale lương (5)', loai:'ngay-sale', sao:3, goiY:'Flash sale đầu tháng, kết hợp 8/3', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T3', ngay:'15/03 (Thứ 7)', ten:'Ngày sale lương (15)', loai:'ngay-sale', sao:3, goiY:'Sale giữa tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T3', ngay:'25/03 (Thứ 3)', ten:'Ngày sale lương (25)', loai:'ngay-sale', sao:3, goiY:'Sale cuối tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        // T4
+        { thang:'T4', ngay:'30/04 – 01/05', ten:'30/4 & Ngày Quốc tế Lao động', loai:'campaign-lon', sao:5, goiY:"'Nghỉ lễ tập guitar' — nội dung học đàn, khuyến mãi combo khóa học + đàn, livestream", kenh:['TikTok','FB','YouTube'], ghiChu:'Kỳ nghỉ dài 4-5 ngày — nhu cầu giải trí & học kỹ năng mới cao' },
+        { thang:'T4', ngay:'05/04 (Thứ 7)', ten:'Ngày sale lương (5)', loai:'ngay-sale', sao:3, goiY:'Flash sale', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T4', ngay:'15/04 (Thứ 3)', ten:'Ngày sale lương (15)', loai:'ngay-sale', sao:3, goiY:'Sale giữa tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T4', ngay:'25/04 (Thứ 6)', ten:'Ngày sale lương (25)', loai:'ngay-sale', sao:3, goiY:'Sale cuối tháng, teaser 30/4', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        // T5
+        { thang:'T5', ngay:'01/05 (Thứ 5)', ten:'Ngày Quốc tế Lao động', loai:'le-vn', sao:4, goiY:'Content ngày nghỉ, khuyến mãi kỷ niệm', kenh:['FB','TikTok'], ghiChu:'Kỳ nghỉ lễ dài' },
+        { thang:'T5', ngay:'05/05 (Thứ 2)', ten:'Ngày sale lương (5)', loai:'ngay-sale', sao:3, goiY:'Flash sale đầu tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T5', ngay:'15/05 (Thứ 5)', ten:'Ngày sale lương (15)', loai:'ngay-sale', sao:3, goiY:'Sale giữa tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T5', ngay:'25/05 (CN)', ten:'Ngày sale lương (25)', loai:'ngay-sale', sao:3, goiY:'Sale cuối tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        // T6
+        { thang:'T6', ngay:'01/06 (CN)', ten:'Ngày Quốc tế Thiếu nhi', loai:'quoc-te', sao:3, goiY:"'Cho bé yêu guitar' — content trẻ em học nhạc, khóa học thiếu nhi, quà tặng con", kenh:['FB','TikTok'], ghiChu:'Target phụ huynh mua quà cho con' },
+        { thang:'T6', ngay:'05/06 (Thứ 5)', ten:'Ngày sale lương (5)', loai:'ngay-sale', sao:3, goiY:'Flash sale đầu tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T6', ngay:'15/06 (CN)', ten:'Ngày của Cha + Ngày sale lương (15)', loai:'campaign-lon', sao:5, goiY:"'Tặng đàn tri ân cha' — content cảm xúc, gift set, câu chuyện âm nhạc cha-con", kenh:['FB','TikTok','Instagram'], ghiChu:'Kết hợp Father\'s Day & ngày sale lương' },
+        { thang:'T6', ngay:'25/06 (Thứ 4)', ten:'Ngày sale lương (25)', loai:'ngay-sale', sao:3, goiY:'Sale cuối tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        // T7
+        { thang:'T7', ngay:'05/07 (Thứ 7)', ten:'Ngày sale lương (5)', loai:'ngay-sale', sao:3, goiY:'Flash sale đầu tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T7', ngay:'15/07 (Thứ 3)', ten:'Ngày sale lương (15)', loai:'ngay-sale', sao:3, goiY:'Sale giữa tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T7', ngay:'25/07 (Thứ 6)', ten:'Ngày sale lương (25)', loai:'ngay-sale', sao:3, goiY:'Sale cuối tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        // T8
+        { thang:'T8', ngay:'05/08 (Thứ 3)', ten:'Ngày sale lương (5)', loai:'ngay-sale', sao:3, goiY:'Flash sale đầu tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T8', ngay:'15/08 (Thứ 6)', ten:'Ngày sale lương (15)', loai:'ngay-sale', sao:3, goiY:'Sale giữa tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T8', ngay:'25/08 (Thứ 2)', ten:'Ngày sale lương (25)', loai:'ngay-sale', sao:3, goiY:'Sale cuối tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        // T9
+        { thang:'T9', ngay:'02/09 (Thứ 3)', ten:'Quốc Khánh 2/9', loai:'le-vn', sao:4, goiY:'Content yêu nước, câu chuyện âm nhạc dân tộc, khuyến mãi kỷ niệm', kenh:['FB','TikTok','YouTube'], ghiChu:'Kỳ nghỉ lễ 3-4 ngày' },
+        { thang:'T9', ngay:'05/09 (Thứ 6)', ten:'Ngày sale lương (5)', loai:'ngay-sale', sao:3, goiY:'Flash sale đầu tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T9', ngay:'15/09 (Thứ 2)', ten:'Ngày sale lương (15)', loai:'ngay-sale', sao:3, goiY:'Sale giữa tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T9', ngay:'25/09 (Thứ 5)', ten:'Ngày sale lương (25)', loai:'ngay-sale', sao:3, goiY:'Sale cuối tháng, teaser 10/10', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        // T10
+        { thang:'T10', ngay:'10/10 (Thứ 6)', ten:'10.10 — Shopee/Tiki Super Sale', loai:'ecom-sale', sao:5, goiY:'Đẩy mạnh sản phẩm trên Shopee, livestream bán hàng, flash deal 2h đồng hồ', kenh:['Shopee','TikTok Shop'], ghiChu:'Siêu sale ecom lớn nhất Q4, cần chuẩn bị tồn kho' },
+        { thang:'T10', ngay:'20/10 (Thứ 2)', ten:'Ngày Phụ nữ Việt Nam', loai:'le-vn', sao:4, goiY:"'Âm nhạc cho nàng' — content tôn vinh phụ nữ, quà tặng ý nghĩa", kenh:['FB','TikTok','Instagram'], ghiChu:'Kết hợp với sale ecom' },
+        { thang:'T10', ngay:'05/10 (CN)', ten:'Ngày sale lương (5)', loai:'ngay-sale', sao:3, goiY:'Flash sale đầu tháng, teaser 10/10', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T10', ngay:'15/10 (Thứ 4)', ten:'Ngày sale lương (15)', loai:'ngay-sale', sao:3, goiY:'Sale giữa tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T10', ngay:'25/10 (Thứ 7)', ten:'Ngày sale lương (25)', loai:'ngay-sale', sao:3, goiY:'Sale cuối tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        // T11
+        { thang:'T11', ngay:'11/11 (Thứ 3)', ten:'11.11 — Super Sale', loai:'ecom-sale', sao:5, goiY:'Siêu sale trên tất cả nền tảng ecom, bundle deal, flash deal mỗi giờ', kenh:['Shopee','TikTok Shop','Tiki'], ghiChu:'Ngày sale lớn nhất năm trên ecom' },
+        { thang:'T11', ngay:'05/11 (Thứ 4)', ten:'Ngày sale lương (5)', loai:'ngay-sale', sao:3, goiY:'Flash sale đầu tháng, teaser 11/11', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T11', ngay:'15/11 (Thứ 7)', ten:'Ngày sale lương (15)', loai:'ngay-sale', sao:3, goiY:'Sale giữa tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T11', ngay:'25/11 (Thứ 3)', ten:'Ngày sale lương (25)', loai:'ngay-sale', sao:3, goiY:'Sale cuối tháng, teaser 12.12', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        // T12
+        { thang:'T12', ngay:'12/12 (Thứ 6)', ten:'12.12 — Super Sale cuối năm', loai:'ecom-sale', sao:5, goiY:'Siêu sale cuối năm, flash deal, bundle, quà tặng Giáng Sinh sớm', kenh:['Shopee','TikTok Shop','Tiki'], ghiChu:'Sale lớn trước Noel' },
+        { thang:'T12', ngay:'24/12 (Thứ 4)', ten:'Giáng Sinh (Noel)', loai:'campaign-lon', sao:5, goiY:"'Guitar dưới cây thông' — content lãng mạn, quà tặng, live acoustic Noel", kenh:['TikTok','FB','Instagram'], ghiChu:'Mùa mua sắm quà tặng cao điểm' },
+        { thang:'T12', ngay:'31/12 (Thứ 4)', ten:'Đêm giao thừa — New Year Eve', loai:'campaign-lon', sao:5, goiY:'Countdown, content nhìn lại năm 2026, warm-up khai xuân 2027', kenh:['TikTok','FB','YouTube'], ghiChu:'Chốt năm bằng nội dung cảm xúc' },
+        { thang:'T12', ngay:'05/12 (Thứ 6)', ten:'Ngày sale lương (5)', loai:'ngay-sale', sao:3, goiY:'Flash sale đầu tháng', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T12', ngay:'15/12 (Thứ 2)', ten:'Ngày sale lương (15)', loai:'ngay-sale', sao:3, goiY:'Sale giữa tháng, teaser Noel', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+        { thang:'T12', ngay:'25/12 (Thứ 5)', ten:'Ngày sale lương (25)', loai:'ngay-sale', sao:3, goiY:'Sale cuối tháng, kết hợp Noel', kenh:['Shopee','TikTok Shop'], ghiChu:'' },
+    ];
+
+    const TYPE_CONFIG = {
+        'campaign-lon': { label: 'Campaign lớn',       cls: 'type-campaign-lon' },
+        'le-vn':        { label: 'Lễ VN',              cls: 'type-le-vn' },
+        'quoc-te':      { label: 'Quốc tế / Trend',    cls: 'type-quoc-te' },
+        'ecom-sale':    { label: 'E-com / Sale',        cls: 'type-ecom-sale' },
+        'ngay-sale':    { label: 'Ngày sale lương',     cls: 'type-ngay-sale' },
+        'ngay-doi':     { label: 'Ngày đổi',            cls: 'type-ngay-doi' },
+    };
+
+    const MONTH_NAMES = { T1:'Tháng 1',T2:'Tháng 2',T3:'Tháng 3',T4:'Tháng 4',T5:'Tháng 5',T6:'Tháng 6',T7:'Tháng 7',T8:'Tháng 8',T9:'Tháng 9',T10:'Tháng 10',T11:'Tháng 11',T12:'Tháng 12' };
+
+    let activeMonth = 'all';
+    let activeType = 'all';
+
+    function renderStars(n) {
+        return '<span class="stars">' + '★'.repeat(n) + '<span style="color:#ddd;">★</span>'.repeat(5 - n) + '</span>';
+    }
+
+    function renderKenh(arr) {
+        return '<div class="kenh-tags">' + arr.map(k => `<span class="kenh-tag">${k}</span>`).join('') + '</div>';
+    }
+
+    function renderTable() {
+        const search = document.getElementById('searchInput').value.trim().toLowerCase();
+        const tbody = document.getElementById('tableBody');
+        let html = '';
+        let lastMonth = '';
+        let countVisible = 0;
+
+        DATA.forEach(row => {
+            // Filter
+            if (activeMonth !== 'all' && row.thang !== activeMonth) return;
+            if (activeType !== 'all' && row.loai !== activeType) return;
+            if (search) {
+                const haystack = [row.ten, row.goiY, row.ghiChu, row.kenh.join(' ')].join(' ').toLowerCase();
+                if (!haystack.includes(search)) return;
+            }
+
+            // Month group header
+            if (row.thang !== lastMonth) {
+                html += `<tr class="month-group-row"><td colspan="8">📌 ${MONTH_NAMES[row.thang] || row.thang}</td></tr>`;
+                lastMonth = row.thang;
+            }
+
+            const tc = TYPE_CONFIG[row.loai] || TYPE_CONFIG['ngay-doi'];
+            html += `<tr data-thang="${row.thang}" data-loai="${row.loai}">
+                <td class="col-thang"><span class="month-badge">${row.thang}</span></td>
+                <td class="col-ngay" style="white-space:nowrap;">${row.ngay}</td>
+                <td class="col-ten">${row.ten}</td>
+                <td class="col-loai"><span class="type-badge ${tc.cls}"><span class="type-dot"></span>${tc.label}</span></td>
+                <td class="col-uu-tien">${renderStars(row.sao)}</td>
+                <td class="col-goi-y">${row.goiY}</td>
+                <td class="col-kenh">${renderKenh(row.kenh)}</td>
+                <td class="col-ghi-chu">${row.ghiChu || '—'}</td>
+            </tr>`;
+            countVisible++;
+        });
+
+        if (!html) {
+            tbody.innerHTML = '';
+            document.getElementById('emptyState').style.display = 'block';
+        } else {
+            document.getElementById('emptyState').style.display = 'none';
+            tbody.innerHTML = html;
+        }
+
+        document.getElementById('countVisible').textContent = countVisible;
+    }
+
+    // Count total
+    document.getElementById('countTotal').textContent = DATA.length;
+
+    // Filter buttons
+    document.querySelectorAll('.filter-btn[data-month]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn[data-month]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeMonth = btn.dataset.month;
+            renderTable();
+        });
+    });
+
+    document.querySelectorAll('.filter-btn[data-type]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn[data-type]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeType = btn.dataset.type;
+            renderTable();
+        });
+    });
+
+    document.getElementById('searchInput').addEventListener('input', renderTable);
+
+    renderTable();
+</script>
+
+</body>
+</html> -->
