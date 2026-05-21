@@ -1520,8 +1520,26 @@
             return m[0].replace(/[.,;)\]]+$/, "");
         }
 
+        function parseLinkPayload(raw) {
+            const value = String(raw ?? "").trim();
+            if (!value) return "";
+
+            if (value.startsWith("{") && value.endsWith("}")) {
+                try {
+                    const obj = JSON.parse(value);
+                    if (obj.Url) return String(obj.Url).trim();
+                    if (obj.LinkText) return String(obj.LinkText).trim();
+                    if (obj.url) return String(obj.url).trim();
+                } catch {
+                    // fallback to raw text if JSON parsing fails
+                }
+            }
+
+            return value;
+        }
+
         function normalizeExternalUrl(raw) {
-            const t = String(raw ?? "").trim();
+            const t = String(parseLinkPayload(raw)).trim();
             if (!t) return "";
             
             const embedded = extractUrlFromText(t);
@@ -1533,11 +1551,35 @@
             }
 
             try {
-                const u = new URL(`https://${t}`);
+                const u = new URL(t.includes('://') ? t : `https://${t}`);
                 return (u.protocol === "http:" || u.protocol === "https:") ? u.href : "";
             } catch {
                 return "";
             }
+        }
+
+        /** Mở link tab mới từ cửa sổ cha (tránh sandbox iframe chặn Facebook/YouTube). */
+        function openExternalLink(url) {
+            const href = normalizeExternalUrl(url);
+            if (!href) return false;
+            const topWin = window.top && window.top !== window ? window.top : window;
+            try {
+                const tab = topWin.open(href, "_blank", "noopener,noreferrer");
+                if (tab) {
+                    tab.opener = null;
+                    return true;
+                }
+            } catch (e) {
+                console.warn("openExternalLink", e);
+            }
+            const a = document.createElement("a");
+            a.href = href;
+            a.target = "_blank";
+            a.rel = "noopener noreferrer";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            return true;
         }
 
         function normalizeText(value) {
@@ -2241,15 +2283,15 @@
                 : eventDetailLinkMenu?.dataset.postLink;
             if (!link) return;
             eventDetailLinkMenu?.classList.remove("open");
-            window.open(link, "_blank", "noopener,noreferrer");
+            if (!openExternalLink(link)) {
+                alert("Không mở được link. Kiểm tra lại URL trên AppSheet.");
+            }
         });
         eventDetailViewBtn.addEventListener("click", () => {
-            const link = normalizeExternalUrl(activeDetailCard?.dataset?.postLink || "");
-            if (!link) {
-                alert("Bài này chưa có link để xem.");
-                return;
+            const link = activeDetailCard?.dataset?.postLink || "";
+            if (!openExternalLink(link)) {
+                alert("Bài này chưa có link hợp lệ để xem.");
             }
-            window.open(link, "_blank", "noopener,noreferrer");
         });
         eventDetailDeleteBtn.addEventListener("click", () => {
             if (!activeDetailCard) return;

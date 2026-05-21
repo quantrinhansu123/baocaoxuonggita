@@ -251,23 +251,37 @@
             background: #faf8fc;
         }
 
-        #statusFilter {
-            min-width: 200px;
+        .date-input {
+            min-width: 145px;
             padding: 0.5rem 2rem 0.5rem 0.75rem;
             border: 1px solid #d1c4e9;
             border-radius: 0.5rem;
             font-family: inherit;
             font-size: 0.875rem;
             color: #5c4d6d;
-            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238e7a9b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center;
-            appearance: none;
+            background: #fff;
             cursor: pointer;
         }
 
-        #statusFilter:focus {
+        .date-input:focus {
             outline: none;
             border-color: #b39ddb;
             box-shadow: 0 0 0 2px rgba(179, 157, 219, 0.35);
+        }
+
+        .filter-action-btn {
+            border: 1px solid #d1c4e9;
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            background: #fff;
+            color: #5c4d6d;
+            cursor: pointer;
+        }
+
+        .filter-action-btn:hover {
+            background: #f3e5f5;
         }
 
         .checkbox-filter {
@@ -330,6 +344,11 @@
         .filter-check input {
             accent-color: #9575cd;
         }
+
+        #statusFilter,
+        label[for="statusFilter"] {
+            display: none;
+        }
     </style>
     <style id="force-black-text">
         html body,
@@ -365,6 +384,21 @@
                                 cả</span></button>
                         <div class="filter-menu"></div>
                     </div>
+                    <span class="text-sm font-medium whitespace-nowrap" style="color: #6a4c7a;">Kênh</span>
+                    <div class="checkbox-filter" id="channelFilter" data-default-label="Tất cả kênh">
+                        <button type="button" class="filter-menu-btn"><span class="filter-menu-text">Tất cả kênh</span></button>
+                        <div class="filter-menu"></div>
+                    </div>
+                    <span class="text-sm font-medium whitespace-nowrap" style="color: #6a4c7a;">Trạng thái</span>
+                    <div class="checkbox-filter" id="statusCheckboxFilter" data-default-label="Tất cả">
+                        <button type="button" class="filter-menu-btn"><span class="filter-menu-text">Tất cả</span></button>
+                        <div class="filter-menu"></div>
+                    </div>
+                    <input type="date" class="date-input" id="startDateFilter" title="Từ ngày">
+                    <span class="text-sm" style="color: #8e7a9b;">→</span>
+                    <input type="date" class="date-input" id="endDateFilter" title="Đến ngày">
+                    <button type="button" class="filter-action-btn" id="applyDateFilterBtn">Xác nhận</button>
+                    <button type="button" class="filter-action-btn" id="clearFiltersBtn">Xóa</button>
                     <span id="filterResultCount" class="text-sm whitespace-nowrap" style="color: #8e7a9b;"></span>
                 </div>
                 <button id="refreshBtn"
@@ -643,20 +677,32 @@
 
         const STATUS_FILTER_LABEL = 'Trạng thái duyệt';
         const STATUS_FILTER_EMPTY = '__EMPTY__';
+        const CHANNEL_FILTER_LABELS = ['Đăng lên kênh nào?', 'Dang len kenh nao?', 'Kênh', 'Kenh', 'Platform'];
+        const DATE_FILTER_LABELS = ['Ngày muốn đăng', 'Ngay muon dang', 'Ngày đăng', 'Ngay dang'];
         const OWNER_FILTER_LABELS = [
             'Bạn là ai?', 'Ban la ai', 'Bạn là ai', 'Ban la ai?',
             'Người đăng', 'Nguoi dang', 'Người phụ trách', 'Nguoi phu trach', 'Owner'
         ];
         let currentData = [];
         let statusColumnName = null;
+        let channelColumnName = null;
+        let dateColumnName = null;
         let ownerColumnName = null;
+        const channelFilter = document.getElementById('channelFilter');
         const ownerFilter = document.getElementById('ownerFilter');
+        const statusCheckboxFilter = document.getElementById('statusCheckboxFilter');
+        const startDateFilter = document.getElementById('startDateFilter');
+        const endDateFilter = document.getElementById('endDateFilter');
+        const applyDateFilterBtn = document.getElementById('applyDateFilterBtn');
+        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
 
         function normalizeText(value) {
             return String(value ?? '')
                 .normalize('NFD')
                 .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[\u0111\u0110]/g, 'd')
                 .toLowerCase()
+                .replace(/[^\w]+/g, ' ')
                 .trim();
         }
 
@@ -670,12 +716,23 @@
             return Object.keys(rows[0]).find(key => normColumnKey(key) === target) || null;
         }
 
+        function findColumnByLabels(rows, labels) {
+            if (!rows?.length) return null;
+            for (const label of labels) {
+                const exact = findColumnByLabel(rows, label);
+                if (exact) return exact;
+            }
+            return null;
+        }
+
         function findStatusColumn(rows) {
             if (!rows?.length) return null;
             const exact = findColumnByLabel(rows, STATUS_FILTER_LABEL);
             if (exact) return exact;
+            const noAccentExact = findColumnByLabel(rows, 'Trang thai duyet');
+            if (noAccentExact) return noAccentExact;
             return Object.keys(rows[0]).find(key => {
-                const n = normalizeColName(key);
+                const n = normColumnKey(key);
                 const hasStatus = n.includes('trạng thái') || n.includes('trang thai');
                 const hasDuyet = n.includes('duyệt') || n.includes('duyet');
                 return hasStatus && hasDuyet;
@@ -696,8 +753,67 @@
             }) || null;
         }
 
+        function findChannelColumn(rows) {
+            return findColumnByLabels(rows, CHANNEL_FILTER_LABELS);
+        }
+
+        function findDateColumn(rows) {
+            return findColumnByLabels(rows, DATE_FILTER_LABELS);
+        }
+
         function getRowOwnerValue(row) {
             return String(row[ownerColumnName] ?? '').trim();
+        }
+
+        function getRowChannelValue(row) {
+            return String(row[channelColumnName] ?? '').trim();
+        }
+
+        function datePartsToIso(year, month, day) {
+            const y = Number(year);
+            const m = Number(month);
+            const d = Number(day);
+            const parsed = new Date(y, m - 1, d);
+            if (
+                Number.isNaN(parsed.getTime()) ||
+                parsed.getFullYear() !== y ||
+                parsed.getMonth() !== m - 1 ||
+                parsed.getDate() !== d
+            ) return '';
+            return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        }
+
+        function slashDateToIso(first, second, year) {
+            const a = Number(first);
+            const b = Number(second);
+            if (a > 12 && b <= 12) return datePartsToIso(year, b, a);
+            if (b > 12 && a <= 12) return datePartsToIso(year, a, b);
+            return datePartsToIso(year, a, b) || datePartsToIso(year, b, a);
+        }
+
+        function toIsoDate(value) {
+            const raw = String(value || '').trim();
+            if (!raw) return '';
+            if (/^\d{4}-\d{2}-\d{2}/.test(raw)) return raw.slice(0, 10);
+            const match = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+            if (match) {
+                const [, first, second, year] = match;
+                return slashDateToIso(first, second, year);
+            }
+            const parsed = new Date(raw);
+            if (Number.isNaN(parsed.getTime())) return '';
+            return `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`;
+        }
+
+        function parseFilterDate(value) {
+            const iso = toIsoDate(value);
+            if (!iso) return null;
+            const date = new Date(`${iso}T00:00:00`);
+            return Number.isNaN(date.getTime()) ? null : date;
+        }
+
+        function getRowDateValue(row) {
+            return dateColumnName ? toIsoDate(row[dateColumnName]) : '';
         }
 
         function updateCheckboxFilterLabel(filter) {
@@ -786,6 +902,12 @@
             fillCheckboxFilter(ownerFilter, values, 'Tất cả');
         }
 
+        function populateChannelFilter(data) {
+            if (!channelFilter || !channelColumnName) return;
+            const values = data.map(row => getRowChannelValue(row)).filter(Boolean);
+            fillCheckboxFilter(channelFilter, values, 'Tất cả kênh');
+        }
+
         function getRowStatusValue(row) {
             return String(row[statusColumnName] ?? '').trim();
         }
@@ -827,21 +949,49 @@
             select.disabled = false;
         }
 
+        function populateStatusFilter(data) {
+            if (!statusCheckboxFilter) return;
+            const { values, hasEmpty } = getUniqueStatusValues(data);
+            fillCheckboxFilter(statusCheckboxFilter, hasEmpty ? [...values, STATUS_FILTER_EMPTY] : values, 'Tất cả');
+            const emptyLabel = Array.from(statusCheckboxFilter.querySelectorAll('.filter-check'))
+                .find(label => label.querySelector('input')?.value === STATUS_FILTER_EMPTY);
+            const emptyText = emptyLabel?.querySelector('span');
+            if (emptyText) emptyText.textContent = '(Trống)';
+        }
+
         function getFilteredData() {
             let rows = currentData;
-            const select = document.getElementById('statusFilter');
-            const filterVal = select?.value ?? '';
-            if (filterVal && statusColumnName) {
-                if (filterVal === STATUS_FILTER_EMPTY) {
-                    rows = rows.filter(row => !getRowStatusValue(row));
-                } else {
-                    rows = rows.filter(row => getRowStatusValue(row) === filterVal);
-                }
+
+            const selectedChannels = getSelectedFilterValues(channelFilter).map(normalizeText);
+            if (selectedChannels.length && channelColumnName) {
+                rows = rows.filter(row => selectedChannels.includes(normalizeText(getRowChannelValue(row))));
             }
+
             const selectedOwners = getSelectedFilterValues(ownerFilter).map(normalizeText);
             if (selectedOwners.length && ownerColumnName) {
                 rows = rows.filter(row => selectedOwners.includes(normalizeText(getRowOwnerValue(row))));
             }
+
+            const selectedStatuses = getSelectedFilterValues(statusCheckboxFilter).map(normalizeText);
+            if (selectedStatuses.length && statusColumnName) {
+                rows = rows.filter(row => {
+                    const statusValue = getRowStatusValue(row);
+                    if (!statusValue) return selectedStatuses.includes(normalizeText(STATUS_FILTER_EMPTY));
+                    return selectedStatuses.includes(normalizeText(statusValue));
+                });
+            }
+
+            const startDate = parseFilterDate(startDateFilter?.value);
+            const endDate = parseFilterDate(endDateFilter?.value);
+            if ((startDate || endDate) && dateColumnName) {
+                rows = rows.filter(row => {
+                    const iso = getRowDateValue(row);
+                    const rowDate = iso ? new Date(`${iso}T00:00:00`) : null;
+                    return (!startDate || (rowDate && rowDate >= startDate))
+                        && (!endDate || (rowDate && rowDate <= endDate));
+                });
+            }
+
             return rows;
         }
 
@@ -858,7 +1008,7 @@
                 return;
             }
 
-            if (statusColumnName || ownerColumnName) {
+            if (channelColumnName || ownerColumnName || statusColumnName || dateColumnName) {
                 filterBar?.classList.remove('hidden');
             } else {
                 filterBar?.classList.add('hidden');
@@ -901,17 +1051,26 @@
                 const data = await appsheetFindRows();
                 currentData = data;
                 statusColumnName = findStatusColumn(data);
+                channelColumnName = findChannelColumn(data);
+                dateColumnName = findDateColumn(data);
                 ownerColumnName = findOwnerColumn(data);
 
                 if (data && data.length > 0) {
                     const statusFilter = document.getElementById('statusFilter');
                     if (statusFilter) statusFilter.value = '';
+                    setCheckboxFilterAll(channelFilter);
                     setCheckboxFilterAll(ownerFilter);
+                    setCheckboxFilterAll(statusCheckboxFilter);
+                    if (startDateFilter) startDateFilter.value = '';
+                    if (endDateFilter) endDateFilter.value = '';
+                    populateChannelFilter(data);
                     populateStatusFilter(data);
                     populateOwnerFilter(data);
                     refreshTableView();
                 } else {
                     statusColumnName = null;
+                    channelColumnName = null;
+                    dateColumnName = null;
                     ownerColumnName = null;
                     emptyStateText.innerText = "Bảng hiện tại chưa có dữ liệu nào.";
                     emptyState.classList.remove('hidden');
@@ -1177,13 +1336,32 @@
 
         // Lắng nghe sự kiện nút Tải lại
         document.getElementById('refreshBtn').addEventListener('click', fetchAppSheetData);
-        document.getElementById('statusFilter').addEventListener('change', refreshTableView);
+        document.getElementById('statusFilter')?.addEventListener('change', refreshTableView);
 
         ownerFilter?.querySelector('.filter-menu-btn')?.addEventListener('click', (event) => {
             event.stopPropagation();
             const open = ownerFilter.classList.contains('open');
             document.querySelectorAll('.checkbox-filter').forEach(f => f.classList.remove('open'));
             if (!open) ownerFilter.classList.add('open');
+        });
+        document.querySelectorAll('.checkbox-filter .filter-menu-btn').forEach(button => {
+            if (button.closest('#ownerFilter')) return;
+            button.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const filter = event.currentTarget.closest('.checkbox-filter');
+                const open = filter.classList.contains('open');
+                document.querySelectorAll('.checkbox-filter').forEach(f => f.classList.remove('open'));
+                if (!open) filter.classList.add('open');
+            });
+        });
+        applyDateFilterBtn?.addEventListener('click', refreshTableView);
+        clearFiltersBtn?.addEventListener('click', () => {
+            setCheckboxFilterAll(channelFilter);
+            setCheckboxFilterAll(ownerFilter);
+            setCheckboxFilterAll(statusCheckboxFilter);
+            if (startDateFilter) startDateFilter.value = '';
+            if (endDateFilter) endDateFilter.value = '';
+            refreshTableView();
         });
         document.addEventListener('click', (event) => {
             if (!event.target.closest('.checkbox-filter')) {
