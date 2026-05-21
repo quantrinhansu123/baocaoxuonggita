@@ -529,7 +529,8 @@
         }
 
         .detail-card {
-            width: min(460px, 100%);
+            width: min(920px, calc(100vw - 32px));
+            max-height: calc(100vh - 32px);
             background: white;
             border-radius: 14px;
             box-shadow: 0 22px 70px rgba(74, 74, 94, 0.22);
@@ -573,6 +574,8 @@
             padding: 18px 20px 20px;
             display: grid;
             gap: 12px;
+            max-height: calc(100vh - 130px);
+            overflow: auto;
         }
 
         .detail-row {
@@ -617,6 +620,32 @@
             border: 1px solid #f4ece0;
             border-radius: 10px;
             padding: 12px;
+            max-height: 52vh;
+            overflow: auto;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+        .detail-content-edit {
+            width: 100%;
+            min-height: 48vh;
+            resize: vertical;
+            color: #2d3436;
+            font-size: 13px;
+            line-height: 1.55;
+            font-family: inherit;
+            background: #fff;
+            border: 1px solid #d8c6b6;
+            border-radius: 10px;
+            padding: 12px;
+            outline: none;
+        }
+        .detail-content-edit:focus {
+            border-color: #f4a261;
+            box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.18);
+        }
+        .detail-content-edit[hidden],
+        .detail-action-btn[hidden] {
+            display: none;
         }
         .detail-link-menu {
             position: relative;
@@ -689,6 +718,8 @@
             transition: opacity 0.2s ease;
         }
         .detail-action-btn:hover { opacity: 0.9; }
+        .detail-action-btn.edit { background: #e8f5e9; color: #2e7d32; }
+        .detail-action-btn.cancel { background: #f5f5f5; color: #555; }
         .detail-action-btn.view { background: #e8eaf6; color: #3f51b5; }
         .detail-action-btn.delete { background: #ffebee; color: #c62828; }
         .detail-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -1182,8 +1213,11 @@
                         </span>
                     </span>
                     <div class="detail-content" id="eventDetailContent" style="font-weight: 600; color: #2d3436; font-size: 13px; line-height: 1.5; padding: 12px; background: #faf5ef; border-radius: 8px; border: 1px solid #f0e8dc;"></div>
+                    <textarea class="detail-content-edit" id="eventDetailContentEdit" hidden></textarea>
                 </div>
                 <div class="detail-actions">
+                    <button type="button" class="detail-action-btn cancel" id="eventDetailCancelEditBtn" hidden>Hủy</button>
+                    <button type="button" class="detail-action-btn edit" id="eventDetailEditBtn">Sửa</button>
                     <button type="button" class="detail-action-btn view" id="eventDetailViewBtn">Xem</button>
                     <button type="button" class="detail-action-btn delete" id="eventDetailDeleteBtn">Xóa</button>
                 </div>
@@ -1460,7 +1494,10 @@
         const eventDetailPlatform = document.getElementById("eventDetailPlatform");
         const eventDetailTag = document.getElementById("eventDetailTag");
         const eventDetailContent = document.getElementById("eventDetailContent");
+        const eventDetailContentEdit = document.getElementById("eventDetailContentEdit");
         const eventDetailClose = document.getElementById("eventDetailClose");
+        const eventDetailEditBtn = document.getElementById("eventDetailEditBtn");
+        const eventDetailCancelEditBtn = document.getElementById("eventDetailCancelEditBtn");
         const eventDetailViewBtn = document.getElementById("eventDetailViewBtn");
         const eventDetailDeleteBtn = document.getElementById("eventDetailDeleteBtn");
         const eventDetailOwner = document.getElementById("eventDetailOwner");
@@ -1750,6 +1787,8 @@
             }
             activeDetailCard = null;
             eventDetailViewBtn.disabled = true;
+            eventDetailEditBtn.disabled = true;
+            setContentEditMode(false);
             eventDetailDeleteBtn.disabled = true;
             eventDetailModal.classList.add("show");
             eventDetailModal.setAttribute("aria-hidden", "false");
@@ -2013,6 +2052,18 @@
             });
         }
 
+        function setContentEditMode(isEditing) {
+            if (!eventDetailContent || !eventDetailContentEdit || !eventDetailEditBtn || !eventDetailCancelEditBtn) return;
+            eventDetailContent.hidden = isEditing;
+            eventDetailContentEdit.hidden = !isEditing;
+            eventDetailCancelEditBtn.hidden = !isEditing;
+            eventDetailEditBtn.textContent = isEditing ? "Lưu" : "Sửa";
+            if (isEditing) {
+                eventDetailContentEdit.value = activeDetailCard?.dataset?.content || "";
+                eventDetailContentEdit.focus();
+            }
+        }
+
         function openEventDetail(card) {
             const title = card.dataset.title || card.querySelector(".event-title")?.textContent.trim() || "Chi tiết bài đăng";
             const tag = card.querySelector(".event-tag")?.textContent.trim() || "Chưa có";
@@ -2055,7 +2106,9 @@
 
             activeDetailCard = card;
             eventDetailViewBtn.disabled = !postLink;
+            eventDetailEditBtn.disabled = !card.dataset.rowKey;
             eventDetailDeleteBtn.disabled = !card.dataset.rowKey;
+            setContentEditMode(false);
             eventDetailModal.classList.add("show");
             eventDetailModal.setAttribute("aria-hidden", "false");
             eventDetailClose.focus();
@@ -2065,7 +2118,46 @@
             eventDetailModal.classList.remove("show");
             eventDetailModal.setAttribute("aria-hidden", "true");
             eventDetailLinkMenu?.classList.remove("open");
+            setContentEditMode(false);
             activeDetailCard = null;
+        }
+
+        async function saveContentEdit() {
+            const rowKey = activeDetailCard?.dataset?.rowKey;
+            if (!rowKey) {
+                alert("Không tìm thấy khóa dòng để lưu trên AppSheet.");
+                return;
+            }
+
+            const newContent = eventDetailContentEdit.value;
+            eventDetailEditBtn.textContent = "Đang lưu...";
+            eventDetailEditBtn.disabled = true;
+            eventDetailCancelEditBtn.disabled = true;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: {
+                        "ApplicationAccessKey": API_KEY,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        Action: "Edit",
+                        Properties: { Locale: "vi-VN", Timezone: "Asia/Ho_Chi_Minh" },
+                        Rows: [{ "ID Key": rowKey, "Nội dung": newContent }]
+                    })
+                });
+                if (!response.ok) throw new Error(await response.text());
+                activeDetailCard.dataset.content = newContent;
+                eventDetailContent.textContent = newContent || "Chưa có nội dung chi tiết.";
+                setContentEditMode(false);
+            } catch (error) {
+                alert(`Lưu thất bại: ${error.message || error}`);
+            } finally {
+                eventDetailEditBtn.textContent = eventDetailContentEdit.hidden ? "Sửa" : "Lưu";
+                eventDetailEditBtn.disabled = !activeDetailCard?.dataset?.rowKey;
+                eventDetailCancelEditBtn.disabled = false;
+            }
         }
 
         async function deleteEventByCard(card) {
@@ -2126,6 +2218,17 @@
         });
 
         eventDetailClose.addEventListener("click", closeEventDetail);
+        eventDetailEditBtn?.addEventListener("click", () => {
+            if (!activeDetailCard) return;
+            if (eventDetailContentEdit.hidden) {
+                setContentEditMode(true);
+                return;
+            }
+            saveContentEdit();
+        });
+        eventDetailCancelEditBtn?.addEventListener("click", () => {
+            setContentEditMode(false);
+        });
         eventDetailLinkPin?.addEventListener("click", (event) => {
             event.stopPropagation();
             eventDetailLinkMenu?.classList.toggle("open");
