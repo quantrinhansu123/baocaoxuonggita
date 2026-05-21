@@ -486,11 +486,12 @@
         }
 
         .event-title {
-            font-size: 11px;
+            font-size: 9.5px;
             color: #4a4a5e;
             font-weight: 600;
-            line-height: 1.3;
+            line-height: 1.25;
             margin-bottom: 4px;
+            overflow-wrap: anywhere;
         }
 
         .event-tag {
@@ -547,10 +548,13 @@
         }
 
         .detail-title {
-            font-size: 18px;
-            line-height: 1.35;
+            font-size: 15px;
+            line-height: 1.3;
             color: #4a4a5e;
             font-weight: 700;
+            overflow-wrap: anywhere;
+            white-space: normal;
+            flex: 1;
         }
 
         .detail-close {
@@ -613,6 +617,61 @@
             border: 1px solid #f4ece0;
             border-radius: 10px;
             padding: 12px;
+        }
+        .detail-link-menu {
+            position: relative;
+            display: inline-flex;
+        }
+        .detail-link-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: #e74c3c;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            background: #faf5ef;
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid #f0e8dc;
+            cursor: pointer;
+        }
+        .detail-link-options {
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            min-width: 170px;
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            padding: 6px;
+            background: white;
+            border: 1px solid #f0e8dc;
+            border-radius: 10px;
+            box-shadow: 0 12px 30px rgba(74, 74, 94, 0.16);
+            z-index: 20;
+        }
+        .detail-link-menu.open .detail-link-options {
+            display: flex;
+        }
+        .detail-link-option {
+            border: none;
+            border-radius: 8px;
+            padding: 8px 10px;
+            background: transparent;
+            color: #4a4a5e;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+        }
+        .detail-link-option:hover {
+            background: #faf5ef;
+        }
+        .detail-link-option:disabled {
+            color: #b8adbe;
+            cursor: not-allowed;
+            background: transparent;
         }
         .detail-actions {
             margin-top: 14px;
@@ -1113,10 +1172,14 @@
                 </div>
                 <div class="detail-content-row">
                     <span class="detail-label" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                        <span>Tiêu đề</span>
-                        <a id="eventDetailLinkPin" href="#" target="_blank" title="Mở link bài đăng" style="display: inline-flex; align-items: center; gap: 4px; color: #e74c3c; text-decoration: none; font-size: 13px; font-weight: 700; background: #faf5ef; padding: 2px 8px; border-radius: 6px; border: 1px solid #f0e8dc; transition: all 0.2s;">
-                            Ghim link 📌
-                        </a>
+                        <span>Nội dung</span>
+                        <span class="detail-link-menu" id="eventDetailLinkMenu">
+                            <button type="button" class="detail-link-toggle" id="eventDetailLinkPin">Ghim link 📌</button>
+                            <span class="detail-link-options" id="eventDetailLinkOptions">
+                                <button type="button" class="detail-link-option" data-link-type="post">Link đăng</button>
+                                <button type="button" class="detail-link-option" data-link-type="drive">Link driver</button>
+                            </span>
+                        </span>
                     </span>
                     <div class="detail-content" id="eventDetailContent" style="font-weight: 600; color: #2d3436; font-size: 13px; line-height: 1.5; padding: 12px; background: #faf5ef; border-radius: 8px; border: 1px solid #f0e8dc;"></div>
                 </div>
@@ -1229,15 +1292,17 @@
         }
 
         // ── Tạo 1 event-card từ row data ──
-        function createEventCard(row, dateCol, contentCol, statusCol, channelCol, ownerCol, linkCol, keyCol) {
+        function createEventCard(row, dateCol, titleCol, contentCol, statusCol, channelCol, ownerCol, postLinkCol, driveLinkCol, keyCol) {
             const isoDate  = dateCol   ? toIsoDate(row[dateCol])   : "";
+            const title    = titleCol   ? String(row[titleCol] || "").trim() : "";
             const content  = contentCol ? String(row[contentCol] || "").trim() : "";
             const status   = statusCol  ? (splitStatusValue(row[statusCol])[0] || "") : "";
             const channel  = channelCol ? String(row[channelCol] || "").trim() : "";
             const owner    = ownerCol   ? String(row[ownerCol]   || "").trim() : "";
-            const postLink = linkCol    ? String(row[linkCol]    || "").trim() : "";
+            const postLink = postLinkCol ? String(row[postLinkCol] || "").trim() : "";
+            const driveLink = driveLinkCol ? String(row[driveLinkCol] || "").trim() : "";
             const rowKey   = keyCol     ? String(row[keyCol]     || "").trim() : "";
-            const titleText = content.length > 50 ? content.slice(0, 50) + "…" : content || "(Chưa có tiêu đề)";
+            const titleText = title || "(Chưa có tiêu đề)";
 
             // Phát hiện platform
             const plat = detectPlatformFromText(channel);
@@ -1248,10 +1313,12 @@
             card.setAttribute("tabindex", "0");
             card.setAttribute("role", "button");
             card.dataset.content = content;
+            card.dataset.title = titleText;
             card.dataset.channel = channel;
             card.dataset.owner   = owner;
             if (isoDate)  card.dataset.publishDate = isoDate;
             if (postLink) card.dataset.postLink    = postLink;
+            if (driveLink) card.dataset.driveLink  = driveLink;
             if (rowKey)   card.dataset.rowKey      = rowKey;
             if (status)   card.dataset.approvalStatus = status;
 
@@ -1281,11 +1348,13 @@
             if (!rows || !rows.length) { updateMonthStats(); return; }
             const r0 = rows[0];
             const dateCol    = findColumn(r0, DATE_COLUMNS);
+            const titleCol   = findColumn(r0, TITLE_COLUMNS);
             const contentCol = findColumn(r0, CONTENT_COLUMNS);
             const statusCol  = findColumn(r0, APPROVAL_STATUS_COLUMNS);
             const channelCol = findColumn(r0, CHANNEL_COLUMNS);
             const ownerCol   = findColumn(r0, OWNER_COLUMNS);
-            const linkCol    = findColumn(r0, LINK_COLUMNS);
+            const postLinkCol = findColumn(r0, POST_LINK_COLUMNS);
+            const driveLinkCol = findColumn(r0, DRIVE_LINK_COLUMNS);
             const keyCol     = findColumn(r0, KEY_COLUMNS);
 
             const monthPrefix = `${year}-${String(month).padStart(2,"0")}-`;
@@ -1299,7 +1368,7 @@
                 const td = document.querySelector(`#calendarBody td[data-date="${iso}"]`);
                 if (!td) return;
 
-                const card = createEventCard(row, dateCol, contentCol, statusCol, channelCol, ownerCol, linkCol, keyCol);
+                const card = createEventCard(row, dateCol, titleCol, contentCol, statusCol, channelCol, ownerCol, postLinkCol, driveLinkCol, keyCol);
                 td.appendChild(card);
             });
 
@@ -1351,6 +1420,7 @@
             return Array.isArray(data) ? data : [];
         }
         const APPROVAL_STATUS_COLUMNS = ["Trạng thái duyệt", "Trang thai duyet", "trang thai duyet"];
+        const TITLE_COLUMNS = ["Tiêu đề", "Tieu de", "Title"];
         const CONTENT_COLUMNS = ["Nội dung", "Noi dung", "content"];
         const CHANNEL_COLUMNS = ["Đăng lên kênh nào?", "Dang len kenh nao?", "Kênh", "Kenh", "Platform"];
         const OWNER_COLUMNS = [
@@ -1358,7 +1428,8 @@
             "Người đăng", "Nguoi dang", "Người phụ trách", "Nguoi phu trach", "Owner"
         ];
         const DATE_COLUMNS = ["Ngày muốn đăng", "Ngay muon dang", "Ngày đăng", "Ngay dang"];
-        const LINK_COLUMNS = ["Link bài đăng", "Link bai dang", "Link video / ảnh", "Link video / anh", "Link"];
+        const POST_LINK_COLUMNS = ["Link bài đăng", "Link bai dang"];
+        const DRIVE_LINK_COLUMNS = ["Link video / ảnh", "Link video / anh", "Link drive", "Link driver", "Drive link"];
         const KEY_COLUMNS = ["ID Key", "ID", "_RowNumber"];
         const chipColors = ["#5b8cb8", "#c89942", "#5e9468", "#c97a5e", "#8a6ba8", "#c46b87"];
         const VIETNAM_HOLIDAYS = {
@@ -1394,6 +1465,8 @@
         const eventDetailDeleteBtn = document.getElementById("eventDetailDeleteBtn");
         const eventDetailOwner = document.getElementById("eventDetailOwner");
         const eventDetailLinkPin = document.getElementById("eventDetailLinkPin");
+        const eventDetailLinkMenu = document.getElementById("eventDetailLinkMenu");
+        const eventDetailLinkOptions = document.getElementById("eventDetailLinkOptions");
         const approvalStatusChips = document.getElementById("approvalStatusChips");
         const channelFilter = document.getElementById("channelFilter");
         const ownerFilter = document.getElementById("ownerFilter");
@@ -1435,7 +1508,9 @@
                 .toString()
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[\u0111\u0110]/g, "d")
                 .toLowerCase()
+                .replace(/[^\w]+/g, " ")
                 .trim();
         }
 
@@ -1569,14 +1644,38 @@
             return Number.isNaN(date.getTime()) ? null : date;
         }
 
+        function datePartsToIso(year, month, day) {
+            const y = Number(year);
+            const m = Number(month);
+            const d = Number(day);
+            const parsed = new Date(y, m - 1, d);
+            if (
+                Number.isNaN(parsed.getTime()) ||
+                parsed.getFullYear() !== y ||
+                parsed.getMonth() !== m - 1 ||
+                parsed.getDate() !== d
+            ) return "";
+            return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+        }
+
+        function slashDateToIso(first, second, year) {
+            const a = Number(first);
+            const b = Number(second);
+            if (a > 12 && b <= 12) return datePartsToIso(year, b, a);
+            if (b > 12 && a <= 12) return datePartsToIso(year, a, b);
+
+            // AppSheet API returns Date values as MM/DD/YYYY even when the app locale is vi-VN.
+            return datePartsToIso(year, a, b) || datePartsToIso(year, b, a);
+        }
+
         function toIsoDate(value) {
             const raw = String(value || "").trim();
             if (!raw) return "";
             if (/^\d{4}-\d{2}-\d{2}/.test(raw)) return raw.slice(0, 10);
             const match = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
             if (match) {
-                const [, day, month, year] = match;
-                return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+                const [, first, second, year] = match;
+                return slashDateToIso(first, second, year);
             }
             const parsed = new Date(raw);
             if (Number.isNaN(parsed.getTime())) return "";
@@ -1645,7 +1744,10 @@
             eventDetailTag.textContent = "Ngày lễ";
             eventDetailContent.textContent = holidayName;
             if (eventDetailOwner) eventDetailOwner.textContent = "Hệ thống";
-            if (eventDetailLinkPin) eventDetailLinkPin.style.display = "none";
+            if (eventDetailLinkMenu) {
+                eventDetailLinkMenu.style.display = "none";
+                eventDetailLinkMenu.classList.remove("open");
+            }
             activeDetailCard = null;
             eventDetailViewBtn.disabled = true;
             eventDetailDeleteBtn.disabled = true;
@@ -1793,15 +1895,20 @@
         }
 
         function hydrateEventCardsFromRows(rows) {
+            const titleColumn = findColumn(rows?.[0], TITLE_COLUMNS);
             const contentColumn = findColumn(rows?.[0], CONTENT_COLUMNS);
             const statusColumn = findColumn(rows?.[0], APPROVAL_STATUS_COLUMNS);
             const channelColumn = findColumn(rows?.[0], CHANNEL_COLUMNS);
             const ownerColumn = findColumn(rows?.[0], OWNER_COLUMNS);
             const dateColumn = findColumn(rows?.[0], DATE_COLUMNS);
-            const linkColumn = findColumn(rows?.[0], LINK_COLUMNS);
+            const postLinkColumn = findColumn(rows?.[0], POST_LINK_COLUMNS);
+            const driveLinkColumn = findColumn(rows?.[0], DRIVE_LINK_COLUMNS);
             const keyColumn = findColumn(rows?.[0], KEY_COLUMNS);
-            if (!contentColumn && !statusColumn && !channelColumn && !ownerColumn && !dateColumn) return;
+            if (!titleColumn && !contentColumn && !statusColumn && !channelColumn && !ownerColumn && !dateColumn) return;
 
+            const titles = titleColumn
+                ? rows.map((row) => String(row[titleColumn] || "").trim())
+                : [];
             const contents = contentColumn
                 ? rows.map((row) => String(row[contentColumn] || "").trim())
                 : [];
@@ -1819,6 +1926,11 @@
                 : [];
 
             document.querySelectorAll(".event-card").forEach((card, index) => {
+                if (titles[index]) {
+                    card.dataset.title = titles[index];
+                    const titleEl = card.querySelector(".event-title");
+                    if (titleEl) titleEl.textContent = titles[index];
+                }
                 if (contents[index]) {
                     card.dataset.content = contents[index];
                 }
@@ -1836,8 +1948,11 @@
                 if (dates[index]) {
                     card.dataset.publishDate = dates[index];
                 }
-                if (linkColumn && rows[index] && rows[index][linkColumn] != null) {
-                    card.dataset.postLink = String(rows[index][linkColumn] || "").trim();
+                if (postLinkColumn && rows[index] && rows[index][postLinkColumn] != null) {
+                    card.dataset.postLink = String(rows[index][postLinkColumn] || "").trim();
+                }
+                if (driveLinkColumn && rows[index] && rows[index][driveLinkColumn] != null) {
+                    card.dataset.driveLink = String(rows[index][driveLinkColumn] || "").trim();
                 }
                 if (keyColumn && rows[index] && rows[index][keyColumn] != null) {
                     card.dataset.rowKey = String(rows[index][keyColumn] || "").trim();
@@ -1883,8 +1998,23 @@
                 .find(Boolean) || "";
         }
 
+        function setDetailLinkOptions(postLink, driveLink) {
+            const hasAnyLink = Boolean(postLink || driveLink);
+            if (!eventDetailLinkMenu) return;
+
+            eventDetailLinkMenu.style.display = hasAnyLink ? "inline-flex" : "none";
+            eventDetailLinkMenu.classList.remove("open");
+            eventDetailLinkMenu.dataset.postLink = postLink || "";
+            eventDetailLinkMenu.dataset.driveLink = driveLink || "";
+
+            eventDetailLinkOptions?.querySelectorAll(".detail-link-option").forEach((button) => {
+                const link = button.dataset.linkType === "drive" ? driveLink : postLink;
+                button.disabled = !link;
+            });
+        }
+
         function openEventDetail(card) {
-            const title = card.querySelector(".event-title")?.textContent.trim() || "Chi tiết bài đăng";
+            const title = card.dataset.title || card.querySelector(".event-title")?.textContent.trim() || "Chi tiết bài đăng";
             const tag = card.querySelector(".event-tag")?.textContent.trim() || "Chưa có";
             const content = card.dataset.content || "Chưa có nội dung chi tiết.";
             const day = getEventDay(card);
@@ -1917,18 +2047,11 @@
                 eventDetailOwner.textContent = card.dataset.owner || "Chưa xác định";
             }
             eventDetailTag.textContent = tag;
-            eventDetailContent.textContent = title; // Thay nội dung bằng tiêu đề
+            eventDetailContent.textContent = content;
             
             const postLink = normalizeExternalUrl(card.dataset.postLink || "");
-            if (eventDetailLinkPin) {
-                if (postLink) {
-                    eventDetailLinkPin.href = postLink;
-                    eventDetailLinkPin.style.display = "inline-flex";
-                } else {
-                    eventDetailLinkPin.href = "#";
-                    eventDetailLinkPin.style.display = "none";
-                }
-            }
+            const driveLink = normalizeExternalUrl(card.dataset.driveLink || "");
+            setDetailLinkOptions(postLink, driveLink);
 
             activeDetailCard = card;
             eventDetailViewBtn.disabled = !postLink;
@@ -1941,6 +2064,7 @@
         function closeEventDetail() {
             eventDetailModal.classList.remove("show");
             eventDetailModal.setAttribute("aria-hidden", "true");
+            eventDetailLinkMenu?.classList.remove("open");
             activeDetailCard = null;
         }
 
@@ -2002,6 +2126,20 @@
         });
 
         eventDetailClose.addEventListener("click", closeEventDetail);
+        eventDetailLinkPin?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            eventDetailLinkMenu?.classList.toggle("open");
+        });
+        eventDetailLinkOptions?.addEventListener("click", (event) => {
+            const button = event.target.closest(".detail-link-option");
+            if (!button || button.disabled) return;
+            const link = button.dataset.linkType === "drive"
+                ? eventDetailLinkMenu?.dataset.driveLink
+                : eventDetailLinkMenu?.dataset.postLink;
+            if (!link) return;
+            eventDetailLinkMenu?.classList.remove("open");
+            window.open(link, "_blank", "noopener,noreferrer");
+        });
         eventDetailViewBtn.addEventListener("click", () => {
             const link = normalizeExternalUrl(activeDetailCard?.dataset?.postLink || "");
             if (!link) {
@@ -2016,6 +2154,11 @@
         });
         eventDetailModal.addEventListener("click", (event) => {
             if (event.target === eventDetailModal) closeEventDetail();
+        });
+        document.addEventListener("click", (event) => {
+            if (!eventDetailLinkMenu?.contains(event.target)) {
+                eventDetailLinkMenu?.classList.remove("open");
+            }
         });
         document.addEventListener("keydown", (event) => {
             if (event.key === "Escape" && eventDetailModal.classList.contains("show")) {
