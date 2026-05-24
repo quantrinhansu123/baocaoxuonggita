@@ -466,8 +466,7 @@
         <div class="header-content">
             <div>
                 <div class="page-title">🔥 DANH SÁCH CAMPAIGN LỚN 2026</div>
-                <div class="page-sub">Kế hoạch chuẩn bị trước ít nhất 2 tuần cho các ngày lễ & chiến dịch quan trọng
-                </div>
+                <div class="page-sub">Nguồn dữ liệu: Bảng <strong>Campaign Lớn</strong> (AppSheet)</div>
             </div>
             <div class="warning-badge">
                 <i class="fa-solid fa-triangle-exclamation"></i> Cần chuẩn bị trước ít nhất 2 tuần!
@@ -488,12 +487,9 @@
 
     <!-- Controls -->
     <div class="control-bar">
-        <div class="filter-group">
+        <div class="filter-group" id="channelFilterGroup">
             <span class="filter-label">Kênh:</span>
-            <button class="channel-filter-btn active" data-channel="all">Tất cả</button>
-            <button class="channel-filter-btn" data-channel="FB">Facebook</button>
-            <button class="channel-filter-btn" data-channel="TikTok">TikTok</button>
-            <button class="channel-filter-btn" data-channel="Shopee">Shopee</button>
+            <div id="channelFilterButtons" class="filter-group" style="gap:6px;"></div>
         </div>
 
         <div class="filter-group">
@@ -511,7 +507,7 @@
 
     <!-- Content View Containers -->
     <div class="cards-view" id="cardsView">
-        <!-- Rendered dynamically -->
+        <div class="empty-state" id="loadingState">Đang tải Campaign Lớn...</div>
     </div>
 
     <div class="table-view" id="tableView" style="display: none;">
@@ -535,31 +531,166 @@
     </div>
 
     <script>
-        // Data representation from sheet image
-        const CAMPAIGNS = [
-            { stt: 1, date: '01/01', name: 'Tết Dương Lịch', msg: 'Chào năm mới — kết nối âm nhạc', channels: ['FB', 'TikTok', 'Shopee'], prep: '20/12', parseDate: '2026-01-01', parsePrep: '2025-12-20' },
-            { stt: 2, date: '14/02', name: "Valentine's Day", msg: 'Tặng đàn cho người yêu', channels: ['TikTok', 'FB', 'Shopee'], prep: '01/02', parseDate: '2026-02-14', parsePrep: '2026-02-01' },
-            { stt: 3, date: '16–20/02', name: 'Tết Nguyên Đán', msg: 'Xuân Bính Ngọ — tiếng đàn khai xuân', channels: ['Tất cả kênh'], prep: '05/01', parseDate: '2026-02-16', parsePrep: '2026-01-05' },
-            { stt: 4, date: '08/03', name: 'Ngày Phụ nữ', msg: 'Những cô gái chơi đàn', channels: ['FB', 'TikTok', 'Reels'], prep: '25/02', parseDate: '2026-03-08', parsePrep: '2026-02-25' },
-            { stt: 5, date: '30/04–01/05', name: '30/4 & Lao Động', msg: 'Mega sale — lịch sử & đam mê', channels: ['Tất cả kênh'], prep: '15/04', parseDate: '2026-04-30', parsePrep: '2026-04-15' },
-            { stt: 6, date: '10/05', name: "Mother's Day", msg: 'Tăng mẹ bản nhạc đầu đời', channels: ['TikTok', 'FB'], prep: '01/05', parseDate: '2026-05-10', parsePrep: '2026-05-01' },
-            { stt: 7, date: '01/06', name: 'Quốc tế Thiếu nhi', msg: 'Bé học đàn — STEAM cho trẻ', channels: ['TikTok', 'FB'], prep: '20/05', parseDate: '2026-06-01', parsePrep: '2026-05-20' },
-            { stt: 8, date: '06/06', name: 'Sale 6.6', msg: 'Flash deal 6.6 Shopee', channels: ['Shopee', 'TikTok Shop'], prep: '01/06', parseDate: '2026-06-06', parsePrep: '2026-06-01' },
-            { stt: 9, date: '02/07', name: '50 năm Tp.HCM', msg: 'Guitar của người Sài Gòn', channels: ['FB', 'TikTok'], prep: '20/06', parseDate: '2026-07-02', parsePrep: '2026-06-20' },
-            { stt: 10, date: '07/07', name: 'Thất Tịch 7.7', msg: 'Cặp đôi học đàn — ngày đôi', channels: ['TikTok Shop', 'Shopee'], prep: '01/07', parseDate: '2026-07-07', parsePrep: '2026-07-01' },
-            { stt: 11, date: 'Mid T8', name: 'Back to School', msg: 'Học kỳ này học đàn', channels: ['TikTok', 'FB', 'Shopee'], prep: '01/08', parseDate: '2026-08-15', parsePrep: '2026-08-01' },
-            { stt: 12, date: '08/08', name: 'Sale 8.8', msg: 'Bundle deal 8.8', channels: ['Shopee', 'TikTok Shop'], prep: '03/08', parseDate: '2026-08-08', parsePrep: '2026-08-03' },
-            { stt: 13, date: '02/09', name: 'Quốc khánh 2/9', msg: 'Tự hào Việt Nam — nhạc cụ Việt', channels: ['Tất cả kênh'], prep: '25/08', parseDate: '2026-09-02', parsePrep: '2026-08-25' }
-        ];
+        const APP_ID = 'fb394ab7-2164-4da6-a15e-9e06fefaccb0';
+        const API_KEY = 'V2-wpK1r-oW88b-9sL5Z-DMxbg-zUWg1-FX50y-91Plm-sPMOc';
+        const TABLE_NAME = 'Campaign Lớn';
+        const API_URL = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${encodeURIComponent(TABLE_NAME)}/Action`;
 
+        const COL = {
+            stt: ['stt', 'số thứ tự', 'so thu tu', '#'],
+            dateFrom: ['từ ngày', 'tu ngay', 'ngày bắt đầu', 'start'],
+            dateTo: ['tới ngày', 'toi ngay', 'đến ngày', 'end'],
+            name: ['tên campaign', 'ten campaign', 'campaign', 'chiến dịch'],
+            msg: ['thông điệp chủ đạo', 'thông điệp', 'thong diep', 'message', 'nội dung'],
+            channels: ['kênh triển khai', 'kenh trien khai', 'kênh', 'kenh', 'channel'],
+            prep: ['chuẩn bị trước', 'chuan bi truoc', 'bắt đầu chuẩn bị', 'prep']
+        };
+
+        let rawRows = [];
+        let columnMap = {};
+        let CAMPAIGNS = [];
         let currentFilterChannel = 'all';
         let searchQuery = '';
 
+        function norm(s) {
+            return String(s ?? '').trim().toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
+        }
+        function findColKey(sampleRow, aliases) {
+            if (!sampleRow) return '';
+            for (const k of Object.keys(sampleRow)) {
+                const nk = norm(k);
+                if (aliases.some(a => nk === norm(a) || nk.includes(norm(a)))) return k;
+            }
+            return '';
+        }
+        function getMap(sampleRow) {
+            const map = {};
+            for (const [name, aliases] of Object.entries(COL)) {
+                map[name] = findColKey(sampleRow, aliases);
+            }
+            return map;
+        }
+        function toIsoDate(value, defaultYear) {
+            const v = String(value ?? '').trim().replace(/^từ\s+/i, '').trim();
+            if (!v) return '';
+            if (/^\d{4}-\d{2}-\d{2}/.test(v)) return v.slice(0, 10);
+            const year = defaultYear || 2026;
+            const m = v.match(/(\d{1,2})\/(\d{1,2})(?:\/(\d{4}))?/);
+            if (m) {
+                const y = m[3] || year;
+                return `${y}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+            }
+            const d = new Date(v);
+            if (Number.isNaN(d.getTime())) return '';
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+        function buildDateRange(fromRaw, toRaw) {
+            const from = String(fromRaw ?? '').trim();
+            const to = String(toRaw ?? '').trim();
+            if (from && to) return from === to ? from : `${from} – ${to}`;
+            return from || to || '—';
+        }
+        function parseChannels(val) {
+            const t = String(val ?? '').trim();
+            if (!t) return [];
+            if (norm(t).includes('tat ca')) return ['Tất cả kênh'];
+            return t.split(/[,;|/]/).map(s => s.trim()).filter(Boolean);
+        }
+        function rowToView(r, index) {
+            const fromRaw = columnMap.dateFrom ? String(r[columnMap.dateFrom] || '').trim() : '';
+            const toRaw = columnMap.dateTo ? String(r[columnMap.dateTo] || '').trim() : '';
+            const dateRaw = buildDateRange(fromRaw, toRaw);
+            const prepRaw = columnMap.prep ? String(r[columnMap.prep] || '').trim() : '';
+            const parseDate = toIsoDate(fromRaw) || toIsoDate(toRaw);
+            const parsePrep = toIsoDate(prepRaw);
+            const sttVal = columnMap.stt ? parseInt(String(r[columnMap.stt] || ''), 10) : NaN;
+            return {
+                stt: Number.isFinite(sttVal) ? sttVal : index + 1,
+                date: dateRaw,
+                name: columnMap.name ? String(r[columnMap.name] || '').trim() : '',
+                msg: columnMap.msg ? String(r[columnMap.msg] || '').trim() : '',
+                channels: columnMap.channels ? parseChannels(r[columnMap.channels]) : [],
+                prep: prepRaw,
+                parseDate: parseDate || '',
+                parsePrep: parsePrep || '',
+                sortKey: parseDate || dateRaw
+            };
+        }
+        function formatDM(iso, raw) {
+            if (raw) return raw;
+            if (!iso) return '';
+            const p = iso.split('-');
+            return p.length === 3 ? `${p[2]}/${p[1]}` : iso;
+        }
+        async function appsheetRequest(action, rows) {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'ApplicationAccessKey': API_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Action: action, Properties: { Locale: 'vi-VN', Timezone: 'Asia/Ho_Chi_Minh' }, Rows: rows || [] })
+            });
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || `HTTP ${response.status}`);
+            }
+            const out = await response.json().catch(() => ([]));
+            return Array.isArray(out) ? out : [];
+        }
+        async function loadRows() {
+            rawRows = await appsheetRequest('Find', []);
+            columnMap = getMap(rawRows[0] || {});
+            CAMPAIGNS = rawRows.map((r, i) => {
+                const v = rowToView(r, i);
+                v.date = formatDM(v.parseDate, v.date);
+                v.prep = formatDM(v.parsePrep, v.prep);
+                return v;
+            }).filter(c => c.name || c.date || c.msg)
+                .sort((a, b) => String(a.sortKey).localeCompare(String(b.sortKey)));
+            renderChannelFilters();
+            renderUrgency();
+            render();
+        }
+        function getUniqueChannels() {
+            const set = new Set();
+            CAMPAIGNS.forEach(c => {
+                c.channels.forEach(ch => set.add(ch));
+            });
+            return Array.from(set).sort((a, b) => a.localeCompare(b, 'vi'));
+        }
+        function renderChannelFilters() {
+            const container = document.getElementById('channelFilterButtons');
+            if (!container) return;
+            container.innerHTML = '';
+            const allBtn = document.createElement('button');
+            allBtn.type = 'button';
+            allBtn.className = 'channel-filter-btn active';
+            allBtn.dataset.channel = 'all';
+            allBtn.textContent = 'Tất cả';
+            container.appendChild(allBtn);
+            getUniqueChannels().forEach(ch => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'channel-filter-btn';
+                btn.dataset.channel = ch;
+                btn.textContent = ch;
+                container.appendChild(btn);
+            });
+            container.querySelectorAll('.channel-filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    container.querySelectorAll('.channel-filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilterChannel = btn.dataset.channel;
+                    render();
+                });
+            });
+        }
+
         // Calculate countdown in days
         function getDaysDiff(targetDateStr) {
+            if (!targetDateStr) return 999;
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            const target = new Date(targetDateStr);
+            const target = new Date(targetDateStr + 'T00:00:00');
+            if (Number.isNaN(target.getTime())) return 999;
             const diffTime = target - today;
             return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         }
@@ -571,7 +702,7 @@
             // Sort campaigns by the prep date closest to current date or already passed but upcoming
             const sorted = [...CAMPAIGNS]
                 .map(c => ({ ...c, daysLeft: getDaysDiff(c.parsePrep) }))
-                .filter(c => c.daysLeft <= 30 && c.daysLeft >= -5) // upcoming or just started
+                .filter(c => c.parsePrep && c.daysLeft <= 30 && c.daysLeft >= -5)
                 .sort((a, b) => a.daysLeft - b.daysLeft);
 
             if (sorted.length === 0) {
@@ -603,11 +734,14 @@
         function render() {
             const cardsView = document.getElementById('cardsView');
             const tableBody = document.getElementById('tableBody');
+            const loading = document.getElementById('loadingState');
 
             let filtered = CAMPAIGNS.filter(c => {
-                // Channel filter
                 if (currentFilterChannel !== 'all') {
-                    const hasChan = c.channels.some(ch => ch.toLowerCase().includes(currentFilterChannel.toLowerCase())) || c.channels.includes('Tất cả kênh');
+                    const key = norm(currentFilterChannel);
+                    const hasChan = c.channels.some(ch =>
+                        norm(ch) === key || norm(ch).includes(key) || key.includes(norm(ch))
+                    ) || c.channels.some(ch => norm(ch).includes('tat ca'));
                     if (!hasChan) return false;
                 }
                 // Search filter
@@ -618,9 +752,9 @@
                 return true;
             });
 
-            // Clear views
             cardsView.innerHTML = '';
             tableBody.innerHTML = '';
+            if (loading) loading.remove();
 
             if (filtered.length === 0) {
                 const emptyHtml = `
@@ -635,7 +769,7 @@
             }
 
             filtered.forEach(c => {
-                const daysToPrep = getDaysDiff(c.parsePrep);
+                const daysToPrep = c.parsePrep ? getDaysDiff(c.parsePrep) : 999;
                 let countdownText = '';
                 let countdownClass = '';
 
@@ -720,24 +854,16 @@
             document.getElementById('tableView').style.display = 'block';
         });
 
-        // Filters event listeners
-        document.querySelectorAll('.channel-filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.channel-filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentFilterChannel = btn.dataset.channel;
-                render();
-            });
-        });
-
         document.getElementById('searchInput').addEventListener('input', (e) => {
             searchQuery = e.target.value;
             render();
         });
 
-        // Init
-        renderUrgency();
-        render();
+        loadRows().catch((err) => {
+            const cardsView = document.getElementById('cardsView');
+            cardsView.innerHTML = `<div class="empty-state">Không tải được bảng Campaign Lớn: ${err.message || err}</div>`;
+            document.getElementById('tableBody').innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:#c0392b;">${err.message || err}</td></tr>`;
+        });
     </script>
 
 </body>

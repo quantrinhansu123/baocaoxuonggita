@@ -115,6 +115,18 @@
             border-color: #0f3460;
         }
 
+        .btn-primary {
+            border: 1px solid #0f3460;
+            background: #0f3460;
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-primary:hover { opacity: 0.92; }
+
         /* Table View */
         .table-view {
             padding: 0 32px;
@@ -201,6 +213,24 @@
             font-weight: 500;
         }
 
+        .actions-cell {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .icon-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            cursor: pointer;
+        }
+        .icon-btn.edit { color: #0f3460; border-color: #bfdbfe; background: #eff6ff; }
+        .icon-btn.delete { color: #b91c1c; border-color: #fecaca; background: #fef2f2; }
+        .icon-btn:hover { filter: brightness(0.96); }
+
         /* Double day highlight row */
         .highlight-row {
             background: #faf5ff;
@@ -219,6 +249,72 @@
             text-align: center;
             padding: 48px;
             color: #64748b;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            padding: 16px;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-card {
+            width: min(560px, 100%);
+            background: #fff;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+        .modal-head {
+            padding: 14px 18px;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 800;
+            color: #0f3460;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-body { padding: 14px 18px; display: grid; gap: 12px; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .field label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .field input, .field select, .field textarea {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 13px;
+        }
+        .field textarea { min-height: 84px; resize: vertical; }
+        .field.span-2 { grid-column: span 2; }
+        .modal-foot {
+            padding: 12px 18px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        .btn-light {
+            border: 1px solid #cbd5e1;
+            background: #fff;
+            color: #334155;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
         }
 
         @media(max-width: 768px) {
@@ -253,15 +349,15 @@
 
     <!-- Controls -->
     <div class="control-bar">
-        <div class="filter-group">
+        <div class="filter-group" id="typeFilterGroup">
             <span class="filter-label">Lọc theo loại:</span>
-            <button class="filter-btn active" data-type="all">Tất cả</button>
-            <button class="filter-btn" data-type="sale">Ngày Sale Lương</button>
-            <button class="filter-btn" data-type="double">Ngày Đôi (Siêu Sale)</button>
+            <div id="typeFilterButtons" class="filter-group" style="gap:6px;"></div>
+            <span id="typeFilterCount" style="font-size:12px;color:#64748b;font-weight:600;"></span>
         </div>
 
         <div class="filter-group">
             <input type="text" class="search-input" id="searchInput" placeholder="🔍 Tìm kiếm sự kiện, gợi ý hành động...">
+            <button class="btn-primary" id="addRowBtn"><i class="fa-solid fa-plus"></i> Thêm ngày</button>
         </div>
     </div>
 
@@ -276,6 +372,7 @@
                         <th style="width: 160px;">Loại</th>
                         <th style="width: 120px;">Thứ</th>
                         <th>Gợi ý hành động</th>
+                        <th style="width: 110px; text-align: right;">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -289,90 +386,242 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="eventModal">
+        <div class="modal-card">
+            <div class="modal-head">
+                <span id="modalTitle">Thêm ngày đặc biệt</span>
+                <button class="btn-light" type="button" id="closeModalBtn">Đóng</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="fDate">Ngày</label>
+                        <input id="fDate" type="date">
+                    </div>
+                    <div class="field">
+                        <label for="fType">Loại</label>
+                        <select id="fType"></select>
+                    </div>
+                    <div class="field">
+                        <label for="fName">Tên hiển thị</label>
+                        <input id="fName" type="text" placeholder="Ví dụ: 9.9">
+                    </div>
+                    <div class="field">
+                        <label for="fDay">Thứ</label>
+                        <input id="fDay" type="text" placeholder="Ví dụ: Thứ 4">
+                    </div>
+                    <div class="field span-2">
+                        <label for="fAction">Gợi ý hành động</label>
+                        <textarea id="fAction" placeholder="Nội dung chiến dịch..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn-light" type="button" id="cancelModalBtn">Hủy</button>
+                <button class="btn-primary" type="button" id="saveModalBtn">Lưu</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const DATA = [
-            // Tháng 1
-            { month: 'T1', date: '05/01', type: 'Sale lương', day: 'Thứ 2', action: 'Flash sale đàn entry, story 24h, Shopee flash deal' },
-            { month: 'T1', date: '15/01', type: 'Sale lương', day: 'Thứ 5', action: 'Mid-month deal + warm-up Tết' },
-            { month: 'T1', date: '25/01', type: 'Sale lương', day: 'Chủ nhật', action: 'Cuối tháng + tinh thần Tết — combo phụ kiện' },
-            // Tháng 2
-            { month: 'T2', date: '05/02', type: 'Sale lương', day: 'Thứ 5', action: 'Pre-Valentine deal, story đếm ngược' },
-            { month: 'T2', date: '15/02', type: 'Sale lương', day: 'Chủ nhật', action: 'Sau Valentine + Khai Xuân — nhu cầu học đàn tăng' },
-            { month: 'T2', date: '25/02', type: 'Sale lương', day: 'Thứ 4', action: 'Hậu Tết sale, học đàn đầu năm' },
-            // Tháng 3
-            { month: 'T3', date: '05/03', type: 'Sale lương', day: 'Thứ 5', action: 'Pre 8/3 — quà tặng phụ nữ' },
-            { month: 'T3', date: '15/03', type: 'Sale lương', day: 'Chủ nhật', action: 'Post 8/3 — duy trì momentum' },
-            { month: 'T3', date: '25/03', type: 'Sale lương', day: 'Thứ 4', action: 'Cuối tháng 3' },
-            // Tháng 4
-            { month: 'T4', date: '05/04', type: 'Sale lương', day: 'Chủ nhật', action: 'Đầu tháng 4, gần Giỗ Tổ' },
-            { month: 'T4', date: '15/04', type: 'Sale lương', day: 'Thứ 4', action: 'Warm-up cho 30/4' },
-            { month: 'T4', date: '25/04', type: 'Sale lương', day: 'Thứ 7', action: 'Trùng Giỗ Tổ Hùng Vương — kép' },
-            // Tháng 5
-            { month: 'T5', date: '05/05', type: 'Sale lương', day: 'Thứ 3', action: 'Post 30/4, duy trì sale' },
-            { month: 'T5', date: '15/05', type: 'Sale lương', day: 'Thứ 6', action: 'Mid-month T5' },
-            { month: 'T5', date: '25/05', type: 'Sale lương', day: 'Thứ 2', action: 'Cuối T5, gần Thiếu nhi' },
-            // Tháng 6
-            { month: 'T6', date: '05/06', type: 'Sale lương', day: 'Thứ 6', action: 'Pre 6.6 — hype ngày đôi' },
-            { month: 'T6', date: '06/06', type: '6.6', day: 'Thứ 7', action: 'SIÊU SALE 6.6 — deal đặc biệt, tăng ngân sách ads', isDouble: true },
-            { month: 'T6', date: '15/06', type: 'Sale lương', day: 'Thứ 2', action: 'Post 6.6 + Father\'s Day' },
-            { month: 'T6', date: '25/06', type: 'Sale lương', day: 'Thứ 5', action: 'Mid-year clearance bắt đầu' },
-            // Tháng 7
-            { month: 'T7', date: '05/07', type: 'Sale lương', day: 'Chủ nhật', action: 'Đầu tháng 7' },
-            { month: 'T7', date: '07/07', type: '7.7 (Thất Tịch)', day: 'Thứ 3', action: 'SIÊU SALE 7.7 — trend tình yêu Á Đông cực viral', isDouble: true },
-            { month: 'T7', date: '15/07', type: 'Sale lương', day: 'Thứ 4', action: 'Mid-month T7' },
-            { month: 'T7', date: '25/07', type: 'Sale lương', day: 'Thứ 7', action: 'Cuối T7' },
-            // Tháng 8
-            { month: 'T8', date: '05/08', type: 'Sale lương', day: 'Thứ 4', action: 'Đầu T8' },
-            { month: 'T8', date: '08/08', type: '8.8', day: 'Thứ 7', action: 'SALE 8.8 — tháng ít event, 8.8 nổi bật', isDouble: true },
-            { month: 'T8', date: '15/08', type: 'Sale lương', day: 'Thứ 7', action: 'Mid-month, back-to-school combo' },
-            { month: 'T8', date: '25/08', type: 'Sale lương', day: 'Thứ 2', action: 'Cuối T8' },
-            // Tháng 9
-            { month: 'T9', date: '05/09', type: 'Sale lương', day: 'Thứ 7', action: 'Đầu T9, sau Quốc khánh' },
-            { month: 'T9', date: '09/09', type: '9.9', day: 'Thứ 4', action: 'SIÊU SALE 9.9 — Mở đầu chuỗi Mega Sale cuối năm', isDouble: true },
-            { month: 'T9', date: '15/09', type: 'Sale lương', day: 'Thứ 3', action: 'Mid-month deal' },
-            { month: 'T9', date: '25/09', type: 'Sale lương', day: 'Thứ 6', action: 'Cuối T9, warm-up 10.10' },
-            // Tháng 10
-            { month: 'T10', date: '05/10', type: 'Sale lương', day: 'Thứ 2', action: 'Pre 10.10' },
-            { month: 'T10', date: '10/10', type: '10.10', day: 'Thứ 7', action: 'MEGA SALE 10.10 — Tập trung đẩy doanh số', isDouble: true },
-            { month: 'T10', date: '15/10', type: 'Sale lương', day: 'Thứ 5', action: 'Post 10.10, warm-up 20/10' },
-            { month: 'T10', date: '25/10', type: 'Sale lương', day: 'Chủ nhật', action: 'Cuối T10' },
-            // Tháng 11
-            { month: 'T11', date: '05/11', type: 'Sale lương', day: 'Thứ 5', action: 'Pre 11.11' },
-            { month: 'T11', date: '11/11', type: '11.11', day: 'Thứ 4', action: 'BIGGEST SALE 11.11 — Đỉnh điểm mua sắm e-com', isDouble: true },
-            { month: 'T11', date: '15/11', type: 'Sale lương', day: 'Chủ nhật', action: 'Post 11.11' },
-            { month: 'T11', date: '25/11', type: 'Sale lương', day: 'Thứ 4', action: 'Cuối T11, Black Friday' },
-            // Tháng 12
-            { month: 'T12', date: '05/12', type: 'Sale lương', day: 'Thứ 7', action: 'Pre 12.12' },
-            { month: 'T12', date: '12/12', type: '12.12', day: 'Thứ 7', action: 'FINAL MEGA SALE 12.12 — Dọn kho cuối năm', isDouble: true },
-            { month: 'T12', date: '15/12', type: 'Sale lương', day: 'Thứ 3', action: 'Warm-up Giáng Sinh' },
-            { month: 'T12', date: '25/12', type: 'Sale lương', day: 'Thứ 6', action: 'Giáng Sinh Sale, End of year' }
-        ];
+        const APP_ID = 'fb394ab7-2164-4da6-a15e-9e06fefaccb0';
+        const API_KEY = 'V2-wpK1r-oW88b-9sL5Z-DMxbg-zUWg1-FX50y-91Plm-sPMOc';
+        const TABLE_NAME = 'Ngày đặc biệt';
+        const API_URL = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${encodeURIComponent(TABLE_NAME)}/Action`;
+
+        const KEY_ALIASES = ['ID', 'ID Key', 'id', '_RowNumber'];
+        const DATE_ALIASES = ['ngày', 'date', 'ngay'];
+        const TYPE_ALIASES = ['loại', 'loai', 'type'];
+        const NAME_ALIASES = ['tên', 'ten', 'sự kiện', 'su kien', 'tên hiển thị', 'ten hien thi'];
+        const DAY_ALIASES = ['thứ', 'thu', 'day'];
+        const ACTION_ALIASES = ['gợi ý hành động', 'goi y hanh dong', 'action', 'nội dung', 'noi dung'];
+
+        let rawRows = [];
+        let columnMap = {};
+        let currentEditRowKey = '';
 
         let activeFilter = 'all';
         let searchQuery = '';
 
+        function norm(s) {
+            return String(s ?? '').trim().toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
+        }
+        function findColKey(sampleRow, aliases) {
+            if (!sampleRow) return '';
+            for (const k of Object.keys(sampleRow)) {
+                const nk = norm(k);
+                if (aliases.some(a => nk === norm(a) || nk.includes(norm(a)))) return k;
+            }
+            return '';
+        }
+        function getMap(sampleRow) {
+            return {
+                key: findColKey(sampleRow, KEY_ALIASES),
+                date: findColKey(sampleRow, DATE_ALIASES),
+                type: findColKey(sampleRow, TYPE_ALIASES),
+                name: findColKey(sampleRow, NAME_ALIASES),
+                day: findColKey(sampleRow, DAY_ALIASES),
+                action: findColKey(sampleRow, ACTION_ALIASES)
+            };
+        }
+        function toIsoDate(value) {
+            const v = String(value ?? '').trim();
+            if (!v) return '';
+            if (/^\d{4}-\d{2}-\d{2}/.test(v)) return v.slice(0, 10);
+            const m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            if (m) return `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+            const d = new Date(v);
+            if (Number.isNaN(d.getTime())) return '';
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+        function formatDateDM(iso) {
+            if (!iso) return '';
+            const p = iso.split('-');
+            if (p.length !== 3) return iso;
+            return `${p[2]}/${p[1]}`;
+        }
+        function monthFromIso(iso) {
+            const p = String(iso || '').split('-');
+            return p.length >= 2 ? `T${Number(p[1]) || ''}` : '';
+        }
+        function rowToView(r) {
+            const iso = toIsoDate(columnMap.date ? r[columnMap.date] : '');
+            const name = columnMap.name ? String(r[columnMap.name] || '').trim() : '';
+            const typeRaw = columnMap.type ? String(r[columnMap.type] || '').trim() : '';
+            const action = columnMap.action ? String(r[columnMap.action] || '').trim() : '';
+            const day = columnMap.day ? String(r[columnMap.day] || '').trim() : '';
+            const isDouble = norm(typeRaw).includes('doi') || /\d{1,2}\.\d{1,2}/.test(typeRaw) || norm(typeRaw).includes('double');
+            const typeLabel = typeRaw || name || (isDouble ? 'Ngày đôi' : 'Sale lương');
+            return {
+                key: columnMap.key ? String(r[columnMap.key] || '') : '',
+                month: monthFromIso(iso),
+                date: formatDateDM(iso),
+                isoDate: iso,
+                typeRaw: typeRaw,
+                typeKey: norm(typeRaw) || '__empty__',
+                type: typeLabel,
+                day: day || '',
+                action: action || '',
+                isDouble: isDouble
+            };
+        }
+
+        function getUniqueTypes() {
+            const map = new Map();
+            rawRows.forEach((r) => {
+                const typeRaw = columnMap.type ? String(r[columnMap.type] || '').trim() : '';
+                const key = norm(typeRaw) || '__empty__';
+                const label = typeRaw || '(Trống)';
+                if (!map.has(key)) map.set(key, label);
+            });
+            return Array.from(map.entries()).sort((a, b) => a[1].localeCompare(b[1], 'vi'));
+        }
+
+        function populateTypeSelect(selectedValue) {
+            const select = document.getElementById('fType');
+            if (!select) return;
+            const types = getUniqueTypes();
+            select.innerHTML = '';
+            const defaults = ['Sale lương', 'Ngày đôi'];
+            const labels = types.length ? types.map(([, label]) => label) : defaults;
+            labels.forEach((label) => {
+                const opt = document.createElement('option');
+                opt.value = label;
+                opt.textContent = label;
+                select.appendChild(opt);
+            });
+            if (selectedValue && ![...select.options].some((o) => o.value === selectedValue)) {
+                const extra = document.createElement('option');
+                extra.value = selectedValue;
+                extra.textContent = selectedValue;
+                select.appendChild(extra);
+            }
+            if (selectedValue) select.value = selectedValue;
+            else if (select.options.length) select.selectedIndex = 0;
+        }
+
+        function renderTypeFilters() {
+            const container = document.getElementById('typeFilterButtons');
+            if (!container) return;
+
+            const types = getUniqueTypes();
+            if (activeFilter !== 'all' && !types.some(([key]) => key === activeFilter)) {
+                activeFilter = 'all';
+            }
+
+            container.innerHTML = '';
+            const allBtn = document.createElement('button');
+            allBtn.type = 'button';
+            allBtn.className = 'filter-btn' + (activeFilter === 'all' ? ' active' : '');
+            allBtn.dataset.type = 'all';
+            allBtn.textContent = 'Tất cả';
+            container.appendChild(allBtn);
+
+            types.forEach(([key, label]) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'filter-btn' + (activeFilter === key ? ' active' : '');
+                btn.dataset.type = key;
+                btn.textContent = label;
+                container.appendChild(btn);
+            });
+
+            container.querySelectorAll('.filter-btn').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    container.querySelectorAll('.filter-btn').forEach((b) => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    activeFilter = btn.dataset.type;
+                    renderTable();
+                });
+            });
+
+        }
+        async function appsheetRequest(action, rows) {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'ApplicationAccessKey': API_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Action: action, Properties: { Locale: 'vi-VN', Timezone: 'Asia/Ho_Chi_Minh' }, Rows: rows || [] })
+            });
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || `HTTP ${response.status}`);
+            }
+            const out = await response.json().catch(() => ([]));
+            return Array.isArray(out) ? out : [];
+        }
+        async function loadRows() {
+            rawRows = await appsheetRequest('Find', []);
+            columnMap = getMap(rawRows[0] || {});
+            renderTypeFilters();
+            populateTypeSelect();
+            renderTable();
+        }
+        function getFilteredRows() {
+            return rawRows.map(rowToView).filter(row => {
+                if (activeFilter !== 'all' && row.typeKey !== activeFilter) return false;
+                if (searchQuery) {
+                    const q = searchQuery.toLowerCase();
+                    if (!row.type.toLowerCase().includes(q) &&
+                        !row.typeRaw.toLowerCase().includes(q) &&
+                        !row.action.toLowerCase().includes(q) &&
+                        !row.date.includes(q)) return false;
+                }
+                return true;
+            }).sort((a, b) => (a.isoDate || '').localeCompare(b.isoDate || ''));
+        }
+
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             const emptyState = document.getElementById('emptyState');
-            
+
             // Filter logic
-            const filtered = DATA.filter(row => {
-                // Category filter
-                if (activeFilter === 'sale' && row.isDouble) return false;
-                if (activeFilter === 'double' && !row.isDouble) return false;
-                
-                // Search filter
-                if (searchQuery) {
-                    const q = searchQuery.toLowerCase();
-                    if (!row.type.toLowerCase().includes(q) && 
-                        !row.action.toLowerCase().includes(q) &&
-                        !row.date.includes(q)) {
-                        return false;
-                    }
-                }
-                
-                return true;
-            });
+            const filtered = getFilteredRows();
+            const countEl = document.getElementById('typeFilterCount');
+            if (countEl) {
+                countEl.textContent = (activeFilter === 'all' && !searchQuery)
+                    ? `${rawRows.length} dòng`
+                    : `Hiển thị ${filtered.length} / ${rawRows.length}`;
+            }
 
             tbody.innerHTML = '';
             
@@ -389,7 +638,7 @@
                 if (row.month !== lastMonth && activeFilter === 'all' && !searchQuery) {
                     const tr = document.createElement('tr');
                     tr.className = 'month-row';
-                    tr.innerHTML = `<td colspan="5">🗓️ Tháng ${row.month.replace('T', '')}</td>`;
+                    tr.innerHTML = `<td colspan="6">🗓️ Tháng ${row.month.replace('T', '')}</td>`;
                     tbody.appendChild(tr);
                     lastMonth = row.month;
                 }
@@ -406,28 +655,107 @@
                     <td><span class="type-badge ${typeBadgeCls}">${typeIcon} &nbsp;${row.type}</span></td>
                     <td class="col-day">${row.day}</td>
                     <td class="col-action">${row.action}</td>
+                    <td>
+                        <div class="actions-cell">
+                            <button class="icon-btn edit" title="Sửa" data-action="edit" data-key="${row.key}"><i class="fa-solid fa-pen"></i></button>
+                            <button class="icon-btn delete" title="Xóa" data-action="delete" data-key="${row.key}"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // Event Listeners
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-                activeFilter = e.target.dataset.type;
-                renderTable();
-            });
-        });
+        function openModal(isEdit, key) {
+            const modal = document.getElementById('eventModal');
+            const title = document.getElementById('modalTitle');
+            const fDate = document.getElementById('fDate');
+            const fType = document.getElementById('fType');
+            const fName = document.getElementById('fName');
+            const fDay = document.getElementById('fDay');
+            const fAction = document.getElementById('fAction');
+            currentEditRowKey = isEdit ? key : '';
+            title.textContent = isEdit ? 'Sửa ngày đặc biệt' : 'Thêm ngày đặc biệt';
+            fDate.value = '';
+            fName.value = '';
+            fDay.value = '';
+            fAction.value = '';
+            let selectedType = getUniqueTypes()[0]?.[1] || 'Sale lương';
+            if (isEdit) {
+                const row = rawRows.find(r => String(columnMap.key ? r[columnMap.key] : '') === String(key));
+                if (row) {
+                    fDate.value = toIsoDate(columnMap.date ? row[columnMap.date] : '');
+                    selectedType = columnMap.type ? String(row[columnMap.type] || '').trim() : selectedType;
+                    fName.value = columnMap.name ? String(row[columnMap.name] || '') : '';
+                    fDay.value = columnMap.day ? String(row[columnMap.day] || '') : '';
+                    fAction.value = columnMap.action ? String(row[columnMap.action] || '') : '';
+                }
+            }
+            populateTypeSelect(selectedType);
+            modal.classList.add('show');
+        }
+        function closeModal() { document.getElementById('eventModal').classList.remove('show'); }
+        async function saveModal() {
+            const fDate = document.getElementById('fDate').value;
+            const fType = document.getElementById('fType').value;
+            const fName = document.getElementById('fName').value.trim();
+            const fDay = document.getElementById('fDay').value.trim();
+            const fAction = document.getElementById('fAction').value.trim();
+            if (!fDate) { alert('Vui lòng chọn ngày'); return; }
+            const payload = {};
+            if (columnMap.date) payload[columnMap.date] = fDate;
+            if (columnMap.type) payload[columnMap.type] = fType;
+            if (columnMap.name) payload[columnMap.name] = fName || fType || '';
+            if (columnMap.day) payload[columnMap.day] = fDay;
+            if (columnMap.action) payload[columnMap.action] = fAction;
+            if (currentEditRowKey) {
+                payload[columnMap.key] = currentEditRowKey;
+                await appsheetRequest('Edit', [payload]);
+            } else {
+                await appsheetRequest('Add', [payload]);
+            }
+            closeModal();
+            await loadRows();
+        }
+        async function deleteRow(key) {
+            if (!key) return;
+            if (!confirm('Bạn có chắc muốn xóa dòng này?')) return;
+            const payload = {};
+            payload[columnMap.key] = key;
+            await appsheetRequest('Delete', [payload]);
+            await loadRows();
+        }
 
         document.getElementById('searchInput').addEventListener('input', (e) => {
             searchQuery = e.target.value.trim();
             renderTable();
         });
 
+        document.getElementById('addRowBtn').addEventListener('click', () => openModal(false, ''));
+        document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+        document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
+        document.getElementById('saveModalBtn').addEventListener('click', async () => {
+            try { await saveModal(); } catch (e) { alert('Lưu thất bại: ' + (e.message || e)); }
+        });
+        document.getElementById('eventModal').addEventListener('click', (e) => {
+            if (e.target.id === 'eventModal') closeModal();
+        });
+        document.getElementById('tableBody').addEventListener('click', async (e) => {
+            const btn = e.target.closest('button[data-action]');
+            if (!btn) return;
+            const key = btn.dataset.key || '';
+            if (btn.dataset.action === 'edit') {
+                openModal(true, key);
+            } else if (btn.dataset.action === 'delete') {
+                try { await deleteRow(key); } catch (err) { alert('Xóa thất bại: ' + (err.message || err)); }
+            }
+        });
+
         // Initial render
-        renderTable();
+        loadRows().catch(err => {
+            document.getElementById('emptyState').style.display = 'block';
+            document.getElementById('emptyState').innerHTML = '<p>Không tải được dữ liệu bảng Ngày đặc biệt: ' + (err.message || err) + '</p>';
+        });
 
     </script>
 </body>

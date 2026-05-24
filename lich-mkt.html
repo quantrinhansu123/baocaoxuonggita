@@ -387,8 +387,7 @@
 
     <div class="page-header">
         <div class="page-title">📅 LỊCH CHIẾN DỊCH MARKETING 2026 — GUITAR SÀI THÀNH</div>
-        <div class="page-sub">Tổng hợp: Ngày lễ VN · Quốc tế · Sale ecom (5-15-25 hàng tháng) · Ngày đổi · Campaign ưu
-            tiên</div>
+        <div class="page-sub">Nguồn dữ liệu: Bảng <strong>Lịch MKT 2026</strong> (AppSheet)</div>
     </div>
 
     <div class="legend-bar">
@@ -430,14 +429,9 @@
             <button class="filter-btn" data-month="T12">T12</button>
         </div>
         <div class="filter-sep"></div>
-        <div class="filter-group">
+        <div class="filter-group" id="typeFilterGroup">
             <span class="filter-label">Loại:</span>
-            <button class="filter-btn active" data-type="all">Tất cả</button>
-            <button class="filter-btn" data-type="campaign-lon">Campaign lớn</button>
-            <button class="filter-btn" data-type="le-vn">Lễ VN</button>
-            <button class="filter-btn" data-type="quoc-te">Quốc tế</button>
-            <button class="filter-btn" data-type="ecom-sale">E-com/Sale</button>
-            <button class="filter-btn" data-type="ngay-sale">Ngày sale lương</button>
+            <div id="typeFilterButtons" class="filter-group" style="gap:6px;"></div>
         </div>
         <div class="filter-sep"></div>
         <input type="text" class="search-input" id="searchInput" placeholder="🔍 Tìm kiếm sự kiện...">
@@ -462,6 +456,7 @@
                 </tr>
             </thead>
             <tbody id="tableBody">
+                <tr><td colspan="8" style="text-align:center;padding:32px;color:#888;">Đang tải Lịch MKT 2026...</td></tr>
             </tbody>
         </table>
         <div class="empty-state" id="emptyState" style="display:none;">
@@ -470,71 +465,25 @@
     </div>
 
     <script>
-        const DATA = [
-            // T1
-            { thang: 'T1', ngay: '01/01 (Thứ 5)', ten: 'Tết Dương Lịch', loai: 'campaign-lon', sao: 5, goiY: 'Content chào năm mới, countdown, lì xì viral, khuyến mãi khai xuân sớm', kenh: ['FB', 'TikTok', 'Shopee'], ghiChu: 'Ngày lễ chính thức 4 ngày' },
-            { thang: 'T1', ngay: '05/01 (Thứ 2)', ten: 'Ngày sale lương (5)', loai: 'ngay-sale', sao: 3, goiY: 'Flash sale ngắn hạn, story khuyến mãi 24h', kenh: ['FB', 'Shopee', 'TikTok Shop'], ghiChu: 'Hành vi mua sau ngày nhận lương' },
-            { thang: 'T1', ngay: '15/01 (Thứ 5)', ten: 'Ngày sale lương (15)', loai: 'ngay-sale', sao: 3, goiY: 'Hash deal đàn entry-level, reminder qua story', kenh: ['Shopee', 'TikTok Shop'], ghiChu: 'Cao điểm chi tiêu giữa tháng' },
-            { thang: 'T1', ngay: '23/01 (Thứ 6)', ten: 'Ông Công Ông Táo (23 tháng Chạp)', loai: 'le-vn', sao: 4, goiY: 'Content truyền thống, nhắc Tết đang đến gần; teaser campaign Tết', kenh: ['FB fanpage', 'Reels'], ghiChu: 'Kết hợp warm-up cho Tết' },
-            { thang: 'T1', ngay: '25/01 (CN)', ten: 'Ngày sale lương (25)', loai: 'ngay-sale', sao: 3, goiY: 'Combo sale + nội dung Tết đan xen', kenh: ['Shopee', 'FB Groups'], ghiChu: 'Gần Tết — tâm lý mua tặng quà cao' },
-            // T2
-            { thang: 'T2', ngay: '14/02 (Thứ 7)', ten: "Valentine's Day", loai: 'campaign-lon', sao: 5, goiY: "'Tặng đàn cho người yêu' — content cặp đôi, gift set, live demo", kenh: ['TikTok', 'FB', 'Instagram'], ghiChu: 'Cao điểm quà tặng; target 18-25 tuổi' },
-            { thang: 'T2', ngay: '16–20/02', ten: 'Tết Nguyên Đán (Bính Ngọ)', loai: 'campaign-lon', sao: 5, goiY: 'Campaign Tết toàn diện: trước/trong/sau Tết. Tri ân anh em, lì xì, khuyến mãi khai xuân', kenh: ['Tất cả kênh'], ghiChu: 'Ngày lễ dài nhất năm — chuẩn bị nội dung từ T1' },
-            { thang: 'T2', ngay: '05/02 (Thứ 5)', ten: 'Ngày sale lương (5)', loai: 'ngay-sale', sao: 3, goiY: 'Flash sale đầu tháng, gần Valentine tăng urgency', kenh: ['Shopee', 'TikTok Shop'], ghiChu: 'Kết hợp với Valentine prep' },
-            { thang: 'T2', ngay: '15/02 (CN)', ten: 'Ngày sale lương (15)', loai: 'ngay-sale', sao: 3, goiY: 'Sale sau Valentine + khai Xuân', kenh: ['Shopee', 'FB'], ghiChu: 'Sau Tết — nhu cầu học đàn tăng cao' },
-            { thang: 'T2', ngay: '25/02 (Thứ 4)', ten: 'Ngày sale lương (25)', loai: 'ngay-sale', sao: 3, goiY: 'Sale cuối tháng, teaser March campaign', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            // T3
-            { thang: 'T3', ngay: '08/03 (CN)', ten: "Ngày Quốc tế Phụ nữ (8/3)", loai: 'campaign-lon', sao: 5, goiY: "'Âm nhạc dành cho nàng' — content phụ nữ chơi đàn, quà tặng ý nghĩa, live show mini", kenh: ['FB', 'TikTok', 'Instagram'], ghiChu: 'Target phụ nữ 18-40 tuổi & mua tặng bạn gái/vợ' },
-            { thang: 'T3', ngay: '05/03 (Thứ 4)', ten: 'Ngày sale lương (5)', loai: 'ngay-sale', sao: 3, goiY: 'Flash sale đầu tháng, kết hợp 8/3', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T3', ngay: '15/03 (Thứ 7)', ten: 'Ngày sale lương (15)', loai: 'ngay-sale', sao: 3, goiY: 'Sale giữa tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T3', ngay: '25/03 (Thứ 3)', ten: 'Ngày sale lương (25)', loai: 'ngay-sale', sao: 3, goiY: 'Sale cuối tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            // T4
-            { thang: 'T4', ngay: '30/04 – 01/05', ten: '30/4 & Ngày Quốc tế Lao động', loai: 'campaign-lon', sao: 5, goiY: "'Nghỉ lễ tập guitar' — nội dung học đàn, khuyến mãi combo khóa học + đàn, livestream", kenh: ['TikTok', 'FB', 'YouTube'], ghiChu: 'Kỳ nghỉ dài 4-5 ngày — nhu cầu giải trí & học kỹ năng mới cao' },
-            { thang: 'T4', ngay: '05/04 (Thứ 7)', ten: 'Ngày sale lương (5)', loai: 'ngay-sale', sao: 3, goiY: 'Flash sale', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T4', ngay: '15/04 (Thứ 3)', ten: 'Ngày sale lương (15)', loai: 'ngay-sale', sao: 3, goiY: 'Sale giữa tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T4', ngay: '25/04 (Thứ 6)', ten: 'Ngày sale lương (25)', loai: 'ngay-sale', sao: 3, goiY: 'Sale cuối tháng, teaser 30/4', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            // T5
-            { thang: 'T5', ngay: '01/05 (Thứ 5)', ten: 'Ngày Quốc tế Lao động', loai: 'le-vn', sao: 4, goiY: 'Content ngày nghỉ, khuyến mãi kỷ niệm', kenh: ['FB', 'TikTok'], ghiChu: 'Kỳ nghỉ lễ dài' },
-            { thang: 'T5', ngay: '05/05 (Thứ 2)', ten: 'Ngày sale lương (5)', loai: 'ngay-sale', sao: 3, goiY: 'Flash sale đầu tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T5', ngay: '15/05 (Thứ 5)', ten: 'Ngày sale lương (15)', loai: 'ngay-sale', sao: 3, goiY: 'Sale giữa tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T5', ngay: '25/05 (CN)', ten: 'Ngày sale lương (25)', loai: 'ngay-sale', sao: 3, goiY: 'Sale cuối tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            // T6
-            { thang: 'T6', ngay: '01/06 (CN)', ten: 'Ngày Quốc tế Thiếu nhi', loai: 'quoc-te', sao: 3, goiY: "'Cho bé yêu guitar' — content trẻ em học nhạc, khóa học thiếu nhi, quà tặng con", kenh: ['FB', 'TikTok'], ghiChu: 'Target phụ huynh mua quà cho con' },
-            { thang: 'T6', ngay: '05/06 (Thứ 5)', ten: 'Ngày sale lương (5)', loai: 'ngay-sale', sao: 3, goiY: 'Flash sale đầu tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T6', ngay: '15/06 (CN)', ten: 'Ngày của Cha + Ngày sale lương (15)', loai: 'campaign-lon', sao: 5, goiY: "'Tặng đàn tri ân cha' — content cảm xúc, gift set, câu chuyện âm nhạc cha-con", kenh: ['FB', 'TikTok', 'Instagram'], ghiChu: 'Kết hợp Father\'s Day & ngày sale lương' },
-            { thang: 'T6', ngay: '25/06 (Thứ 4)', ten: 'Ngày sale lương (25)', loai: 'ngay-sale', sao: 3, goiY: 'Sale cuối tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            // T7
-            { thang: 'T7', ngay: '05/07 (Thứ 7)', ten: 'Ngày sale lương (5)', loai: 'ngay-sale', sao: 3, goiY: 'Flash sale đầu tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T7', ngay: '15/07 (Thứ 3)', ten: 'Ngày sale lương (15)', loai: 'ngay-sale', sao: 3, goiY: 'Sale giữa tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T7', ngay: '25/07 (Thứ 6)', ten: 'Ngày sale lương (25)', loai: 'ngay-sale', sao: 3, goiY: 'Sale cuối tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            // T8
-            { thang: 'T8', ngay: '05/08 (Thứ 3)', ten: 'Ngày sale lương (5)', loai: 'ngay-sale', sao: 3, goiY: 'Flash sale đầu tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T8', ngay: '15/08 (Thứ 6)', ten: 'Ngày sale lương (15)', loai: 'ngay-sale', sao: 3, goiY: 'Sale giữa tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T8', ngay: '25/08 (Thứ 2)', ten: 'Ngày sale lương (25)', loai: 'ngay-sale', sao: 3, goiY: 'Sale cuối tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            // T9
-            { thang: 'T9', ngay: '02/09 (Thứ 3)', ten: 'Quốc Khánh 2/9', loai: 'le-vn', sao: 4, goiY: 'Content yêu nước, câu chuyện âm nhạc dân tộc, khuyến mãi kỷ niệm', kenh: ['FB', 'TikTok', 'YouTube'], ghiChu: 'Kỳ nghỉ lễ 3-4 ngày' },
-            { thang: 'T9', ngay: '05/09 (Thứ 6)', ten: 'Ngày sale lương (5)', loai: 'ngay-sale', sao: 3, goiY: 'Flash sale đầu tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T9', ngay: '15/09 (Thứ 2)', ten: 'Ngày sale lương (15)', loai: 'ngay-sale', sao: 3, goiY: 'Sale giữa tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T9', ngay: '25/09 (Thứ 5)', ten: 'Ngày sale lương (25)', loai: 'ngay-sale', sao: 3, goiY: 'Sale cuối tháng, teaser 10/10', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            // T10
-            { thang: 'T10', ngay: '10/10 (Thứ 6)', ten: '10.10 — Shopee/Tiki Super Sale', loai: 'ecom-sale', sao: 5, goiY: 'Đẩy mạnh sản phẩm trên Shopee, livestream bán hàng, flash deal 2h đồng hồ', kenh: ['Shopee', 'TikTok Shop'], ghiChu: 'Siêu sale ecom lớn nhất Q4, cần chuẩn bị tồn kho' },
-            { thang: 'T10', ngay: '20/10 (Thứ 2)', ten: 'Ngày Phụ nữ Việt Nam', loai: 'le-vn', sao: 4, goiY: "'Âm nhạc cho nàng' — content tôn vinh phụ nữ, quà tặng ý nghĩa", kenh: ['FB', 'TikTok', 'Instagram'], ghiChu: 'Kết hợp với sale ecom' },
-            { thang: 'T10', ngay: '05/10 (CN)', ten: 'Ngày sale lương (5)', loai: 'ngay-sale', sao: 3, goiY: 'Flash sale đầu tháng, teaser 10/10', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T10', ngay: '15/10 (Thứ 4)', ten: 'Ngày sale lương (15)', loai: 'ngay-sale', sao: 3, goiY: 'Sale giữa tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T10', ngay: '25/10 (Thứ 7)', ten: 'Ngày sale lương (25)', loai: 'ngay-sale', sao: 3, goiY: 'Sale cuối tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            // T11
-            { thang: 'T11', ngay: '11/11 (Thứ 3)', ten: '11.11 — Super Sale', loai: 'ecom-sale', sao: 5, goiY: 'Siêu sale trên tất cả nền tảng ecom, bundle deal, flash deal mỗi giờ', kenh: ['Shopee', 'TikTok Shop', 'Tiki'], ghiChu: 'Ngày sale lớn nhất năm trên ecom' },
-            { thang: 'T11', ngay: '05/11 (Thứ 4)', ten: 'Ngày sale lương (5)', loai: 'ngay-sale', sao: 3, goiY: 'Flash sale đầu tháng, teaser 11/11', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T11', ngay: '15/11 (Thứ 7)', ten: 'Ngày sale lương (15)', loai: 'ngay-sale', sao: 3, goiY: 'Sale giữa tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T11', ngay: '25/11 (Thứ 3)', ten: 'Ngày sale lương (25)', loai: 'ngay-sale', sao: 3, goiY: 'Sale cuối tháng, teaser 12.12', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            // T12
-            { thang: 'T12', ngay: '12/12 (Thứ 6)', ten: '12.12 — Super Sale cuối năm', loai: 'ecom-sale', sao: 5, goiY: 'Siêu sale cuối năm, flash deal, bundle, quà tặng Giáng Sinh sớm', kenh: ['Shopee', 'TikTok Shop', 'Tiki'], ghiChu: 'Sale lớn trước Noel' },
-            { thang: 'T12', ngay: '24/12 (Thứ 4)', ten: 'Giáng Sinh (Noel)', loai: 'campaign-lon', sao: 5, goiY: "'Guitar dưới cây thông' — content lãng mạn, quà tặng, live acoustic Noel", kenh: ['TikTok', 'FB', 'Instagram'], ghiChu: 'Mùa mua sắm quà tặng cao điểm' },
-            { thang: 'T12', ngay: '31/12 (Thứ 4)', ten: 'Đêm giao thừa — New Year Eve', loai: 'campaign-lon', sao: 5, goiY: 'Countdown, content nhìn lại năm 2026, warm-up khai xuân 2027', kenh: ['TikTok', 'FB', 'YouTube'], ghiChu: 'Chốt năm bằng nội dung cảm xúc' },
-            { thang: 'T12', ngay: '05/12 (Thứ 6)', ten: 'Ngày sale lương (5)', loai: 'ngay-sale', sao: 3, goiY: 'Flash sale đầu tháng', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T12', ngay: '15/12 (Thứ 2)', ten: 'Ngày sale lương (15)', loai: 'ngay-sale', sao: 3, goiY: 'Sale giữa tháng, teaser Noel', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-            { thang: 'T12', ngay: '25/12 (Thứ 5)', ten: 'Ngày sale lương (25)', loai: 'ngay-sale', sao: 3, goiY: 'Sale cuối tháng, kết hợp Noel', kenh: ['Shopee', 'TikTok Shop'], ghiChu: '' },
-        ];
+        const APP_ID = 'fb394ab7-2164-4da6-a15e-9e06fefaccb0';
+        const API_KEY = 'V2-wpK1r-oW88b-9sL5Z-DMxbg-zUWg1-FX50y-91Plm-sPMOc';
+        const TABLE_NAME = 'Lịch MKT 2026';
+        const API_URL = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${encodeURIComponent(TABLE_NAME)}/Action`;
+
+        const COL = {
+            thang: ['tháng', 'thang', 'month'],
+            ngay: ['ngày', 'ngay', 'date', 'thời gian'],
+            ten: ['tên dịp', 'ten dip', 'sự kiện', 'su kien', 'tên', 'ten', 'dịp'],
+            loai: ['loại', 'loai', 'type'],
+            sao: ['ưu tiên', 'uu tien', 'priority', 'sao'],
+            goiY: ['gợi ý', 'goi y', 'chiến dịch', 'chien dich', 'content'],
+            kenh: ['kênh', 'kenh', 'channel', 'kênh đề xuất'],
+            ghiChu: ['ghi chú', 'ghi chu', 'note']
+        };
+
+        let rawRows = [];
+        let columnMap = {};
+        let DATA = [];
 
         const TYPE_CONFIG = {
             'campaign-lon': { label: 'Campaign lớn', cls: 'type-campaign-lon' },
@@ -549,6 +498,152 @@
 
         let activeMonth = 'all';
         let activeType = 'all';
+
+        function norm(s) {
+            return String(s ?? '').trim().toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
+        }
+        function findColKey(sampleRow, aliases) {
+            if (!sampleRow) return '';
+            for (const k of Object.keys(sampleRow)) {
+                const nk = norm(k);
+                if (aliases.some(a => nk === norm(a) || nk.includes(norm(a)))) return k;
+            }
+            return '';
+        }
+        function getMap(sampleRow) {
+            const map = {};
+            for (const [name, aliases] of Object.entries(COL)) {
+                map[name] = findColKey(sampleRow, aliases);
+            }
+            return map;
+        }
+        function parseStars(val) {
+            const n = parseInt(String(val ?? '').replace(/\D/g, ''), 10);
+            if (Number.isFinite(n) && n >= 1 && n <= 5) return n;
+            const stars = (String(val ?? '').match(/★/g) || []).length;
+            return stars >= 1 && stars <= 5 ? stars : 3;
+        }
+        function parseKenh(val) {
+            const t = String(val ?? '').trim();
+            if (!t) return [];
+            return t.split(/[,;|/]/).map(s => s.trim()).filter(Boolean);
+        }
+        function inferThang(text, isoDate) {
+            const t = String(text ?? '').trim().toUpperCase();
+            const m = t.match(/^T(\d{1,2})$/);
+            if (m) return `T${Number(m[1])}`;
+            if (isoDate) {
+                const p = isoDate.split('-');
+                if (p.length >= 2) return `T${Number(p[1])}`;
+            }
+            const monthNum = parseInt(t, 10);
+            if (monthNum >= 1 && monthNum <= 12) return `T${monthNum}`;
+            return '';
+        }
+        function toIsoDate(value) {
+            const v = String(value ?? '').trim();
+            if (!v) return '';
+            if (/^\d{4}-\d{2}-\d{2}/.test(v)) return v.slice(0, 10);
+            const m = v.match(/^(\d{1,2})\/(\d{1,2})(?:\/(\d{4}))?/);
+            if (m) {
+                const year = m[3] || '2026';
+                return `${year}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+            }
+            const d = new Date(v);
+            if (Number.isNaN(d.getTime())) return '';
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+        function resolveTypeKey(loaiText) {
+            const n = norm(loaiText);
+            if (n.includes('campaign') || n.includes('lon')) return 'campaign-lon';
+            if (n.includes('le vn') || n.includes('viet nam') || n.includes('chinh thuc')) return 'le-vn';
+            if (n.includes('quoc te') || n.includes('trend')) return 'quoc-te';
+            if (n.includes('ecom') || n.includes('e-com') || n.includes('shopee')) return 'ecom-sale';
+            if (n.includes('sale luong') || n.includes('ngay sale')) return 'ngay-sale';
+            if (n.includes('ngay doi') || /\d\.\d/.test(loaiText)) return 'ngay-doi';
+            return 'ngay-doi';
+        }
+        function rowToView(r) {
+            const iso = columnMap.ngay ? toIsoDate(r[columnMap.ngay]) : '';
+            const loaiRaw = columnMap.loai ? String(r[columnMap.loai] || '').trim() : '';
+            const thangRaw = columnMap.thang ? String(r[columnMap.thang] || '').trim() : '';
+            const ngayRaw = columnMap.ngay ? String(r[columnMap.ngay] || '').trim() : '';
+            const thang = inferThang(thangRaw, iso) || '';
+            let ngayDisplay = ngayRaw;
+            if (!ngayDisplay && iso) {
+                const p = iso.split('-');
+                if (p.length === 3) ngayDisplay = `${p[2]}/${p[1]}/${p[0]}`;
+            }
+            return {
+                thang: thang,
+                ngay: ngayDisplay,
+                ten: columnMap.ten ? String(r[columnMap.ten] || '').trim() : '',
+                loai: resolveTypeKey(loaiRaw),
+                loaiLabel: loaiRaw || TYPE_CONFIG[resolveTypeKey(loaiRaw)]?.label || 'Khác',
+                sao: columnMap.sao ? parseStars(r[columnMap.sao]) : 3,
+                goiY: columnMap.goiY ? String(r[columnMap.goiY] || '').trim() : '',
+                kenh: columnMap.kenh ? parseKenh(r[columnMap.kenh]) : [],
+                ghiChu: columnMap.ghiChu ? String(r[columnMap.ghiChu] || '').trim() : '',
+                sortKey: iso || ngayRaw
+            };
+        }
+        async function appsheetRequest(action, rows) {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'ApplicationAccessKey': API_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Action: action, Properties: { Locale: 'vi-VN', Timezone: 'Asia/Ho_Chi_Minh' }, Rows: rows || [] })
+            });
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || `HTTP ${response.status}`);
+            }
+            const out = await response.json().catch(() => ([]));
+            return Array.isArray(out) ? out : [];
+        }
+        async function loadRows() {
+            rawRows = await appsheetRequest('Find', []);
+            columnMap = getMap(rawRows[0] || {});
+            DATA = rawRows.map(rowToView).filter(r => r.ten || r.ngay || r.goiY)
+                .sort((a, b) => String(a.sortKey).localeCompare(String(b.sortKey)));
+            document.getElementById('countTotal').textContent = DATA.length;
+            renderTypeFilters();
+            renderTable();
+        }
+        function getUniqueTypes() {
+            const map = new Map();
+            DATA.forEach((row) => {
+                if (!map.has(row.loai)) map.set(row.loai, row.loaiLabel);
+            });
+            return Array.from(map.entries()).sort((a, b) => a[1].localeCompare(b[1], 'vi'));
+        }
+        function renderTypeFilters() {
+            const container = document.getElementById('typeFilterButtons');
+            if (!container) return;
+            if (activeType !== 'all' && !DATA.some(r => r.loai === activeType)) activeType = 'all';
+            container.innerHTML = '';
+            const allBtn = document.createElement('button');
+            allBtn.type = 'button';
+            allBtn.className = 'filter-btn' + (activeType === 'all' ? ' active' : '');
+            allBtn.dataset.type = 'all';
+            allBtn.textContent = 'Tất cả';
+            container.appendChild(allBtn);
+            getUniqueTypes().forEach(([key, label]) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'filter-btn' + (activeType === key ? ' active' : '');
+                btn.dataset.type = key;
+                btn.textContent = label;
+                container.appendChild(btn);
+            });
+            container.querySelectorAll('.filter-btn').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    activeType = btn.dataset.type;
+                    renderTable();
+                });
+            });
+        }
 
         function renderStars(n) {
             return '<span class="stars">' + '★'.repeat(n) + '<span style="color:#ddd;">★</span>'.repeat(5 - n) + '</span>';
@@ -581,11 +676,12 @@
                 }
 
                 const tc = TYPE_CONFIG[row.loai] || TYPE_CONFIG['ngay-doi'];
+                const thangBadge = row.thang || '—';
                 html += `<tr data-thang="${row.thang}" data-loai="${row.loai}">
-                <td class="col-thang"><span class="month-badge">${row.thang}</span></td>
-                <td class="col-ngay" style="white-space:nowrap;">${row.ngay}</td>
-                <td class="col-ten">${row.ten}</td>
-                <td class="col-loai"><span class="type-badge ${tc.cls}"><span class="type-dot"></span>${tc.label}</span></td>
+                <td class="col-thang"><span class="month-badge">${thangBadge}</span></td>
+                <td class="col-ngay" style="white-space:nowrap;">${row.ngay || '—'}</td>
+                <td class="col-ten">${row.ten || '—'}</td>
+                <td class="col-loai"><span class="type-badge ${tc.cls}"><span class="type-dot"></span>${row.loaiLabel || tc.label}</span></td>
                 <td class="col-uu-tien">${renderStars(row.sao)}</td>
                 <td class="col-goi-y">${row.goiY}</td>
                 <td class="col-kenh">${renderKenh(row.kenh)}</td>
@@ -605,9 +701,6 @@
             document.getElementById('countVisible').textContent = countVisible;
         }
 
-        // Count total
-        document.getElementById('countTotal').textContent = DATA.length;
-
         // Filter buttons
         document.querySelectorAll('.filter-btn[data-month]').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -618,18 +711,15 @@
             });
         });
 
-        document.querySelectorAll('.filter-btn[data-type]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn[data-type]').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                activeType = btn.dataset.type;
-                renderTable();
-            });
-        });
-
         document.getElementById('searchInput').addEventListener('input', renderTable);
 
-        renderTable();
+        loadRows().catch((err) => {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:32px;color:#c0392b;">Không tải được bảng Lịch MKT 2026: ${err.message || err}</td></tr>`;
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('countTotal').textContent = '0';
+            document.getElementById('countVisible').textContent = '0';
+        });
     </script>
 
 </body>
