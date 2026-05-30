@@ -230,6 +230,78 @@
             background: #faf5ef;
         }
 
+        .add-new-btn {
+            margin-left: auto;
+            padding: 8px 16px;
+            background: #059669;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+            flex-shrink: 0;
+        }
+
+        .add-new-btn:hover {
+            background: #047857;
+        }
+
+        .form-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(38, 32, 45, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 200;
+        }
+
+        .form-modal.show {
+            display: flex;
+        }
+
+        .form-modal-card {
+            width: min(720px, 100%);
+            height: min(92vh, 900px);
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 22px 70px rgba(74, 74, 94, 0.25);
+            border: 1px solid #f0e8dc;
+        }
+
+        .form-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            border-bottom: 1px solid #f4ece0;
+            background: #fdfaf6;
+            flex-shrink: 0;
+        }
+
+        .form-modal-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #4a4a5e;
+        }
+
+        .form-modal-frame {
+            flex: 1;
+            border: 0;
+            width: 100%;
+            background: #fdf6ff;
+        }
+
         /* Content Layout */
         .content-grid {
             display: grid;
@@ -1064,6 +1136,10 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     Xóa
                 </button>
+                <button class="add-new-btn" id="addPostBtn" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Thêm mới
+                </button>
             </div>
 
             <!-- Content Grid -->
@@ -1172,6 +1248,15 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="form-modal" id="addPostModal" aria-hidden="true">
+        <div class="form-modal-card" role="dialog" aria-modal="true" aria-labelledby="addPostModalTitle">
+            <div class="form-modal-header">
+                <div class="form-modal-title" id="addPostModalTitle">Thêm bài đăng mới</div>
+                <button class="detail-close" id="addPostClose" type="button" aria-label="Đóng">×</button>
+            </div>
+            <iframe class="form-modal-frame" id="addPostFrame" title="Form tạo nội dung đăng bài"></iframe>
         </div>
     </div>
     <div class="detail-modal" id="eventDetailModal" aria-hidden="true">
@@ -2242,6 +2327,32 @@
         // ── Khởi tạo lưới lịch ngay khi load ──
         renderCalendarGrid(currentYear, currentMonth);
         renderVietnamHolidayNotices();
+
+        const addPostModal = document.getElementById("addPostModal");
+        const addPostFrame = document.getElementById("addPostFrame");
+
+        function openAddPostForm(presetDate) {
+            let url = "guitar_saigon_post_form.html";
+            if (presetDate) url += "?date=" + encodeURIComponent(presetDate);
+            addPostFrame.src = url;
+            addPostModal.classList.add("show");
+            addPostModal.setAttribute("aria-hidden", "false");
+        }
+
+        function closeAddPostForm() {
+            addPostModal.classList.remove("show");
+            addPostModal.setAttribute("aria-hidden", "true");
+            addPostFrame.src = "about:blank";
+        }
+
+        document.getElementById("addPostBtn")?.addEventListener("click", () => openAddPostForm());
+        document.getElementById("addPostClose")?.addEventListener("click", closeAddPostForm);
+        addPostModal?.addEventListener("click", (e) => {
+            if (e.target === addPostModal) closeAddPostForm();
+        });
+        window.addEventListener("message", (e) => {
+            if (e.data?.type === "post-form-submitted") closeAddPostForm();
+        });
 
         // ── Gắn sự kiện 3 nút điều hướng tháng ──
         document.getElementById("prevMonthBtn")?.addEventListener("click", () => {

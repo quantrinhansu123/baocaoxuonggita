@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Form đăng bài — Guitar Sài Thành</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body,div,span,p,label,input,select,textarea,button{font-family:'Montserrat',sans-serif}
+.wrap{max-width:680px;margin:0 auto;padding:1.5rem 1rem 3rem}
+h1{font-size:22px;font-weight:700;color:#2d2d2d;margin-bottom:4px}
+.sub{font-size:13px;color:#888;margin-bottom:1.5rem}
+.section{background:#fff;border:1px solid #e8e4f0;border-radius:14px;padding:1.25rem 1.25rem 1rem;margin-bottom:1rem}
+.section-label{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#a78bca;margin-bottom:.75rem}
+.field-label{font-size:13px;font-weight:600;color:#444;margin-bottom:.5rem;display:block}
+.req{color:#e9637a}
+input[type=text],input[type=date],input[type=time],textarea,select{
+  width:100%;border:1.5px solid #e2ddf0;border-radius:9px;padding:9px 12px;
+  font-size:14px;font-family:'Montserrat',sans-serif;color:#333;
+  background:#faf9ff;outline:none;transition:border .2s
+}
+input:focus,textarea:focus,select:focus{border-color:#a78bca;background:#fff}
+textarea{resize:vertical;min-height:72px;line-height:1.5}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.radio-group,.check-group{display:flex;flex-direction:column;gap:7px}
+.radio-row,.check-row{display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 11px;border:1.5px solid #e8e4f0;border-radius:9px;transition:all .15s;background:#faf9ff;font-size:13px;color:#444;font-weight:500}
+.radio-row:hover,.check-row:hover{border-color:#c4a8e8;background:#f3edfa}
+.radio-row.selected,.check-row.selected{border-color:#a78bca;background:#f0e9f9;color:#7c4fa0}
+input[type=radio],input[type=checkbox]{accent-color:#a78bca;width:15px;height:15px}
+.channels-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ch-btn{display:flex;align-items:center;gap:8px;padding:9px 12px;border:1.5px solid #e8e4f0;border-radius:9px;cursor:pointer;transition:all .15s;background:#faf9ff;font-size:13px;font-weight:600;color:#555}
+.ch-btn .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.ch-btn:hover{border-color:#c4a8e8;background:#f3edfa}
+.ch-btn.selected{border-color:#a78bca;background:#f0e9f9;color:#7c4fa0}
+.ch-btn input{display:none}
+.tags-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.tag{padding:6px 14px;border-radius:20px;border:1.5px solid #e2ddf0;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;background:#faf9ff;color:#666}
+.tag:hover{border-color:#c4a8e8;background:#f3edfa}
+.tag.selected{border-color:#a78bca;background:#a78bca;color:#fff}
+.submit-row{display:flex;gap:10px;margin-top:1.5rem}
+.btn-submit{flex:1;padding:13px;background:linear-gradient(135deg,#b894d6,#e8a0c8);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;font-family:'Montserrat',sans-serif;cursor:pointer;transition:opacity .2s;letter-spacing:.02em}
+.btn-submit:hover{opacity:.88}
+.btn-submit:disabled{opacity:.55;cursor:not-allowed}
+.btn-reset{padding:13px 20px;border:1.5px solid #e2ddf0;border-radius:12px;background:#fff;color:#999;font-size:14px;font-weight:600;font-family:'Montserrat',sans-serif;cursor:pointer}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e293b;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;transition:all .3s;z-index:999;max-width:90vw;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.ok{background:#059669}
+.toast.err{background:#dc2626}
+.divider{height:1px;background:#f0ebf8;margin:.75rem 0}
+.hint{font-size:11.5px;color:#aaa;margin-top:5px;line-height:1.5}
+.time-row{display:flex;gap:8px;align-items:center}
+.time-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.time-chip{padding:5px 12px;border-radius:20px;border:1.5px solid #e2ddf0;font-size:12px;font-weight:600;cursor:pointer;background:#faf9ff;color:#888;transition:all .15s}
+.time-chip:hover{border-color:#c4a8e8;background:#f3edfa;color:#7c4fa0}
+.time-chip.sel{background:#a78bca;border-color:#a78bca;color:#fff}
+.page-bg{background:linear-gradient(160deg,#fdf6ff 0%,#fff0f8 50%,#f0f4ff 100%);min-height:100vh;padding-bottom:2rem}
+.header-accent{width:40px;height:4px;background:linear-gradient(90deg,#b894d6,#e8a0c8);border-radius:4px;margin-bottom:.75rem}
+.source-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+</style>
+</head>
+<body>
+
+<div class="page-bg">
+<div class="wrap">
+  <h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Form tạo nội dung đăng bài đa kênh Guitar Sài Thành</h2>
+  <div class="header-accent"></div>
+  <h1>Tạo Nội Dung Đăng Bài</h1>
+  <p class="sub">Gửi yêu cầu vào bảng <strong>Form Bài Đăng</strong> (AppSheet) để AI gen caption và lên lịch đăng</p>
+
+  <div class="section">
+    <div class="section-label">Thông tin cơ bản</div>
+    <div class="grid2" style="gap:12px">
+      <div>
+        <label class="field-label">Bạn là ai? <span class="req">*</span></label>
+        <select id="who">
+          <option value="">— Chọn —</option>
+          <option>Tuyến (Content)</option>
+          <option>Minh (Video)</option>
+          <option>Hùng (Store)</option>
+          <option>Tuan (Owner)</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label">Nguồn nội dung <span class="req">*</span></label>
+        <div class="source-row">
+          <div class="radio-row" data-group="source" data-val="staff" onclick="pick('source',this)">👤 Nhân viên tự làm</div>
+          <div class="radio-row" data-group="source" data-val="ai" onclick="pick('source',this)">🤖 AI tự tạo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Loại & Media</div>
+    <label class="field-label">Loại nội dung <span class="req">*</span></label>
+    <div class="tags-row" id="type-tags">
+      <div class="tag" onclick="toggleTag(this)">💡 Mẹo học guitar</div>
+      <div class="tag" onclick="toggleTag(this)">🎸 Giải trí</div>
+      <div class="tag" onclick="toggleTag(this)">🔥 Khuyến mãi / Sản phẩm</div>
+      <div class="tag" onclick="toggleTag(this)">⭐ Branding</div>
+      <div class="tag" onclick="toggleTag(this)">🎵 Cover / Biểu diễn</div>
+      <div class="tag" onclick="toggleTag(this)">🛠️ Xưởng / Workshop</div>
+    </div>
+    <div class="divider"></div>
+    <label class="field-label">Loại media <span class="req">*</span></label>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <div class="radio-row" style="flex:1;min-width:120px" data-group="media" data-val="video" onclick="pick('media',this)">🎬 Video</div>
+      <div class="radio-row" style="flex:1;min-width:120px" data-group="media" data-val="photo" onclick="pick('media',this)">🖼️ Ảnh đơn</div>
+      <div class="radio-row" style="flex:1;min-width:120px" data-group="media" data-val="carousel" onclick="pick('media',this)">🗂️ Carousel</div>
+    </div>
+    <div style="margin-top:10px">
+      <label class="field-label">Link video / ảnh (Google Drive)</label>
+      <input type="text" id="media-link" placeholder="Paste link vào đây — để trống nếu muốn AI gen ảnh">
+      <p class="hint">AI không gen được video. Nếu không có link, AI sẽ tự tạo ảnh cho bài.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Caption & Nội dung</div>
+    <label class="field-label">Caption thô / Ý tưởng chính <span class="req">*</span></label>
+    <textarea id="caption" placeholder="VD: tổng hợp các thế tay bấm hợp âm cơ bản... hoặc viết sẵn caption, AI sẽ gen lại đúng chuẩn SEO"></textarea>
+    <div class="divider"></div>
+    <label class="field-label">Ghi chú thêm cho AI</label>
+    <textarea id="note" style="min-height:52px" placeholder="Nhấn mạnh giá ưu đãi, thêm CTA nhắn tin, không đề cập đối thủ..."></textarea>
+    <div class="divider"></div>
+    <label class="field-label">Cần duyệt trước khi đăng? <span class="req">*</span></label>
+    <div style="display:flex;gap:8px">
+      <div class="radio-row" style="flex:1" data-group="approve" data-val="yes" onclick="pick('approve',this)">✅ Có — duyệt lại</div>
+      <div class="radio-row" style="flex:1" data-group="approve" data-val="no" onclick="pick('approve',this)">🚀 Không — đăng luôn</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Kênh đăng</div>
+    <label class="field-label">Chọn kênh <span class="req">*</span></label>
+    <div class="channels-grid" id="ch-grid">
+      <div class="ch-btn" onclick="toggleCh(this)"><input type="checkbox"><div class="dot" style="background:#1877F2"></div>FB Guitar Sài Thành</div>
+      <div class="ch-btn" onclick="toggleCh(this)"><input type="checkbox"><div class="dot" style="background:#1877F2"></div>FB Academy</div>
+      <div class="ch-btn" onclick="toggleCh(this)"><input type="checkbox"><div class="dot" style="background:#1877F2"></div>FB Giá Tận Xưởng</div>
+      <div class="ch-btn" onclick="toggleCh(this)"><input type="checkbox"><div class="dot" style="background:#1877F2"></div>FB Thanh Lý Đàn Giá Rẻ</div>
+      <div class="ch-btn" onclick="toggleCh(this)"><input type="checkbox"><div class="dot" style="background:#000"></div>TikTok Academy</div>
+      <div class="ch-btn" onclick="toggleCh(this)"><input type="checkbox"><div class="dot" style="background:#000"></div>TikTok Store</div>
+      <div class="ch-btn" onclick="toggleCh(this)"><input type="checkbox"><div class="dot" style="background:#000"></div>TikTok Xưởng Đàn</div>
+      <div class="ch-btn" onclick="toggleCh(this)"><input type="checkbox"><div class="dot" style="background:#FF0000"></div>YouTube Guitar Sài Thành</div>
+      <div class="ch-btn" onclick="toggleCh(this)"><input type="checkbox"><div class="dot" style="background:#e9637a"></div>Hội Học Đàn</div>
+      <div class="ch-btn" onclick="toggleCh(this)"><input type="checkbox"><div class="dot" style="background:#e9637a"></div>Hội Thanh Lý</div>
+    </div>
+    <div style="margin-top:8px;display:flex;gap:8px">
+      <span style="font-size:12px;color:#a78bca;cursor:pointer;font-weight:600" onclick="selectAllCh()">Chọn tất cả</span>
+      <span style="color:#ddd">|</span>
+      <span style="font-size:12px;color:#aaa;cursor:pointer;font-weight:600" onclick="clearAllCh()">Bỏ chọn</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Lịch đăng</div>
+    <div class="grid2" style="gap:12px">
+      <div>
+        <label class="field-label">Ngày muốn đăng <span class="req">*</span></label>
+        <input type="date" id="post-date">
+      </div>
+      <div>
+        <label class="field-label">Giờ đăng bài <span class="req">*</span></label>
+        <input type="time" id="post-time">
+        <p class="hint">Giờ vàng: 9h, 11h, 13h, 19h, 21h</p>
+      </div>
+    </div>
+    <div class="time-chips" id="time-chips">
+      <div class="time-chip" onclick="setTime('09:00',this)">9:00</div>
+      <div class="time-chip" onclick="setTime('11:00',this)">11:00</div>
+      <div class="time-chip" onclick="setTime('13:00',this)">13:00</div>
+      <div class="time-chip" onclick="setTime('19:00',this)">19:00</div>
+      <div class="time-chip" onclick="setTime('21:00',this)">21:00</div>
+    </div>
+  </div>
+
+  <div class="submit-row">
+    <button class="btn-reset" type="button" onclick="resetForm()">Xóa</button>
+    <button class="btn-submit" type="button" id="submitBtn" onclick="submitForm()">✨ Gửi & Gen Caption</button>
+  </div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const APP_ID = 'fb394ab7-2164-4da6-a15e-9e06fefaccb0';
+const API_KEY = 'V2-wpK1r-oW88b-9sL5Z-DMxbg-zUWg1-FX50y-91Plm-sPMOc';
+const TABLE_NAME = 'Form Bài Đăng';
+const API_URL = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${encodeURIComponent(TABLE_NAME)}/Action`;
+
+const COL = {
+  who: 'Bạn là ai? *',
+  source: 'Nguồn nội dung từ đâu?',
+  types: 'Loại nội dung:',
+  caption: 'Caption thô / Ý tưởng chính *',
+  approve: 'Cần duyệt trước khi đăng?',
+  media: 'Loại media',
+  mediaLink: 'Link video / ảnh',
+  channels: 'Đăng lên kênh nào?',
+  postDate: 'Ngày muốn đăng',
+  postTime: 'Giờ đăng bài',
+  note: 'Ghi chú thêm cho AI'
+};
+
+const SOURCE_MAP = {
+  staff: '👤 Nhân viên tự làm',
+  ai: '🤖 AI tự tạo (chỉ cần chủ đề hoặc ý tưởng thô)'
+};
+const MEDIA_MAP = {
+  video: 'Video',
+  photo: 'Ảnh đơn',
+  carousel: 'Nhiều ảnh (Carousel)'
+};
+
+let submitting = false;
+
+function pick(group, el) {
+  document.querySelectorAll('[data-group="' + group + '"]').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function toggleTag(el) { el.classList.toggle('selected'); }
+function toggleCh(el) { el.classList.toggle('selected'); }
+function selectAllCh() { document.querySelectorAll('#ch-grid .ch-btn').forEach(e => e.classList.add('selected')); }
+function clearAllCh() { document.querySelectorAll('#ch-grid .ch-btn').forEach(e => e.classList.remove('selected')); }
+function setTime(t, el) {
+  document.getElementById('post-time').value = t;
+  document.querySelectorAll('.time-chip').forEach(e => e.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function showToast(msg, ok) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + (ok ? 'ok' : 'err');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => { el.className = 'toast'; }, 3500);
+}
+function genId() {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let s = '';
+  for (let i = 0; i < 8; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return s;
+}
+function toAppSheetTime(t) {
+  if (!t) return '';
+  return t.length === 5 ? `${t}:00` : t;
+}
+function isValidUrl(s) {
+  try { new URL(s); return true; } catch { return false; }
+}
+async function appsheetAdd(row) {
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'ApplicationAccessKey': API_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      Action: 'Add',
+      Properties: { Locale: 'vi-VN', Timezone: 'Asia/Ho_Chi_Minh' },
+      Rows: [row]
+    })
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || `HTTP ${response.status}`);
+  }
+  return response.json().catch(() => ({}));
+}
+function resetForm() {
+  document.querySelectorAll('.selected').forEach(e => e.classList.remove('selected'));
+  document.querySelectorAll('.sel').forEach(e => e.classList.remove('sel'));
+  ['who', 'media-link', 'caption', 'note', 'post-time'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('post-date').value = new Date().toISOString().split('T')[0];
+}
+async function submitForm() {
+  if (submitting) return;
+
+  const who = document.getElementById('who').value;
+  const caption = document.getElementById('caption').value.trim();
+  const channels = [...document.querySelectorAll('#ch-grid .ch-btn.selected')].map(e => e.textContent.trim());
+  const date = document.getElementById('post-date').value;
+  const types = [...document.querySelectorAll('#type-tags .tag.selected')].map(e => e.textContent.trim());
+  const mediaLink = document.getElementById('media-link').value.trim();
+  const note = document.getElementById('note').value.trim();
+  const source = document.querySelector('[data-group="source"].selected');
+  const approve = document.querySelector('[data-group="approve"].selected');
+  const media = document.querySelector('[data-group="media"].selected');
+  const time = document.getElementById('post-time').value;
+
+  if (!who || !caption || channels.length === 0 || !date || !time || !source || !media || !approve) {
+    showToast('Vui lòng điền đầy đủ các trường bắt buộc!', false);
+    return;
+  }
+  if (types.length === 0) {
+    showToast('Vui lòng chọn ít nhất một loại nội dung!', false);
+    return;
+  }
+  if (mediaLink && !isValidUrl(mediaLink)) {
+    showToast('Link video/ảnh phải là URL hợp lệ (https://...)', false);
+    return;
+  }
+
+  const payload = {
+    id: genId(),
+    [COL.who]: who,
+    [COL.source]: SOURCE_MAP[source.dataset.val] || source.textContent.trim(),
+    [COL.types]: types.join(', '),
+    [COL.caption]: caption,
+    [COL.approve]: approve.dataset.val === 'yes' ? 'Có' : 'Không',
+    [COL.media]: MEDIA_MAP[media.dataset.val] || media.textContent.trim(),
+    [COL.channels]: channels.join(', '),
+    [COL.postDate]: date,
+    [COL.postTime]: toAppSheetTime(time)
+  };
+  if (mediaLink) payload[COL.mediaLink] = mediaLink;
+  if (note) payload[COL.note] = note;
+
+  const btn = document.getElementById('submitBtn');
+  submitting = true;
+  btn.disabled = true;
+  btn.textContent = 'Đang gửi...';
+
+  try {
+    await appsheetAdd(payload);
+    showToast('Đã gửi vào Form Bài Đăng thành công!', true);
+    try { window.parent.postMessage({ type: 'post-form-submitted' }, '*'); } catch (_) {}
+    resetForm();
+  } catch (err) {
+    showToast('Gửi thất bại: ' + (err.message || err), false);
+  } finally {
+    submitting = false;
+    btn.disabled = false;
+    btn.textContent = '✨ Gửi & Gen Caption';
+  }
+}
+
+const urlParams = new URLSearchParams(location.search);
+const presetDate = urlParams.get('date');
+document.getElementById('post-date').value = presetDate || new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
