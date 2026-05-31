@@ -52,8 +52,8 @@
 </head>
 
 <body class="bg-slate-100 text-slate-800 h-screen flex flex-col app-shell">
-  <div class="shrink-0 px-4 py-3 border-b border-slate-200 bg-white/90 shadow-sm backdrop-blur-sm">
-    <div id="tabs" class="flex flex-wrap gap-2"></div>
+  <div class="shrink-0 px-6 py-5 border-b border-slate-200 bg-white/90 shadow-sm backdrop-blur-sm">
+    <div id="tabs" class="flex flex-wrap gap-4"></div>
   </div>
   <div class="flex-1 min-h-0 bg-white/85 backdrop-blur-[1px]">
     <iframe id="tabFrame" title="Nội dung tab" src=""
@@ -67,7 +67,8 @@
       { id: 'noi-dung', label: 'Nội dung', file: 'noi-dung.html' },
       { id: 'lich-mkt', label: ' Lịch MKT 2026', file: 'lich-mkt.html' },
       { id: 'campaign-lon', label: ' Campaign Lớn', file: 'campaign-lon.html' },
-      { id: 'ngay-doi-sale', label: ' Ngày Đôi & Sale', file: 'ngay-doi-sale.html' }
+      { id: 'ngay-doi-sale', label: ' Ngày Đôi & Sale', file: 'ngay-doi-sale.html' },
+      { id: 'nhansu', label: 'Nhân sự', file: 'nhansu.html' }
     ];
 
     const tabsContainer = document.getElementById('tabs');
@@ -80,8 +81,8 @@
 
         if (btn) {
           btn.className = active
-            ? 'px-4 py-2 rounded-lg text-sm font-medium bg-emerald-600 text-white shadow-sm'
-            : 'px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors';
+            ? 'min-w-[160px] px-16 py-3 rounded-xl text-base font-semibold bg-emerald-600 text-white shadow-sm'
+            : 'min-w-[160px] px-16 py-3 rounded-xl text-base font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors';
         }
 
         if (active) {

@@ -75,11 +75,7 @@ input[type=radio],input[type=checkbox]{accent-color:#a78bca;width:15px;height:15
       <div>
         <label class="field-label">Bạn là ai? <span class="req">*</span></label>
         <select id="who">
-          <option value="">— Chọn —</option>
-          <option>Tuyến (Content)</option>
-          <option>Minh (Video)</option>
-          <option>Hùng (Store)</option>
-          <option>Tuan (Owner)</option>
+          <option value="">Đang tải nhân sự...</option>
         </select>
       </div>
       <div>
@@ -188,7 +184,10 @@ input[type=radio],input[type=checkbox]{accent-color:#a78bca;width:15px;height:15
 const APP_ID = 'fb394ab7-2164-4da6-a15e-9e06fefaccb0';
 const API_KEY = 'V2-wpK1r-oW88b-9sL5Z-DMxbg-zUWg1-FX50y-91Plm-sPMOc';
 const TABLE_NAME = 'Form Bài Đăng';
+const STAFF_TABLE_NAME = 'Nhân sự';
 const API_URL = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${encodeURIComponent(TABLE_NAME)}/Action`;
+const STAFF_API_URL = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${encodeURIComponent(STAFF_TABLE_NAME)}/Action`;
+const STAFF_NAME_COL = 'Tên nhân sự';
 
 const COL = {
   who: 'Bạn là ai? *',
@@ -249,6 +248,49 @@ function toAppSheetTime(t) {
 function isValidUrl(s) {
   try { new URL(s); return true; } catch { return false; }
 }
+async function appsheetFind(url) {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'ApplicationAccessKey': API_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      Action: 'Find',
+      Properties: { Locale: 'vi-VN', Timezone: 'Asia/Ho_Chi_Minh' },
+      Rows: []
+    })
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || `HTTP ${response.status}`);
+  }
+  const data = await response.json();
+  return Array.isArray(data) ? data : [];
+}
+
+async function loadStaffOptions() {
+  const select = document.getElementById('who');
+  if (!select) return;
+  try {
+    const rows = await appsheetFind(STAFF_API_URL);
+    const names = [...new Set(
+      rows.map(r => String(r[STAFF_NAME_COL] || '').trim()).filter(Boolean)
+    )].sort((a, b) => a.localeCompare(b, 'vi'));
+
+    select.innerHTML = '<option value="">— Chọn —</option>';
+    names.forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      select.appendChild(opt);
+    });
+    if (!names.length) {
+      select.innerHTML = '<option value="">Chưa có nhân sự</option>';
+    }
+  } catch (err) {
+    select.innerHTML = '<option value="">Không tải được nhân sự</option>';
+    console.error('loadStaffOptions', err);
+  }
+}
+
 async function appsheetAdd(row) {
   const response = await fetch(API_URL, {
     method: 'POST',
@@ -339,6 +381,7 @@ async function submitForm() {
 const urlParams = new URLSearchParams(location.search);
 const presetDate = urlParams.get('date');
 document.getElementById('post-date').value = presetDate || new Date().toISOString().split('T')[0];
+loadStaffOptions();
 </script>
 </body>
 </html>

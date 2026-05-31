@@ -305,7 +305,7 @@
         /* Content Layout */
         .content-grid {
             display: grid;
-            grid-template-columns: 1fr 340px;
+            grid-template-columns: 1fr;
             gap: 20px;
         }
 
@@ -442,12 +442,20 @@
 
         .calendar-table td {
             border: 1px solid #f4ece0;
-            padding: 6px;
+            padding: 6px 8px;
             vertical-align: top;
-            height: 100px;
+            height: 92px;
             width: 14.28%;
             position: relative;
             background: white;
+        }
+
+        .calendar-table td.has-posts:not(.disabled) {
+            cursor: pointer;
+        }
+
+        .calendar-table td.has-posts:not(.disabled):hover {
+            background: #f8fbff;
         }
 
         .calendar-table td.disabled {
@@ -456,18 +464,461 @@
         }
 
         .calendar-table td.today {
-            background: #fff8e7;
+            background: #eef4ff;
         }
 
         .calendar-table td.weekend {
             color: #e8918a;
         }
 
+        .day-cell-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+
+        .day-count-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border: 1px solid #e8e0d4;
+            border-radius: 999px;
+            background: #faf7f2;
+            font-size: 10px;
+            font-weight: 700;
+            color: #6b6b80;
+            line-height: 1.2;
+        }
+
+        .day-count-badge svg {
+            width: 11px;
+            height: 11px;
+            flex-shrink: 0;
+        }
+
+        .day-status-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 6px;
+            margin-bottom: 6px;
+            min-height: 14px;
+        }
+
+        .day-status-dot {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #6b6b80;
+        }
+
+        .day-status-dot .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .day-platform-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: auto;
+        }
+
+        .day-plat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 2px 6px;
+            border: 1px solid #ece4d8;
+            border-radius: 6px;
+            background: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            color: #4a4a5e;
+        }
+
+        .day-plat-icon {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .day-plat-icon svg {
+            width: 8px;
+            height: 8px;
+        }
+
+        .day-events-store {
+            display: none !important;
+        }
+
+        .day-detail-card {
+            max-height: calc(100vh - 32px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .day-detail-card .detail-header {
+            flex-shrink: 0;
+        }
+
+        .day-detail-toolbar {
+            flex-shrink: 0;
+            padding: 10px 16px 12px;
+            border-bottom: 1px solid #f4ece0;
+            background: #fdfaf6;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .day-detail-filter-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #8a7a92;
+            padding-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .day-detail-status-checks {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .day-status-check {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 11px;
+            border: 1px solid #ece4d8;
+            border-radius: 999px;
+            background: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a4a5e;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .day-status-check:hover {
+            border-color: #d8cfc0;
+            background: #faf7f2;
+        }
+
+        .day-status-check.is-all {
+            border-color: #b8e0bf;
+            background: #f0faf3;
+        }
+
+        .day-status-check input {
+            width: 14px;
+            height: 14px;
+            accent-color: #059669;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .day-detail-card .detail-body.day-kanban-board {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: stretch;
+            gap: 12px;
+            padding: 12px 14px 14px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            flex: 1;
+            min-height: 0;
+            min-width: 0;
+            max-height: none;
+            grid-template-columns: unset;
+            scrollbar-width: thin;
+            scrollbar-color: #d4c4b0 transparent;
+        }
+
+        .day-detail-card .detail-body.day-kanban-board::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .day-detail-card .detail-body.day-kanban-board::-webkit-scrollbar-thumb {
+            background: #d4c4b0;
+            border-radius: 999px;
+        }
+
+        .day-kanban-board {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            gap: 12px;
+            align-items: stretch;
+            height: 100%;
+            min-height: 0;
+            width: 100%;
+        }
+
+        .kanban-column {
+            flex: 1 1 0;
+            min-width: 280px;
+            width: auto;
+            max-width: none;
+            background: #f8f6f2;
+            border: 1px solid #ece4d8;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            max-height: 100%;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .kanban-column-head {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f0e8dc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            color: #4a4a5e;
+            background: #fff;
+            border-radius: 10px 10px 0 0;
+            flex-shrink: 0;
+        }
+
+        .kanban-column-count {
+            margin-left: auto;
+            font-size: 11px;
+            font-weight: 700;
+            background: #f0e8dc;
+            color: #6b6b80;
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+
+        .kanban-column-body {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            flex: 1;
+            min-height: 0;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #d4c4b0 #f8f6f2;
+        }
+
+        .kanban-column-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .kanban-column-body::-webkit-scrollbar-thumb {
+            background: #d4c4b0;
+            border-radius: 999px;
+        }
+
+        .kanban-column-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        /* Kanban item card */
+        .kb-card {
+            position: relative;
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid #ece8e0;
+            box-shadow: 0 1px 6px rgba(74, 74, 94, 0.05);
+            overflow: visible;
+            flex-shrink: 0;
+            width: 100%;
+        }
+
+        .kb-accent {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+        }
+
+        .kb-facebook .kb-accent { background: #1877f2; }
+        .kb-youtube .kb-accent { background: #ff0000; }
+        .kb-tiktok .kb-accent { background: #111; }
+        .kb-instagram .kb-accent { background: linear-gradient(180deg, #f58529, #dd2a7b); }
+
+        .kb-inner {
+            padding: 11px 12px 11px 14px;
+        }
+
+        .kb-top {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .kb-time {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 2px 6px;
+            border-radius: 999px;
+            background: #f3f0ea;
+            color: #6b6b80;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .kb-time svg {
+            width: 10px;
+            height: 10px;
+            opacity: 0.7;
+        }
+
+        .kb-plat-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .kb-plat-icon svg {
+            width: 9px;
+            height: 9px;
+        }
+
+        .kb-sep {
+            width: 1px;
+            height: 12px;
+            background: #ddd6cb;
+            flex-shrink: 0;
+        }
+
+        .kb-type {
+            font-size: 10px;
+            font-weight: 600;
+            color: #6b6b80;
+        }
+
+        .kb-status {
+            margin-left: auto;
+            padding: 2px 6px;
+            border-radius: 5px;
+            background: #f0ebe3;
+            color: #6b6b80;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .kb-status.is-error {
+            background: #fde8e8;
+            color: #b42318;
+        }
+
+        .kb-status.is-ok {
+            background: #e8f5ec;
+            color: #2e7d32;
+        }
+
+        .kb-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1a1a2e;
+            line-height: 1.45;
+            margin: 0 0 6px;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            white-space: normal;
+        }
+
+        .kb-channel {
+            font-size: 9px;
+            font-weight: 600;
+            color: #9a8fa8;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .kb-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .kb-btn {
+            border: none;
+            border-radius: 6px;
+            padding: 5px 9px;
+            font-size: 10px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: opacity 0.15s;
+        }
+
+        .kb-btn:hover { opacity: 0.88; }
+
+        .kb-btn.primary {
+            background: #e8f0fe;
+            color: #1a56db;
+        }
+
+        .kb-btn.ghost {
+            background: #fff;
+            color: #6b6b80;
+            border: 1px solid #e2ddd4;
+        }
+
+        .kanban-empty-col {
+            text-align: center;
+            color: #aaa0b3;
+            font-size: 11px;
+            padding: 12px 6px;
+        }
+
+        .kanban-empty {
+            text-align: center;
+            color: #8a7a92;
+            padding: 24px;
+            width: 100%;
+        }
+
+        .kanban-column.is-empty {
+            opacity: 0.72;
+        }
+
+        .kanban-column.is-empty .kanban-column-body {
+            justify-content: center;
+        }
+
         .day-number {
             font-size: 13px;
             color: #8a7a92;
-            margin-bottom: 5px;
             font-weight: 600;
+            line-height: 1;
+            flex-shrink: 0;
         }
 
         .day-number.weekend {
@@ -598,6 +1049,22 @@
 
         .detail-modal.show {
             display: flex;
+        }
+
+        #eventDetailModal {
+            z-index: 110;
+        }
+
+        #dayDetailModal {
+            z-index: 105;
+            padding: 8px;
+            align-items: stretch;
+        }
+
+        #dayDetailModal .day-detail-card {
+            width: calc(100vw - 16px);
+            max-width: none;
+            max-height: calc(100vh - 16px);
         }
 
         .detail-card {
@@ -796,302 +1263,6 @@
         .detail-action-btn.delete { background: #ffebee; color: #c62828; }
         .detail-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Right Panel - Form */
-        .right-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .form-card {
-            background: white;
-            border-radius: 14px;
-            padding: 18px;
-            box-shadow: 0 2px 12px rgba(180, 160, 140, 0.06);
-        }
-
-        .form-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #4a4a5e;
-            margin-bottom: 14px;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            letter-spacing: 0.5px;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 11px;
-            color: #aaa0b3;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .form-input,
-        .form-select,
-        .form-textarea {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #f0e8dc;
-            border-radius: 8px;
-            font-size: 12px;
-            background: white;
-            color: #4a4a5e;
-            font-family: inherit;
-        }
-
-        .form-select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23aaa0b3' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 8px center;
-            padding-right: 25px;
-            cursor: pointer;
-        }
-
-        .form-textarea {
-            min-height: 50px;
-            resize: vertical;
-        }
-
-        .form-input::placeholder,
-        .form-textarea::placeholder {
-            color: #c8bcd0;
-        }
-
-        .status-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 10px;
-            border: 1px solid #f0e8dc;
-            border-radius: 8px;
-            background: white;
-            font-size: 12px;
-            cursor: pointer;
-            width: 100%;
-            justify-content: space-between;
-            color: #4a4a5e;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #ffd97d;
-        }
-
-        .add-btn {
-            width: 100%;
-            padding: 10px;
-            background: #ffeaa7;
-            color: #8b6914;
-            border: none;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            margin-top: 5px;
-            font-family: inherit;
-        }
-
-        .add-btn:hover {
-            background: #ffe066;
-        }
-
-        .save-icon-btn {
-            width: 36px;
-            height: 36px;
-            background: white;
-            border: 1px solid #f0e8dc;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            margin-left: 8px;
-        }
-
-        .form-bottom-row {
-            display: flex;
-            align-items: center;
-        }
-
-        /* AI Assistant */
-        .ai-card {
-            background: white;
-            border-radius: 14px;
-            padding: 18px;
-            box-shadow: 0 2px 12px rgba(180, 160, 140, 0.06);
-        }
-
-        .ai-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #4a4a5e;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            letter-spacing: 0.5px;
-        }
-
-        .ai-sparkle {
-            color: #f4a261;
-        }
-
-        .ai-hint {
-            background: #e0f0ff;
-            border-left: 3px solid #a8c5e8;
-            padding: 8px 10px;
-            border-radius: 8px;
-            font-size: 11px;
-            color: #5b8cb8;
-            margin-bottom: 12px;
-            display: flex;
-            gap: 6px;
-            align-items: flex-start;
-        }
-
-        .ai-hint-icon {
-            color: #5b8cb8;
-            flex-shrink: 0;
-            font-weight: bold;
-        }
-
-        .ai-message {
-            font-size: 12px;
-            color: #6b6b80;
-            line-height: 1.5;
-            margin-bottom: 12px;
-        }
-
-        .ai-input-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .ai-input {
-            flex: 1;
-            padding: 8px 10px;
-            border: 1px solid #f0e8dc;
-            border-radius: 8px;
-            font-size: 12px;
-            background: white;
-            color: #4a4a5e;
-            font-family: inherit;
-        }
-
-        .send-btn {
-            background: #ffeaa7;
-            color: #8b6914;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        .send-btn:hover {
-            background: #ffe066;
-        }
-
-        .ai-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 12px;
-        }
-
-        .ai-chip {
-            padding: 5px 10px;
-            background: white;
-            border: 1px solid #f0e8dc;
-            border-radius: 15px;
-            font-size: 11px;
-            color: #6b6b80;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-family: inherit;
-            font-weight: 500;
-        }
-
-        .ai-chip:hover {
-            background: #faf5ef;
-        }
-
-        .ai-chip svg {
-            width: 11px;
-            height: 11px;
-        }
-
-        .api-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .api-label {
-            font-size: 11px;
-            color: #aaa0b3;
-            font-weight: 600;
-            flex-shrink: 0;
-            letter-spacing: 0.5px;
-        }
-
-        .api-input {
-            flex: 1;
-            padding: 6px 10px;
-            border: 1px solid #f0e8dc;
-            border-radius: 8px;
-            font-size: 11px;
-            background: white;
-            color: #4a4a5e;
-            font-family: inherit;
-        }
-
-        .save-btn {
-            background: #ffeaa7;
-            color: #8b6914;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        .save-btn:hover {
-            background: #ffe066;
-        }
-
     </style>
   <style id="force-black-text">
     html body, html body * { color: #000 !important; }
@@ -1160,14 +1331,6 @@
                                 <button class="today-btn" id="todayBtn">Hôm nay</button>
                             </div>
                             <div class="month-right">
-                                <span class="filter-label">Kênh</span>
-                                <select class="filter-select">
-                                    <option>Tất cả kênh</option>
-                                </select>
-                                <span class="filter-label">Trạng thái</span>
-                                <select class="filter-select">
-                                    <option>Tất cả</option>
-                                </select>
                                 <span class="month-stats" id="monthStats">0 bài tháng này</span>
                             </div>
                         </div>
@@ -1197,56 +1360,6 @@
                     </div>
 
                 </div>
-
-                <!-- Right Panel -->
-                <div class="right-panel">
-                    <!-- AI Assistant -->
-                    <div class="ai-card">
-                        <div class="ai-title">
-                            <span class="ai-sparkle">✨</span>
-                            AI HỖ TRỢ NỘI DUNG
-                        </div>
-                        <div class="ai-hint">
-                            <span class="ai-hint-icon">G</span>
-                            <span><strong>Gợi ý AI:</strong> Hãy sử dụng AI để nhận gợi ý bài viết, chú thích và hashtag phù hợp.</span>
-                        </div>
-                        <div class="ai-message">
-                            Xin chào! Mình là AI assistant của Guitar ST.Real 🎸<br>
-                            Hỏi mình để nhận ý tưởng nội dung, caption, hashtag trending, hoặc gợi ý lịch đăng hiệu quả nhé!
-                        </div>
-                        <div class="ai-input-row">
-                            <input type="text" class="ai-input" placeholder="Hỏi AI gợi ý nội dung...">
-                            <button class="send-btn">Gửi</button>
-                        </div>
-                        <div class="ai-chips">
-                            <div class="ai-chip">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.84-.1z"/></svg>
-                                Ý tưởng TikTok
-                            </div>
-                            <div class="ai-chip">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#1877f2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                                Caption FB
-                            </div>
-                            <div class="ai-chip">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
-                                Lịch 1 tuần
-                            </div>
-                            <div class="ai-chip">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ff0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                                YouTube ideas
-                            </div>
-                            <div class="ai-chip">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
-                                Hook viral
-                            </div>
-                        </div>
-                        <div class="api-row">
-                            <span class="api-label">API KEY</span>
-                            <input type="text" class="api-input" placeholder="Nhập API key...">
-                            <button class="save-btn">Lưu</button>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -1257,6 +1370,19 @@
                 <button class="detail-close" id="addPostClose" type="button" aria-label="Đóng">×</button>
             </div>
             <iframe class="form-modal-frame" id="addPostFrame" title="Form tạo nội dung đăng bài"></iframe>
+        </div>
+    </div>
+    <div class="detail-modal" id="dayDetailModal" aria-hidden="true">
+        <div class="detail-card day-detail-card" role="dialog" aria-modal="true" aria-labelledby="dayDetailTitle">
+            <div class="detail-header">
+                <div class="detail-title" id="dayDetailTitle">Chi tiết ngày</div>
+                <button class="detail-close" id="dayDetailClose" type="button" aria-label="Đóng">×</button>
+            </div>
+            <div class="day-detail-toolbar">
+                <span class="day-detail-filter-label">Trạng thái</span>
+                <div class="day-detail-status-checks" id="dayDetailStatusFilters"></div>
+            </div>
+            <div class="detail-body day-kanban-board" id="dayDetailList"></div>
         </div>
     </div>
     <div class="detail-modal" id="eventDetailModal" aria-hidden="true">
@@ -1329,13 +1455,124 @@
             instagram:{ cls: "instagram-bg",svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4z"/></svg>` }
         };
 
+        const PLATFORM_KANBAN = [
+            { key: "facebook", label: "Facebook", always: true },
+            { key: "tiktok", label: "TikTok", always: true },
+            { key: "youtube", label: "YouTube", always: true },
+            { key: "instagram", label: "Instagram", always: false }
+        ];
+
+        const platformNames = {
+            "facebook-bg": "Facebook",
+            "youtube-bg": "YouTube",
+            "tiktok-bg": "TikTok",
+            "instagram-bg": "Instagram"
+        };
+
         function detectPlatformFromText(text) {
-            const t = (text || "").toLowerCase();
-            if (t.includes("facebook") || t.includes("fb")) return PLATFORM_SVGS.facebook;
-            if (t.includes("youtube") || t.includes("yt"))  return PLATFORM_SVGS.youtube;
-            if (t.includes("tiktok"))  return PLATFORM_SVGS.tiktok;
+            const t = String(text || "").toLowerCase();
+            if (t.includes("youtube") || t.includes("yt")) return PLATFORM_SVGS.youtube;
+            if (t.includes("tiktok") || t.includes("tik tok")) return PLATFORM_SVGS.tiktok;
             if (t.includes("instagram") || t.includes("ig")) return PLATFORM_SVGS.instagram;
-            return PLATFORM_SVGS.facebook; // mặc định
+            return PLATFORM_SVGS.facebook;
+        }
+
+        function getPlatformKey(channelText) {
+            const t = String(channelText || "").toLowerCase();
+            if (t.includes("youtube") || t.includes("yt")) return "youtube";
+            if (t.includes("tiktok") || t.includes("tik tok")) return "tiktok";
+            if (t.includes("instagram") || t.includes("ig")) return "instagram";
+            return "facebook";
+        }
+
+        function getCardPlatformKey(card) {
+            const platEl = card.querySelector(".event-platform");
+            if (platEl?.classList.contains("youtube-bg")) return "youtube";
+            if (platEl?.classList.contains("tiktok-bg")) return "tiktok";
+            if (platEl?.classList.contains("instagram-bg")) return "instagram";
+            if (platEl?.classList.contains("facebook-bg")) return "facebook";
+            return getPlatformKey(getCardChannel(card));
+        }
+
+        function escapeHtml(text) {
+            return String(text ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        function formatTimeDisplay(raw) {
+            const v = String(raw ?? "").trim();
+            if (!v) return "";
+            const m = v.match(/(\d{1,2}):(\d{2})/);
+            if (!m) return v;
+            return `${m[1].padStart(2, "0")}:${m[2]}`;
+        }
+
+        function getMediaLabel(card) {
+            const m = String(card.dataset.mediaType || "").toLowerCase();
+            if (m.includes("video")) return "Video";
+            if (m.includes("carousel") || m.includes("nhiều") || m.includes("nhieu")) return "Carousel";
+            if (m.includes("ảnh") || m.includes("anh")) return "Bài viết";
+            return m ? card.dataset.mediaType : "Bài viết";
+        }
+
+        function getStatusBadgeClass(status) {
+            const s = String(status || "").toLowerCase();
+            if (s.includes("lỗi") || s.includes("loi") || s.includes("api")) return "is-error";
+            if (s.includes("đã đăng") || s.includes("da dang") || s.includes("duyệt")) return "is-ok";
+            return "";
+        }
+
+        function buildKanbanCardElement(sourceCard) {
+            const platKey = getCardPlatformKey(sourceCard);
+            const plat = PLATFORM_SVGS[platKey] || PLATFORM_SVGS.facebook;
+            const time = getEventTime(sourceCard) || "--:--";
+            const title = sourceCard.dataset.title || sourceCard.querySelector(".event-title")?.textContent.trim() || "(Chưa có tiêu đề)";
+            const status = getCardStatus(sourceCard) || "Chưa rõ";
+            const mediaLabel = getMediaLabel(sourceCard);
+            const channel = getCardChannel(sourceCard);
+            const postLink = normalizeExternalUrl(sourceCard.dataset.postLink || "");
+            const driveLink = normalizeExternalUrl(sourceCard.dataset.driveLink || "");
+            const hasLink = Boolean(postLink || driveLink);
+            const statusCls = getStatusBadgeClass(status);
+
+            const el = document.createElement("article");
+            el.className = `kb-card kb-${platKey}`;
+            el.innerHTML = `
+                <div class="kb-accent"></div>
+                <div class="kb-inner">
+                    <div class="kb-top">
+                        <span class="kb-time">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            ${escapeHtml(time)}
+                        </span>
+                        <span class="kb-plat-icon ${plat.cls}">${plat.svg}</span>
+                        <span class="kb-sep"></span>
+                        <span class="kb-type">${escapeHtml(mediaLabel)}</span>
+                        <span class="kb-status ${statusCls}">${escapeHtml(status.toUpperCase())}</span>
+                    </div>
+                    <h3 class="kb-title">${escapeHtml(title)}</h3>
+                    ${channel ? `<div class="kb-channel">${escapeHtml(channel)}</div>` : ""}
+                    <div class="kb-actions">
+                        <button type="button" class="kb-btn primary" data-action="view">Xem / Sửa</button>
+                        ${hasLink ? `<button type="button" class="kb-btn ghost" data-action="pin">Ghim Link</button>` : ""}
+                    </div>
+                </div>
+            `;
+
+            el.querySelector('[data-action="view"]')?.addEventListener("click", (e) => {
+                e.stopPropagation();
+                openEventDetail(sourceCard);
+            });
+            el.querySelector('[data-action="pin"]')?.addEventListener("click", (e) => {
+                e.stopPropagation();
+                openEventDetail(sourceCard);
+                setTimeout(() => eventDetailLinkMenu?.classList.add("open"), 50);
+            });
+
+            return el;
         }
 
         // ── Render lưới lịch động ──
@@ -1400,10 +1637,35 @@
                     if (isToday)    td.classList.add("today");
                     if (isWeekend && !isDisabled) td.classList.add("weekend");
 
+                    const top = document.createElement("div");
+                    top.className = "day-cell-top";
+
+                    const countBadge = document.createElement("div");
+                    countBadge.className = "day-count-badge";
+                    countBadge.hidden = true;
+                    countBadge.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg><span class="day-count-text">0 bài</span>`;
+
                     const dayDiv = document.createElement("div");
                     dayDiv.className = "day-number" + (isWeekend && !isDisabled ? " weekend" : "") + (isDisabled ? " disabled" : "");
                     dayDiv.textContent = day;
-                    td.appendChild(dayDiv);
+
+                    top.appendChild(countBadge);
+                    top.appendChild(dayDiv);
+                    td.appendChild(top);
+
+                    const statusRow = document.createElement("div");
+                    statusRow.className = "day-status-row";
+                    td.appendChild(statusRow);
+
+                    const platformRow = document.createElement("div");
+                    platformRow.className = "day-platform-row";
+                    td.appendChild(platformRow);
+
+                    const store = document.createElement("div");
+                    store.className = "day-events-store";
+                    store.hidden = true;
+                    td.appendChild(store);
+
                     tr.appendChild(td);
                 }
                 tbody.appendChild(tr);
@@ -1411,7 +1673,7 @@
         }
 
         // ── Tạo 1 event-card từ row data ──
-        function createEventCard(row, dateCol, titleCol, contentCol, statusCol, channelCol, ownerCol, postLinkCol, driveLinkCol, keyCol) {
+        function createEventCard(row, dateCol, titleCol, contentCol, statusCol, channelCol, ownerCol, postLinkCol, driveLinkCol, keyCol, timeCol, mediaCol) {
             const isoDate  = dateCol   ? toIsoDate(row[dateCol])   : "";
             const title    = titleCol   ? String(row[titleCol] || "").trim() : "";
             const content  = contentCol ? String(row[contentCol] || "").trim() : "";
@@ -1421,6 +1683,7 @@
             const postLink = postLinkCol ? String(row[postLinkCol] || "").trim() : "";
             const driveLink = driveLinkCol ? String(row[driveLinkCol] || "").trim() : "";
             const rowKey   = keyCol     ? String(row[keyCol]     || "").trim() : "";
+            const mediaType = mediaCol ? String(row[mediaCol] || "").trim() : "";
             const titleText = title || "(Chưa có tiêu đề)";
 
             // Phát hiện platform
@@ -1440,11 +1703,13 @@
             if (driveLink) card.dataset.driveLink  = driveLink;
             if (rowKey)   card.dataset.rowKey      = rowKey;
             if (status)   card.dataset.approvalStatus = status;
+            if (mediaType) card.dataset.mediaType = mediaType;
 
-            // Lấy giờ từ cột ngày nếu có
+            const timeFromCol = timeCol ? formatTimeDisplay(row[timeCol]) : "";
             const rawDate = dateCol ? String(row[dateCol] || "") : "";
             const timeMatch = rawDate.match(/(\d{1,2}:\d{2})/);
-            const timeStr = timeMatch ? timeMatch[1] : "";
+            const timeStr = timeFromCol || (timeMatch ? timeMatch[1] : "");
+            if (timeStr) card.dataset.postTime = timeStr;
 
             card.innerHTML = `
                 <div class="event-time">
@@ -1464,7 +1729,7 @@
 
         // ── Đặt cards của tháng vào lưới ──
         function renderCardsForMonth(rows, year, month) {
-            if (!rows || !rows.length) { updateMonthStats(); return; }
+            if (!rows || !rows.length) { refreshDaySummaries(); return; }
             const r0 = rows[0];
             const dateCol    = findColumn(r0, DATE_COLUMNS);
             const titleCol   = findColumn(r0, TITLE_COLUMNS);
@@ -1475,6 +1740,8 @@
             const postLinkCol = findColumn(r0, POST_LINK_COLUMNS);
             const driveLinkCol = findColumn(r0, DRIVE_LINK_COLUMNS);
             const keyCol     = findColumn(r0, KEY_COLUMNS);
+            const timeCol    = findColumn(r0, TIME_COLUMNS);
+            const mediaCol   = findColumn(r0, MEDIA_COLUMNS);
 
             const monthPrefix = `${year}-${String(month).padStart(2,"0")}-`;
 
@@ -1487,11 +1754,250 @@
                 const td = document.querySelector(`#calendarBody td[data-date="${iso}"]`);
                 if (!td) return;
 
-                const card = createEventCard(row, dateCol, titleCol, contentCol, statusCol, channelCol, ownerCol, postLinkCol, driveLinkCol, keyCol);
-                td.appendChild(card);
+                let store = td.querySelector(".day-events-store");
+                if (!store) {
+                    store = document.createElement("div");
+                    store.className = "day-events-store";
+                    store.hidden = true;
+                    td.appendChild(store);
+                }
+
+                const card = createEventCard(row, dateCol, titleCol, contentCol, statusCol, channelCol, ownerCol, postLinkCol, driveLinkCol, keyCol, timeCol, mediaCol);
+                store.appendChild(card);
+            });
+
+            refreshDaySummaries();
+        }
+
+        function getVisibleCardsForDate(iso) {
+            const td = document.querySelector(`#calendarBody td[data-date="${iso}"]`);
+            if (!td) return [];
+            const store = td.querySelector(".day-events-store");
+            if (!store) return [];
+            return Array.from(store.querySelectorAll(".event-card")).filter((card) => card.style.display !== "none");
+        }
+
+        function getStatusColor(status) {
+            const list = buildStatusList(_cachedRows || []);
+            const unique = [...new Set(list.map((s) => s.trim()).filter(Boolean))];
+            const idx = unique.indexOf(status);
+            return chipColors[idx >= 0 ? idx % chipColors.length : 0];
+        }
+
+        function buildPlatformBadgeHtml(key, count) {
+            const plat = PLATFORM_SVGS[key] || PLATFORM_SVGS.facebook;
+            return `<span class="day-plat-badge"><span class="day-plat-icon ${plat.cls}">${plat.svg}</span>${count}</span>`;
+        }
+
+        function refreshDaySummaries() {
+            document.querySelectorAll("#calendarBody td[data-date]").forEach((td) => {
+                const iso = td.dataset.date;
+                const cards = getVisibleCardsForDate(iso);
+                const badge = td.querySelector(".day-count-badge");
+                const countText = badge?.querySelector(".day-count-text");
+                const statusRow = td.querySelector(".day-status-row");
+                const platformRow = td.querySelector(".day-platform-row");
+
+                td.classList.toggle("has-posts", cards.length > 0);
+
+                if (!cards.length) {
+                    if (badge) badge.hidden = true;
+                    if (statusRow) statusRow.innerHTML = "";
+                    if (platformRow) platformRow.innerHTML = "";
+                    return;
+                }
+
+                if (badge) badge.hidden = false;
+                if (countText) countText.textContent = `${cards.length} bài`;
+
+                const statusCounts = {};
+                cards.forEach((card) => {
+                    const status = getCardStatus(card) || "Chưa rõ";
+                    statusCounts[status] = (statusCounts[status] || 0) + 1;
+                });
+                if (statusRow) {
+                    statusRow.innerHTML = Object.entries(statusCounts).map(([status, count]) => {
+                        const color = getStatusColor(status);
+                        return `<span class="day-status-dot"><span class="dot" style="background:${color}"></span>${count}</span>`;
+                    }).join("");
+                }
+
+                const platformCounts = { facebook: 0, youtube: 0, tiktok: 0, instagram: 0 };
+                cards.forEach((card) => {
+                    const key = getCardPlatformKey(card);
+                    platformCounts[key] = (platformCounts[key] || 0) + 1;
+                });
+                if (platformRow) {
+                    platformRow.innerHTML = ["facebook", "tiktok", "youtube", "instagram"]
+                        .filter((key) => platformCounts[key] > 0)
+                        .map((key) => buildPlatformBadgeHtml(key, platformCounts[key]))
+                        .join("");
+                }
             });
 
             updateMonthStats();
+        }
+
+        function sortCardsByTime(cards) {
+            return [...cards].sort((a, b) => {
+                const ta = getEventTime(a) || "99:99";
+                const tb = getEventTime(b) || "99:99";
+                return ta.localeCompare(tb);
+            });
+        }
+
+        let dayDetailAllCards = [];
+        let dayDetailIsoDate = "";
+
+        function createDayStatusCheck(value, text, isAll, checked) {
+            const label = document.createElement("label");
+            label.className = "day-status-check" + (isAll ? " is-all" : "");
+            const input = document.createElement("input");
+            input.type = "checkbox";
+            input.value = value;
+            input.checked = checked;
+            const span = document.createElement("span");
+            span.textContent = text;
+            label.append(input, span);
+            return label;
+        }
+
+        function onDayDetailStatusFilterChange(event) {
+            const container = document.getElementById("dayDetailStatusFilters");
+            const input = event.target;
+            const allInput = container.querySelector('input[value="all"]');
+            const valueInputs = Array.from(container.querySelectorAll('input[type="checkbox"]'))
+                .filter((item) => item.value !== "all");
+
+            if (input.value === "all" && input.checked) {
+                valueInputs.forEach((item) => { item.checked = false; });
+            } else if (input.value !== "all" && input.checked) {
+                if (allInput) allInput.checked = false;
+            }
+
+            if (!valueInputs.some((item) => item.checked) && allInput) {
+                allInput.checked = true;
+            }
+
+            renderDayDetailKanban(getDayDetailFilteredCards());
+        }
+
+        function renderDayDetailStatusFilters(cards) {
+            const container = document.getElementById("dayDetailStatusFilters");
+            container.innerHTML = "";
+
+            const statusCounts = {};
+            cards.forEach((card) => {
+                const status = getCardStatus(card) || "Chưa rõ";
+                statusCounts[status] = (statusCounts[status] || 0) + 1;
+            });
+
+            const statuses = Object.keys(statusCounts).sort((a, b) => a.localeCompare(b, "vi"));
+            container.appendChild(createDayStatusCheck("all", `Tất cả (${cards.length})`, true, true));
+
+            statuses.forEach((status) => {
+                container.appendChild(
+                    createDayStatusCheck(status, `${status} (${statusCounts[status]})`, false, false)
+                );
+            });
+
+            container.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+                input.addEventListener("change", onDayDetailStatusFilterChange);
+            });
+        }
+
+        function getDayDetailFilteredCards() {
+            const container = document.getElementById("dayDetailStatusFilters");
+            const allInput = container.querySelector('input[value="all"]');
+            const checked = Array.from(container.querySelectorAll('input[type="checkbox"]:checked'))
+                .filter((item) => item.value !== "all")
+                .map((item) => normalizeText(item.value));
+
+            if (!container.querySelectorAll("input").length || (allInput && allInput.checked) || !checked.length) {
+                return dayDetailAllCards;
+            }
+
+            return dayDetailAllCards.filter((card) =>
+                checked.includes(normalizeText(getCardStatus(card) || "Chưa rõ"))
+            );
+        }
+
+        function renderDayDetailKanban(cards) {
+            const dayDetailTitle = document.getElementById("dayDetailTitle");
+            const dayDetailList = document.getElementById("dayDetailList");
+            const [year, month, day] = dayDetailIsoDate.split("-");
+            const total = dayDetailAllCards.length;
+            const count = cards.length;
+
+            dayDetailTitle.textContent = count === total
+                ? `Ngày ${day}/${month}/${year} — ${count} bài`
+                : `Ngày ${day}/${month}/${year} — ${count}/${total} bài`;
+
+            dayDetailList.innerHTML = "";
+
+            const grouped = {};
+            PLATFORM_KANBAN.forEach((p) => { grouped[p.key] = []; });
+            cards.forEach((card) => {
+                const key = getCardPlatformKey(card);
+                if (!grouped[key]) grouped[key] = [];
+                grouped[key].push(card);
+            });
+
+            PLATFORM_KANBAN.forEach((plat) => {
+                const colCards = sortCardsByTime(grouped[plat.key] || []);
+                if (!colCards.length && !plat.always) return;
+
+                const svgInfo = PLATFORM_SVGS[plat.key] || PLATFORM_SVGS.facebook;
+                const col = document.createElement("div");
+                col.className = "kanban-column" + (colCards.length ? "" : " is-empty");
+                col.innerHTML = `
+                    <div class="kanban-column-head">
+                        <span class="day-plat-icon ${svgInfo.cls}">${svgInfo.svg}</span>
+                        <span>${plat.label}</span>
+                        <span class="kanban-column-count">${colCards.length}</span>
+                    </div>
+                    <div class="kanban-column-body"></div>
+                `;
+
+                const body = col.querySelector(".kanban-column-body");
+                if (!colCards.length) {
+                    body.innerHTML = '<p class="kanban-empty-col">Chưa có bài</p>';
+                } else {
+                    colCards.forEach((card) => {
+                        body.appendChild(buildKanbanCardElement(card));
+                    });
+                }
+
+                dayDetailList.appendChild(col);
+            });
+
+            if (!dayDetailList.children.length) {
+                dayDetailList.innerHTML = '<p class="kanban-empty">Không có bài phù hợp bộ lọc.</p>';
+            }
+        }
+
+        function openDayDetail(isoDate) {
+            dayDetailAllCards = getVisibleCardsForDate(isoDate);
+            if (!dayDetailAllCards.length) return;
+
+            dayDetailIsoDate = isoDate;
+            const dayDetailModal = document.getElementById("dayDetailModal");
+
+            renderDayDetailStatusFilters(dayDetailAllCards);
+            renderDayDetailKanban(dayDetailAllCards);
+
+            dayDetailModal.classList.add("show");
+            dayDetailModal.setAttribute("aria-hidden", "false");
+        }
+
+        function closeDayDetail() {
+            const dayDetailModal = document.getElementById("dayDetailModal");
+            dayDetailModal.classList.remove("show");
+            dayDetailModal.setAttribute("aria-hidden", "true");
+            document.getElementById("dayDetailList").innerHTML = "";
+            document.getElementById("dayDetailStatusFilters").innerHTML = "";
+            dayDetailAllCards = [];
+            dayDetailIsoDate = "";
         }
 
         // ── Cập nhật toàn bộ view khi chuyển tháng ──
@@ -1547,6 +2053,8 @@
             "Người đăng", "Nguoi dang", "Người phụ trách", "Nguoi phu trach", "Owner"
         ];
         const DATE_COLUMNS = ["Ngày muốn đăng", "Ngay muon dang", "Ngày đăng", "Ngay dang"];
+        const TIME_COLUMNS = ["Giờ muốn đăng", "Gio muon dang", "Giờ đăng", "Gio dang"];
+        const MEDIA_COLUMNS = ["Loại media", "Loai media", "Media"];
         const POST_LINK_COLUMNS = ["Link bài đăng", "Link bai dang"];
         const DRIVE_LINK_COLUMNS = ["Link video / ảnh", "Link video / anh", "Link drive", "Link driver", "Drive link"];
         const KEY_COLUMNS = ["ID Key", "ID", "_RowNumber"];
@@ -1563,13 +2071,6 @@
             "2026-05-01": "Ngày Quốc tế Lao động",
             "2026-09-01": "Ngày Quốc khánh Việt Nam",
             "2026-09-02": "Ngày Quốc khánh Việt Nam"
-        };
-
-        const platformNames = {
-            "facebook-bg": "Facebook",
-            "youtube-bg": "YouTube",
-            "tiktok-bg": "TikTok",
-            "instagram-bg": "Instagram"
         };
 
         const eventDetailModal = document.getElementById("eventDetailModal");
@@ -1990,7 +2491,7 @@
             });
 
             syncApprovalChipsWithStatus(selectedStatuses);
-            updateMonthStats();
+            refreshDaySummaries();
         }
 
         function setActiveApprovalChip(chip) {
@@ -2156,6 +2657,7 @@
         }
 
         function getEventTime(card) {
+            if (card.dataset.postTime) return card.dataset.postTime;
             const timeNode = card.querySelector(".event-time");
             if (!timeNode) return "";
             return Array.from(timeNode.childNodes)
@@ -2192,8 +2694,8 @@
         }
 
         function openEventDetail(card) {
-            const title = card.dataset.title || card.querySelector(".event-title")?.textContent.trim() || "Chi tiết bài đăng";
-            const tag = card.querySelector(".event-tag")?.textContent.trim() || "Chưa có";
+            const title = card.dataset.title || card.querySelector(".event-title")?.textContent.trim() || card.querySelector(".kb-title")?.textContent.trim() || "Chi tiết bài đăng";
+            const tag = card.dataset.approvalStatus || card.querySelector(".event-tag")?.textContent.trim() || card.querySelector(".kb-status")?.textContent.trim() || "Chưa có";
             const content = card.dataset.content || "Chưa có nội dung chi tiết.";
             const day = getEventDay(card);
             const time = getEventTime(card);
@@ -2327,6 +2829,17 @@
         // ── Khởi tạo lưới lịch ngay khi load ──
         renderCalendarGrid(currentYear, currentMonth);
         renderVietnamHolidayNotices();
+
+        document.getElementById("calendarBody")?.addEventListener("click", (e) => {
+            if (e.target.closest(".holiday-notice")) return;
+            const td = e.target.closest("td.has-posts:not(.disabled)");
+            if (td?.dataset?.date) openDayDetail(td.dataset.date);
+        });
+
+        document.getElementById("dayDetailClose")?.addEventListener("click", closeDayDetail);
+        document.getElementById("dayDetailModal")?.addEventListener("click", (e) => {
+            if (e.target.id === "dayDetailModal") closeDayDetail();
+        });
 
         const addPostModal = document.getElementById("addPostModal");
         const addPostFrame = document.getElementById("addPostFrame");

@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Nhân sự — Guitar Sài Thành</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+            padding: 24px 32px;
+            border-bottom: 3px solid #f5c518;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #f5c518;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .page-sub {
+            font-size: 14px;
+            font-weight: 500;
+            color: #aaa;
+        }
+
+        .control-bar {
+            background: #ffffff;
+            margin: 24px 32px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1.5px solid #e2e8f0;
+            font-size: 13px;
+            outline: none;
+            width: 280px;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: #0f3460;
+        }
+
+        .btn-primary {
+            border: 1px solid #0f3460;
+            background: #0f3460;
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.92;
+        }
+
+        .count-badge {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .table-view {
+            padding: 0 32px;
+        }
+
+        .table-container {
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .data-table th {
+            background: #1a1a2e;
+            color: #f5c518;
+            padding: 14px 20px;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+            color: #334155;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .col-stt {
+            width: 70px;
+            text-align: center;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .col-name {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .icon-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .icon-btn.edit {
+            color: #0f3460;
+            border-color: #bfdbfe;
+            background: #eff6ff;
+        }
+
+        .icon-btn.delete {
+            color: #b91c1c;
+            border-color: #fecaca;
+            background: #fef2f2;
+        }
+
+        .icon-btn:hover {
+            filter: brightness(0.96);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: #64748b;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 32px;
+            color: #64748b;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            padding: 16px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-card {
+            width: min(440px, 100%);
+            background: #fff;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .modal-head {
+            padding: 14px 18px;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 800;
+            color: #0f3460;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 14px 18px;
+        }
+
+        .field label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .field input {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 14px;
+        }
+
+        .field input:focus {
+            outline: none;
+            border-color: #0f3460;
+        }
+
+        .modal-foot {
+            padding: 12px 18px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn-light {
+            border: 1px solid #cbd5e1;
+            background: #fff;
+            color: #334155;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+
+            .page-header,
+            .control-bar,
+            .table-view {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .control-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-header">
+        <div class="page-title"><i class="fa-solid fa-users"></i> QUẢN LÝ NHÂN SỰ</div>
+        <div class="page-sub">Nguồn dữ liệu: Bảng <strong>Nhân sự</strong> (AppSheet)</div>
+    </div>
+
+    <div class="control-bar">
+        <div class="filter-group">
+            <input type="text" class="search-input" id="searchInput" placeholder="🔍 Tìm tên nhân sự...">
+            <span class="count-badge" id="rowCount"></span>
+        </div>
+        <button class="btn-primary" id="addRowBtn" type="button">
+            <i class="fa-solid fa-plus"></i> Thêm nhân sự
+        </button>
+    </div>
+
+    <div class="table-view">
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th class="col-stt">STT</th>
+                        <th>Tên nhân sự</th>
+                        <th style="width: 110px; text-align: right;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr>
+                        <td colspan="3" class="loading-state">Đang tải...</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="fa-solid fa-user-slash" style="font-size: 32px; color: #cbd5e1; margin-bottom: 12px;"></i>
+                <p>Không có nhân sự nào.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="staffModal">
+        <div class="modal-card">
+            <div class="modal-head">
+                <span id="modalTitle">Thêm nhân sự</span>
+                <button class="btn-light" type="button" id="closeModalBtn">Đóng</button>
+            </div>
+            <div class="modal-body">
+                <div class="field">
+                    <label for="fName">Tên nhân sự <span style="color:#dc2626">*</span></label>
+                    <input id="fName" type="text" placeholder="Ví dụ: Tuyến (Content)">
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn-light" type="button" id="cancelModalBtn">Hủy</button>
+                <button class="btn-primary" type="button" id="saveModalBtn">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const APP_ID = 'fb394ab7-2164-4da6-a15e-9e06fefaccb0';
+        const API_KEY = 'V2-wpK1r-oW88b-9sL5Z-DMxbg-zUWg1-FX50y-91Plm-sPMOc';
+        const TABLE_NAME = 'Nhân sự';
+        const API_URL = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${encodeURIComponent(TABLE_NAME)}/Action`;
+
+        const KEY_ALIASES = ['id', 'ID', 'ID Key'];
+        const NAME_ALIASES = ['tên nhân sự', 'ten nhan su', 'tên', 'ten', 'name', 'nhân sự'];
+
+        let rawRows = [];
+        let columnMap = {};
+        let currentEditRowKey = '';
+        let searchQuery = '';
+
+        function norm(s) {
+            return String(s ?? '').trim().toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
+        }
+
+        function findColKey(sampleRow, aliases) {
+            if (!sampleRow) return '';
+            for (const k of Object.keys(sampleRow)) {
+                const nk = norm(k);
+                if (aliases.some(a => nk === norm(a) || nk.includes(norm(a)))) return k;
+            }
+            return '';
+        }
+
+        function getMap(sampleRow) {
+            return {
+                key: findColKey(sampleRow, KEY_ALIASES),
+                name: findColKey(sampleRow, NAME_ALIASES)
+            };
+        }
+
+        function genId() {
+            return 'ns' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        }
+
+        function rowToView(r, index) {
+            return {
+                key: columnMap.key ? String(r[columnMap.key] || '') : '',
+                name: columnMap.name ? String(r[columnMap.name] || '').trim() : '',
+                stt: index + 1
+            };
+        }
+
+        async function appsheetRequest(action, rows) {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'ApplicationAccessKey': API_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    Action: action,
+                    Properties: { Locale: 'vi-VN', Timezone: 'Asia/Ho_Chi_Minh' },
+                    Rows: rows || []
+                })
+            });
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || `HTTP ${response.status}`);
+            }
+            return response.json().catch(() => ({}));
+        }
+
+        function getFilteredRows() {
+            return rawRows
+                .map((r, i) => rowToView(r, i))
+                .filter(row => {
+                    if (!searchQuery) return true;
+                    const q = searchQuery.toLowerCase();
+                    return row.name.toLowerCase().includes(q);
+                })
+                .sort((a, b) => a.name.localeCompare(b.name, 'vi'));
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const emptyState = document.getElementById('emptyState');
+            const countEl = document.getElementById('rowCount');
+            const filtered = getFilteredRows();
+
+            if (countEl) {
+                countEl.textContent = searchQuery
+                    ? `Hiển thị ${filtered.length} / ${rawRows.length}`
+                    : `${rawRows.length} nhân sự`;
+            }
+
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            filtered.forEach((row, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="col-stt">${idx + 1}</td>
+                    <td class="col-name">${row.name || '(Chưa có tên)'}</td>
+                    <td>
+                        <div class="actions-cell">
+                            <button class="icon-btn edit" title="Sửa" data-action="edit" data-key="${row.key}">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button class="icon-btn delete" title="Xóa" data-action="delete" data-key="${row.key}">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function loadRows() {
+            rawRows = await appsheetRequest('Find', []);
+            if (!Array.isArray(rawRows)) rawRows = [];
+            columnMap = getMap(rawRows[0] || {});
+            renderTable();
+        }
+
+        function openModal(isEdit, key) {
+            const modal = document.getElementById('staffModal');
+            const title = document.getElementById('modalTitle');
+            const fName = document.getElementById('fName');
+
+            currentEditRowKey = isEdit ? key : '';
+            title.textContent = isEdit ? 'Sửa nhân sự' : 'Thêm nhân sự';
+            fName.value = '';
+
+            if (isEdit) {
+                const row = rawRows.find(r => String(columnMap.key ? r[columnMap.key] : '') === String(key));
+                if (row && columnMap.name) {
+                    fName.value = String(row[columnMap.name] || '');
+                }
+            }
+
+            modal.classList.add('show');
+            fName.focus();
+        }
+
+        function closeModal() {
+            document.getElementById('staffModal').classList.remove('show');
+            currentEditRowKey = '';
+        }
+
+        async function saveModal() {
+            const fName = document.getElementById('fName');
+            const name = fName.value.trim();
+            if (!name) {
+                alert('Vui lòng nhập tên nhân sự');
+                return;
+            }
+
+            const payload = {};
+            if (columnMap.name) payload[columnMap.name] = name;
+
+            if (currentEditRowKey) {
+                payload[columnMap.key] = currentEditRowKey;
+                await appsheetRequest('Edit', [payload]);
+            } else {
+                payload[columnMap.key || 'id'] = genId();
+                await appsheetRequest('Add', [payload]);
+            }
+
+            closeModal();
+            await loadRows();
+        }
+
+        async function deleteRow(key) {
+            if (!key) return;
+            if (!confirm('Bạn có chắc muốn xóa nhân sự này?')) return;
+
+            const payload = {};
+            payload[columnMap.key] = key;
+            await appsheetRequest('Delete', [payload]);
+            await loadRows();
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchQuery = e.target.value.trim();
+            renderTable();
+        });
+
+        document.getElementById('addRowBtn').addEventListener('click', () => openModal(false, ''));
+        document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+        document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
+        document.getElementById('saveModalBtn').addEventListener('click', async () => {
+            try {
+                await saveModal();
+            } catch (e) {
+                alert('Lưu thất bại: ' + (e.message || e));
+            }
+        });
+
+        document.getElementById('staffModal').addEventListener('click', (e) => {
+            if (e.target.id === 'staffModal') closeModal();
+        });
+
+        document.getElementById('tableBody').addEventListener('click', async (e) => {
+            const btn = e.target.closest('button[data-action]');
+            if (!btn) return;
+            const key = btn.dataset.key || '';
+            try {
+                if (btn.dataset.action === 'edit') {
+                    openModal(true, key);
+                } else if (btn.dataset.action === 'delete') {
+                    await deleteRow(key);
+                }
+            } catch (err) {
+                alert('Thao tác thất bại: ' + (err.message || err));
+            }
+        });
+
+        loadRows().catch((err) => {
+            document.getElementById('tableBody').innerHTML =
+                `<tr><td colspan="3" class="empty-state" style="color:#dc2626;">Không tải được bảng Nhân sự: ${err.message || err}</td></tr>`;
+        });
+    </script>
+
+</body>
+
+</html>
