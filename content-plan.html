@@ -1439,6 +1439,7 @@
         const APP_ID = "fb394ab7-2164-4da6-a15e-9e06fefaccb0";
         const API_KEY = "V2-wpK1r-oW88b-9sL5Z-DMxbg-zUWg1-FX50y-91Plm-sPMOc";
         const TABLE_NAME = "Input";
+        const FORM_TABLE_NAME = "Form Bài Đăng";
         const API_URL = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${encodeURIComponent(TABLE_NAME)}/Action`;
 
         // ── Trạng thái tháng hiện tại ──
@@ -1673,7 +1674,7 @@
         }
 
         // ── Tạo 1 event-card từ row data ──
-        function createEventCard(row, dateCol, titleCol, contentCol, statusCol, channelCol, ownerCol, postLinkCol, driveLinkCol, keyCol, timeCol, mediaCol) {
+        function createEventCard(row, dateCol, titleCol, contentCol, statusCol, channelCol, ownerCol, postLinkCol, driveLinkCol, timeCol, mediaCol) {
             const isoDate  = dateCol   ? toIsoDate(row[dateCol])   : "";
             const title    = titleCol   ? String(row[titleCol] || "").trim() : "";
             const content  = contentCol ? String(row[contentCol] || "").trim() : "";
@@ -1682,7 +1683,6 @@
             const owner    = ownerCol   ? String(row[ownerCol]   || "").trim() : "";
             const postLink = postLinkCol ? String(row[postLinkCol] || "").trim() : "";
             const driveLink = driveLinkCol ? String(row[driveLinkCol] || "").trim() : "";
-            const rowKey   = keyCol     ? String(row[keyCol]     || "").trim() : "";
             const mediaType = mediaCol ? String(row[mediaCol] || "").trim() : "";
             const titleText = title || "(Chưa có tiêu đề)";
 
@@ -1701,7 +1701,7 @@
             if (isoDate)  card.dataset.publishDate = isoDate;
             if (postLink) card.dataset.postLink    = postLink;
             if (driveLink) card.dataset.driveLink  = driveLink;
-            if (rowKey)   card.dataset.rowKey      = rowKey;
+            applyRowApiMetaToCard(card, row);
             if (status)   card.dataset.approvalStatus = status;
             if (mediaType) card.dataset.mediaType = mediaType;
 
@@ -1739,7 +1739,6 @@
             const ownerCol   = findColumn(r0, OWNER_COLUMNS);
             const postLinkCol = findColumn(r0, POST_LINK_COLUMNS);
             const driveLinkCol = findColumn(r0, DRIVE_LINK_COLUMNS);
-            const keyCol     = findColumn(r0, KEY_COLUMNS);
             const timeCol    = findColumn(r0, TIME_COLUMNS);
             const mediaCol   = findColumn(r0, MEDIA_COLUMNS);
 
@@ -1762,7 +1761,7 @@
                     td.appendChild(store);
                 }
 
-                const card = createEventCard(row, dateCol, titleCol, contentCol, statusCol, channelCol, ownerCol, postLinkCol, driveLinkCol, keyCol, timeCol, mediaCol);
+                const card = createEventCard(row, dateCol, titleCol, contentCol, statusCol, channelCol, ownerCol, postLinkCol, driveLinkCol, timeCol, mediaCol);
                 store.appendChild(card);
             });
 
@@ -2019,8 +2018,9 @@
             return statusColumn ? rows.flatMap((row) => splitStatusValue(row[statusColumn])) : [];
         }
 
-        async function appsheetFindRows() {
-            const response = await fetch(API_URL, {
+        async function appsheetFindRows(tableName = TABLE_NAME) {
+            const url = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${encodeURIComponent(tableName)}/Action`;
+            const response = await fetch(url, {
                 method: "POST",
                 headers: {
                     "ApplicationAccessKey": API_KEY,
@@ -2044,20 +2044,20 @@
             const data = await response.json();
             return Array.isArray(data) ? data : [];
         }
-        const APPROVAL_STATUS_COLUMNS = ["Trạng thái duyệt", "Trang thai duyet", "trang thai duyet"];
-        const TITLE_COLUMNS = ["Tiêu đề", "Tieu de", "Title"];
-        const CONTENT_COLUMNS = ["Nội dung", "Noi dung", "content"];
+        const APPROVAL_STATUS_COLUMNS = ["Trạng thái duyệt", "Trang thai duyet", "trang thai duyet", "Trạng thái"];
+        const TITLE_COLUMNS = ["Tiêu đề", "Tieu de", "Title", "Caption thô / Ý tưởng chính *", "Caption thô / Y tuong chinh *"];
+        const CONTENT_COLUMNS = ["Nội dung", "Noi dung", "content", "Caption thô / Ý tưởng chính *"];
         const CHANNEL_COLUMNS = ["Đăng lên kênh nào?", "Dang len kenh nao?", "Kênh", "Kenh", "Platform"];
         const OWNER_COLUMNS = [
             "Bạn là ai?", "Ban la ai", "Bạn là ai",
             "Người đăng", "Nguoi dang", "Người phụ trách", "Nguoi phu trach", "Owner"
         ];
         const DATE_COLUMNS = ["Ngày muốn đăng", "Ngay muon dang", "Ngày đăng", "Ngay dang"];
-        const TIME_COLUMNS = ["Giờ muốn đăng", "Gio muon dang", "Giờ đăng", "Gio dang"];
+        const TIME_COLUMNS = ["Giờ muốn đăng", "Gio muon dang", "Giờ đăng", "Gio dang", "Giờ đăng bài", "Gio dang bai"];
         const MEDIA_COLUMNS = ["Loại media", "Loai media", "Media"];
         const POST_LINK_COLUMNS = ["Link bài đăng", "Link bai dang"];
         const DRIVE_LINK_COLUMNS = ["Link video / ảnh", "Link video / anh", "Link drive", "Link driver", "Drive link"];
-        const KEY_COLUMNS = ["ID Key", "ID", "_RowNumber"];
+        const KEY_COLUMNS = ["ID Key", "ID", "id"];
         const chipColors = ["#5b8cb8", "#c89942", "#5e9468", "#c97a5e", "#8a6ba8", "#c46b87"];
         const VIETNAM_HOLIDAYS = {
             "2026-01-01": "Tết Dương lịch",
@@ -2187,6 +2187,52 @@
             const keys = Object.keys(row || {});
             const normalizedCandidates = new Set(candidates.map(normColumnKey));
             return keys.find((key) => normalizedCandidates.has(normColumnKey(key)));
+        }
+
+        /** Chọn cột theo thứ tự ưu tiên (tránh nhầm _RowNumber với khóa thật ID Key). */
+        function findColumnByPriority(row, candidates) {
+            if (!row) return null;
+            const keyMap = new Map(Object.keys(row).map((k) => [normColumnKey(k), k]));
+            for (const candidate of candidates) {
+                const match = keyMap.get(normColumnKey(candidate));
+                if (match !== undefined) return match;
+            }
+            return null;
+        }
+
+        function getAppsheetTableUrl(tableName) {
+            return `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${encodeURIComponent(tableName)}/Action`;
+        }
+
+        function getRowApiMeta(row) {
+            if (row?._calendarSource === "form") {
+                const id = String(row.id || "").trim();
+                if (!id) return null;
+                return {
+                    table: FORM_TABLE_NAME,
+                    keyColumn: "id",
+                    keyValue: id,
+                    contentColumn: "Caption thô / Ý tưởng chính *"
+                };
+            }
+            const keyColumn = findColumnByPriority(row, ["ID Key", "ID", "id"]);
+            const keyValue = keyColumn ? String(row[keyColumn] || "").trim() : "";
+            if (!keyValue) return null;
+            return {
+                table: TABLE_NAME,
+                keyColumn,
+                keyValue,
+                contentColumn: findColumnByPriority(row, ["Nội dung", "Noi dung", "content"]) || "Nội dung"
+            };
+        }
+
+        function applyRowApiMetaToCard(card, row) {
+            const meta = getRowApiMeta(row);
+            if (!meta) return;
+            card.dataset.rowKey = meta.keyValue;
+            card.dataset.rowSource = meta.table === FORM_TABLE_NAME ? "form" : "input";
+            card.dataset.keyColumn = meta.keyColumn;
+            card.dataset.contentColumn = meta.contentColumn;
         }
 
         function splitStatusValue(value) {
@@ -2326,11 +2372,46 @@
         function slashDateToIso(first, second, year) {
             const a = Number(first);
             const b = Number(second);
+            // Một phần > 12 → rõ ràng: 22/05 = ngày 22 tháng 5 (MM/DD từ AppSheet)
             if (a > 12 && b <= 12) return datePartsToIso(year, b, a);
             if (b > 12 && a <= 12) return datePartsToIso(year, a, b);
 
-            // AppSheet API returns Date values as MM/DD/YYYY even when the app locale is vi-VN.
-            return datePartsToIso(year, a, b) || datePartsToIso(year, b, a);
+            // AppSheet API trả về MM/DD/YYYY (vd. 06/01/2026 = 1 tháng 6, KHÔNG phải 6 tháng 1)
+            const asMmDd = datePartsToIso(year, a, b);
+            if (asMmDd) return asMmDd;
+            return datePartsToIso(year, b, a);
+        }
+
+        function getRowCalendarSignature(row) {
+            const dateCol = findColumn(row, DATE_COLUMNS);
+            const titleCol = findColumn(row, TITLE_COLUMNS);
+            const iso = dateCol ? toIsoDate(row[dateCol]) : "";
+            const title = titleCol ? String(row[titleCol] || "").trim() : "";
+            if (!iso) return "";
+            return `${iso}|${normalizeText(title)}`;
+        }
+
+        function normalizeFormRow(row) {
+            const copy = { ...row, _calendarSource: "form" };
+            const caption = row["Caption thô / Ý tưởng chính *"];
+            if (caption && !copy["Tiêu đề"]) copy["Tiêu đề"] = caption;
+            if (row["Giờ đăng bài"] && !copy["Giờ muốn đăng"]) copy["Giờ muốn đăng"] = row["Giờ đăng bài"];
+            const status = String(row["Trạng thái"] || "").trim();
+            if (!copy["Trạng thái duyệt"]) copy["Trạng thái duyệt"] = status || "Chờ duyệt";
+            return copy;
+        }
+
+        function mergeCalendarRows(inputRows, formRows) {
+            const inputSigs = new Set(
+                (inputRows || []).map(getRowCalendarSignature).filter(Boolean)
+            );
+            const merged = [...(inputRows || [])];
+            (formRows || []).map(normalizeFormRow).forEach((row) => {
+                const sig = getRowCalendarSignature(row);
+                if (!sig || inputSigs.has(sig)) return;
+                merged.push(row);
+            });
+            return merged;
         }
 
         function toIsoDate(value) {
@@ -2570,7 +2651,7 @@
             const dateColumn = findColumn(rows?.[0], DATE_COLUMNS);
             const postLinkColumn = findColumn(rows?.[0], POST_LINK_COLUMNS);
             const driveLinkColumn = findColumn(rows?.[0], DRIVE_LINK_COLUMNS);
-            const keyColumn = findColumn(rows?.[0], KEY_COLUMNS);
+            const keyColumn = findColumnByPriority(rows?.[0], KEY_COLUMNS);
             if (!titleColumn && !contentColumn && !statusColumn && !channelColumn && !ownerColumn && !dateColumn) return;
 
             const titles = titleColumn
@@ -2621,16 +2702,21 @@
                 if (driveLinkColumn && rows[index] && rows[index][driveLinkColumn] != null) {
                     card.dataset.driveLink = String(rows[index][driveLinkColumn] || "").trim();
                 }
-                if (keyColumn && rows[index] && rows[index][keyColumn] != null) {
-                    card.dataset.rowKey = String(rows[index][keyColumn] || "").trim();
-                }
+                if (rows[index]) applyRowApiMetaToCard(card, rows[index]);
             });
         }
 
         async function loadInputDataForFiltersAndDetails() {
             try {
-                const rows = await appsheetFindRows();
-                _cachedRows = rows || [];
+                const [inputRows, formRows] = await Promise.all([
+                    appsheetFindRows(TABLE_NAME),
+                    appsheetFindRows(FORM_TABLE_NAME).catch((err) => {
+                        console.warn("Không tải được Form Bài Đăng:", err);
+                        return [];
+                    })
+                ]);
+                const rows = mergeCalendarRows(inputRows || [], formRows || []);
+                _cachedRows = rows;
                 renderApprovalStatusChips(buildStatusList(_cachedRows));
                 renderTopFilterOptions(_cachedRows);
                 renderCardsForMonth(_cachedRows, currentYear, currentMonth);
@@ -2753,6 +2839,9 @@
 
         async function saveContentEdit() {
             const rowKey = activeDetailCard?.dataset?.rowKey;
+            const keyColumn = activeDetailCard?.dataset?.keyColumn || "ID Key";
+            const contentColumn = activeDetailCard?.dataset?.contentColumn || "Nội dung";
+            const tableName = activeDetailCard?.dataset?.rowSource === "form" ? FORM_TABLE_NAME : TABLE_NAME;
             if (!rowKey) {
                 alert("Không tìm thấy khóa dòng để lưu trên AppSheet.");
                 return;
@@ -2764,7 +2853,7 @@
             eventDetailCancelEditBtn.disabled = true;
 
             try {
-                const response = await fetch(API_URL, {
+                const response = await fetch(getAppsheetTableUrl(tableName), {
                     method: "POST",
                     headers: {
                         "ApplicationAccessKey": API_KEY,
@@ -2773,7 +2862,7 @@
                     body: JSON.stringify({
                         Action: "Edit",
                         Properties: { Locale: "vi-VN", Timezone: "Asia/Ho_Chi_Minh" },
-                        Rows: [{ "ID Key": rowKey, "Nội dung": newContent }]
+                        Rows: [{ [keyColumn]: rowKey, [contentColumn]: newContent }]
                     })
                 });
                 if (!response.ok) throw new Error(await response.text());
@@ -2791,6 +2880,8 @@
 
         async function deleteEventByCard(card) {
             const rowKey = card?.dataset?.rowKey;
+            const keyColumn = card?.dataset?.keyColumn || "ID Key";
+            const tableName = card?.dataset?.rowSource === "form" ? FORM_TABLE_NAME : TABLE_NAME;
             if (!rowKey) {
                 alert("Không tìm thấy khóa dòng để xóa trên AppSheet.");
                 return;
@@ -2802,7 +2893,7 @@
             btn.textContent = "Đang xóa...";
             btn.disabled = true;
             try {
-                const response = await fetch(API_URL, {
+                const response = await fetch(getAppsheetTableUrl(tableName), {
                     method: "POST",
                     headers: {
                         "ApplicationAccessKey": API_KEY,
@@ -2811,7 +2902,7 @@
                     body: JSON.stringify({
                         Action: "Delete",
                         Properties: { Locale: "vi-VN", Timezone: "Asia/Ho_Chi_Minh" },
-                        Rows: [{ "ID Key": rowKey }]
+                        Rows: [{ [keyColumn]: rowKey }]
                     })
                 });
                 if (!response.ok) throw new Error(await response.text());
