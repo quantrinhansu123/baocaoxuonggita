@@ -3,3 +3,4 @@ _patch_*.py
 _fix_*.py
 .DS_Store
 Thumbs.db
+node_modules/

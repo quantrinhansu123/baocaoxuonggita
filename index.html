@@ -56,13 +56,14 @@
     <div id="tabs" class="flex flex-wrap gap-4"></div>
   </div>
   <div class="flex-1 min-h-0 bg-white/85 backdrop-blur-[1px]">
-    <iframe id="tabFrame" title="Nội dung tab" src=""
-      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals"></iframe>
+    <iframe id="tabFrame" title="Nội dung tab" src=""></iframe>
   </div>
 
   <script>
     const tabItems = [
       { id: 'content-plan', label: 'Content Plan', file: 'content-plan.html' },
+      { id: 'content', label: 'Content', file: 'studio-v3.html', hash: 'script' },
+      { id: 'setup', label: '⚙️ Setup', file: 'studio-v3.html', hash: 'cai-dat' },
       { id: 'dashboard', label: 'Dashboard', file: 'dashboard-complete.html' },
       { id: 'noi-dung', label: 'Nội dung', file: 'noi-dung.html' },
       { id: 'lich-mkt', label: ' Lịch MKT 2026', file: 'lich-mkt.html' },
@@ -86,8 +87,9 @@
         }
 
         if (active) {
-          frame.src = item.file;
           document.title = `Tổng Hợp Tabs - ${item.label}`;
+          const url = item.hash ? `${item.file}#${item.hash}` : item.file;
+          frame.src = url;
         }
       });
     }
