@@ -2955,7 +2955,9 @@
             if (e.target === addPostModal) closeAddPostForm();
         });
         window.addEventListener("message", (e) => {
-            if (e.data?.type === "post-form-submitted") closeAddPostForm();
+            if (e.source !== addPostFrame.contentWindow || e.data?.type !== "post-form-submitted") return;
+            closeAddPostForm();
+            loadInputDataForFiltersAndDetails();
         });
 
         // ── Gắn sự kiện 3 nút điều hướng tháng ──

@@ -233,7 +233,7 @@ function showToast(msg, ok) {
   el.textContent = msg;
   el.className = 'toast show ' + (ok ? 'ok' : 'err');
   clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => { el.className = 'toast'; }, 3500);
+  if (ok) showToast._t = setTimeout(() => { el.className = 'toast'; }, 3500);
 }
 function genId() {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -297,7 +297,7 @@ async function appsheetAdd(row) {
     headers: { 'ApplicationAccessKey': API_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       Action: 'Add',
-      Properties: { Locale: 'vi-VN', Timezone: 'Asia/Ho_Chi_Minh' },
+      Properties: { Locale: 'en-US', Timezone: 'Asia/Ho_Chi_Minh' },
       Rows: [row]
     })
   });
@@ -305,7 +305,11 @@ async function appsheetAdd(row) {
     const text = await response.text();
     throw new Error(text || `HTTP ${response.status}`);
   }
-  return response.json().catch(() => ({}));
+  const data = await response.json().catch(() => null);
+  const rows = Array.isArray(data) ? data : data?.Rows;
+  if (!Array.isArray(rows) || !rows.some(saved => saved?.id === row.id)) {
+    throw new Error('AppSheet chưa xác nhận đã ghi dòng. Mã dòng: ' + row.id);
+  }
 }
 function resetForm() {
   document.querySelectorAll('.selected').forEach(e => e.classList.remove('selected'));
@@ -331,12 +335,19 @@ async function submitForm() {
   const media = document.querySelector('[data-group="media"].selected');
   const time = document.getElementById('post-time').value;
 
-  if (!who || !caption || channels.length === 0 || !date || !time || !source || !media || !approve) {
-    showToast('Vui lòng điền đầy đủ các trường bắt buộc!', false);
-    return;
-  }
-  if (types.length === 0) {
-    showToast('Vui lòng chọn ít nhất một loại nội dung!', false);
+  const missing = [
+    [who, 'Bạn là ai?'],
+    [source, 'Nguồn nội dung'],
+    [types.length, 'Loại nội dung'],
+    [media, 'Loại media'],
+    [caption, 'Caption thô / Ý tưởng chính'],
+    [approve, 'Cần duyệt trước khi đăng?'],
+    [channels.length, 'Kênh đăng'],
+    [date, 'Ngày muốn đăng'],
+    [time, 'Giờ đăng bài']
+  ].filter(([value]) => !value).map(([, label]) => label);
+  if (missing.length) {
+    showToast('Vui lòng bổ sung: ' + missing.join(', '), false);
     return;
   }
   if (mediaLink && !isValidUrl(mediaLink)) {
@@ -344,6 +355,7 @@ async function submitForm() {
     return;
   }
 
+  const [year, month, day] = date.split('-');
   const payload = {
     id: genId(),
     [COL.who]: who,
@@ -353,7 +365,7 @@ async function submitForm() {
     [COL.approve]: approve.dataset.val === 'yes' ? 'Có' : 'Không',
     [COL.media]: MEDIA_MAP[media.dataset.val] || media.textContent.trim(),
     [COL.channels]: channels.join(', '),
-    [COL.postDate]: date,
+    [COL.postDate]: `${month}/${day}/${year}`,
     [COL.postTime]: toAppSheetTime(time)
   };
   if (mediaLink) payload[COL.mediaLink] = mediaLink;
