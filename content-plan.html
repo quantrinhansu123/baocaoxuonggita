@@ -1425,6 +1425,7 @@
                     </span>
                     <div class="detail-content" id="eventDetailContent" style="font-weight: 600; color: #2d3436; font-size: 13px; line-height: 1.5; padding: 12px; background: #faf5ef; border-radius: 8px; border: 1px solid #f0e8dc;"></div>
                     <textarea class="detail-content-edit" id="eventDetailContentEdit" hidden></textarea>
+                    <p id="eventDetailSaveError" role="alert" style="color: #a61b1b; font-size: 13px;" hidden></p>
                 </div>
                 <div class="detail-actions">
                     <button type="button" class="detail-action-btn cancel" id="eventDetailCancelEditBtn" hidden>Hủy</button>
@@ -1677,7 +1678,7 @@
         function createEventCard(row, dateCol, titleCol, contentCol, statusCol, channelCol, ownerCol, postLinkCol, driveLinkCol, timeCol, mediaCol) {
             const isoDate  = dateCol   ? toIsoDate(row[dateCol])   : "";
             const title    = titleCol   ? String(row[titleCol] || "").trim() : "";
-            const content  = contentCol ? String(row[contentCol] || "").trim() : "";
+            const content  = contentCol ? String(row[contentCol] ?? "") : "";
             const status   = statusCol  ? (splitStatusValue(row[statusCol])[0] || "") : "";
             const channel  = channelCol ? String(row[channelCol] || "").trim() : "";
             const owner    = ownerCol   ? String(row[ownerCol]   || "").trim() : "";
@@ -1733,7 +1734,6 @@
             const r0 = rows[0];
             const dateCol    = findColumn(r0, DATE_COLUMNS);
             const titleCol   = findColumn(r0, TITLE_COLUMNS);
-            const contentCol = findColumn(r0, CONTENT_COLUMNS);
             const statusCol  = findColumn(r0, APPROVAL_STATUS_COLUMNS);
             const channelCol = findColumn(r0, CHANNEL_COLUMNS);
             const ownerCol   = findColumn(r0, OWNER_COLUMNS);
@@ -1761,6 +1761,7 @@
                     td.appendChild(store);
                 }
 
+                const contentCol = getRowApiMeta(row)?.contentColumn || findColumn(row, CONTENT_COLUMNS);
                 const card = createEventCard(row, dateCol, titleCol, contentCol, statusCol, channelCol, ownerCol, postLinkCol, driveLinkCol, timeCol, mediaCol);
                 store.appendChild(card);
             });
@@ -2081,6 +2082,7 @@
         const eventDetailTag = document.getElementById("eventDetailTag");
         const eventDetailContent = document.getElementById("eventDetailContent");
         const eventDetailContentEdit = document.getElementById("eventDetailContentEdit");
+        const eventDetailSaveError = document.getElementById("eventDetailSaveError");
         const eventDetailClose = document.getElementById("eventDetailClose");
         const eventDetailEditBtn = document.getElementById("eventDetailEditBtn");
         const eventDetailCancelEditBtn = document.getElementById("eventDetailCancelEditBtn");
@@ -2206,17 +2208,19 @@
 
         function getRowApiMeta(row) {
             if (row?._calendarSource === "form") {
-                const id = String(row.id || "").trim();
-                if (!id) return null;
+                const keyColumn = findColumnByPriority(row, ["id"]);
+                const keyValue = keyColumn ? String(row[keyColumn] ?? "") : "";
+                const contentColumn = findColumnByPriority(row, ["Caption thô / Ý tưởng chính *"]);
+                if (!keyValue || !contentColumn) return null;
                 return {
                     table: FORM_TABLE_NAME,
-                    keyColumn: "id",
-                    keyValue: id,
-                    contentColumn: "Caption thô / Ý tưởng chính *"
+                    keyColumn,
+                    keyValue,
+                    contentColumn
                 };
             }
-            const keyColumn = findColumnByPriority(row, ["ID Key", "ID", "id"]);
-            const keyValue = keyColumn ? String(row[keyColumn] || "").trim() : "";
+            const keyColumn = findColumnByPriority(row, KEY_COLUMNS);
+            const keyValue = keyColumn ? String(row[keyColumn] ?? "") : "";
             if (!keyValue) return null;
             return {
                 table: TABLE_NAME,
@@ -2773,6 +2777,7 @@
             eventDetailContentEdit.hidden = !isEditing;
             eventDetailCancelEditBtn.hidden = !isEditing;
             eventDetailEditBtn.textContent = isEditing ? "Lưu" : "Sửa";
+            eventDetailSaveError.hidden = true;
             if (isEditing) {
                 eventDetailContentEdit.value = activeDetailCard?.dataset?.content || "";
                 eventDetailContentEdit.focus();
@@ -2838,16 +2843,19 @@
         }
 
         async function saveContentEdit() {
-            const rowKey = activeDetailCard?.dataset?.rowKey;
-            const keyColumn = activeDetailCard?.dataset?.keyColumn || "ID Key";
-            const contentColumn = activeDetailCard?.dataset?.contentColumn || "Nội dung";
-            const tableName = activeDetailCard?.dataset?.rowSource === "form" ? FORM_TABLE_NAME : TABLE_NAME;
-            if (!rowKey) {
-                alert("Không tìm thấy khóa dòng để lưu trên AppSheet.");
-                return;
-            }
+            const card = activeDetailCard;
+            if (!card?.dataset.rowKey || eventDetailEditBtn.disabled) return;
+            const { rowKey, keyColumn, contentColumn, rowSource } = card.dataset;
+            const tableName = rowSource === "form" ? FORM_TABLE_NAME : TABLE_NAME;
 
             const newContent = eventDetailContentEdit.value;
+            eventDetailSaveError.hidden = true;
+            if (rowSource === "form" && !newContent.trim()) {
+                eventDetailSaveError.textContent = "Vui lòng nhập nội dung bài đăng.";
+                eventDetailSaveError.hidden = false;
+                eventDetailContentEdit.focus();
+                return;
+            }
             eventDetailEditBtn.textContent = "Đang lưu...";
             eventDetailEditBtn.disabled = true;
             eventDetailCancelEditBtn.disabled = true;
@@ -2861,16 +2869,38 @@
                     },
                     body: JSON.stringify({
                         Action: "Edit",
-                        Properties: { Locale: "vi-VN", Timezone: "Asia/Ho_Chi_Minh" },
+                        Properties: { Locale: "en-US", Timezone: "Asia/Ho_Chi_Minh" },
                         Rows: [{ [keyColumn]: rowKey, [contentColumn]: newContent }]
                     })
                 });
-                if (!response.ok) throw new Error(await response.text());
-                activeDetailCard.dataset.content = newContent;
-                eventDetailContent.textContent = newContent || "Chưa có nội dung chi tiết.";
-                setContentEditMode(false);
+                const raw = await response.text();
+                let data;
+                try { data = JSON.parse(raw); } catch { /* Some errors are plain text. */ }
+                if (!response.ok) {
+                    throw new Error(data?.detail || data?.Message || data?.message || raw || `HTTP ${response.status}`);
+                }
+                const rows = Array.isArray(data) ? data : data?.Rows;
+                const saved = Array.isArray(rows) && rows.find((row) => String(row?.[keyColumn] ?? "") === rowKey);
+                const savedContent = String(saved?.[contentColumn] ?? "");
+                if (!saved || savedContent.replace(/\r\n/g, "\n") !== newContent.replace(/\r\n/g, "\n")) {
+                    throw new Error("AppSheet chưa xác nhận nội dung đã được lưu.");
+                }
+
+                const cached = _cachedRows?.find((row) => {
+                    const meta = getRowApiMeta(row);
+                    return meta?.table === tableName && meta.keyValue === rowKey;
+                });
+                if (cached) cached[contentColumn] = savedContent;
+                card.dataset.content = savedContent;
+                if (activeDetailCard === card) {
+                    eventDetailContent.textContent = savedContent || "Chưa có nội dung chi tiết.";
+                    setContentEditMode(false);
+                }
             } catch (error) {
-                alert(`Lưu thất bại: ${error.message || error}`);
+                if (activeDetailCard === card) {
+                    eventDetailSaveError.textContent = `Lưu thất bại: ${error.message || error}`;
+                    eventDetailSaveError.hidden = false;
+                }
             } finally {
                 eventDetailEditBtn.textContent = eventDetailContentEdit.hidden ? "Sửa" : "Lưu";
                 eventDetailEditBtn.disabled = !activeDetailCard?.dataset?.rowKey;
