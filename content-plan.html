@@ -1241,9 +1241,23 @@
             cursor: not-allowed;
             background: transparent;
         }
-        .detail-actions {
-            margin-top: 14px;
+        #eventDetailModal .detail-card {
             display: flex;
+            flex-direction: column;
+        }
+        #eventDetailModal .detail-body {
+            min-height: 0;
+            max-height: none;
+        }
+        #eventDetailModal .detail-header,
+        #eventDetailModal .detail-actions {
+            flex-shrink: 0;
+        }
+        .detail-actions {
+            padding: 12px 20px;
+            border-top: 1px solid #f4ece0;
+            display: flex;
+            flex-wrap: wrap;
             gap: 10px;
             justify-content: flex-end;
         }
@@ -1427,12 +1441,12 @@
                     <textarea class="detail-content-edit" id="eventDetailContentEdit" hidden></textarea>
                     <p id="eventDetailSaveError" role="alert" style="color: #a61b1b; font-size: 13px;" hidden></p>
                 </div>
-                <div class="detail-actions">
+            </div>
+            <div class="detail-actions">
                     <button type="button" class="detail-action-btn cancel" id="eventDetailCancelEditBtn" hidden>Hủy</button>
                     <button type="button" class="detail-action-btn edit" id="eventDetailEditBtn">Sửa</button>
                     <button type="button" class="detail-action-btn view" id="eventDetailViewBtn">Xem</button>
                     <button type="button" class="detail-action-btn delete" id="eventDetailDeleteBtn">Xóa</button>
-                </div>
             </div>
         </div>
     </div>
@@ -2813,7 +2827,7 @@
             }
             eventDetailDate.textContent = formattedDate;
             eventDetailTime.textContent = time || "Chưa có giờ";
-            eventDetailPlatform.textContent = getEventPlatform(card);
+            eventDetailPlatform.textContent = getCardChannel(card);
             if (eventDetailOwner) {
                 eventDetailOwner.textContent = card.dataset.owner || "Chưa xác định";
             }
